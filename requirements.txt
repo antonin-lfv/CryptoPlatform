@@ -1,0 +1,7 @@
+flask
+numpy
+plotly
+flask-nav
+jsons
+pip
+requests
