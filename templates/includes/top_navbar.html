@@ -2,7 +2,7 @@
         <div class="inside-header">
             <div class="d-flex align-items-center logo-box justify-content-start">
                 <!-- Logo -->
-                <a href="index.html" class="logo">
+                <a href="{{ url_for('BLP_general.home') }}" class="logo">
                     <!-- logo-->
                     <div class="logo-lg">
                         <span class="light-logo"><img
@@ -20,16 +20,7 @@
                         <li class="btn-group d-lg-inline-flex d-none">
                             <div class="app-menu">
                                 <div class="search-bx mx-5">
-                                    <form>
-                                        <div class="input-group">
-                                            <input type="search" class="form-control" placeholder="Search"
-                                                   aria-label="Search" aria-describedby="button-addon2">
-                                            <div class="input-group-append">
-                                                <button class="btn" type="submit" id="button-addon3"><i
-                                                        data-feather="search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                    <!-- old search bar -->
                                 </div>
                             </div>
                         </li>
@@ -145,8 +136,8 @@
                                data-bs-toggle="dropdown" title="User">
                                 <div class="d-flex pt-1">
                                     <div class="text-end me-10">
-                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
-                                        <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
+                                        <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ user.username }}</p>
+                                        <small class="fs-10 mb-0 text-uppercase text-mute">User</small>
                                     </div>
                                     <img src="{{ url_for('static', filename='images/avatar/avatar-1.png') }}"
                                          class="avatar rounded-10 bg-primary-light h-40 w-40" alt=""/>

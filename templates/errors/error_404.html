@@ -3,10 +3,12 @@
 <head>
 
     {% include('includes/head_content.html') %}
-    <title>Specie Admin - 404 Page not found </title>
+    <title>
+        Error 404
+    </title>
 
 </head>
-<body class="hold-transition theme-primary bg-img" style="background-image: url({{ url_for('static', filename='images/auth-bg/bg-4.jpg') }})">
+<body class="hold-transition theme-primary bg-img" style="background-color: #63708b">
 	
 	<section class="error-page h-p100">
 		<div class="container h-p100">
@@ -17,14 +19,6 @@
 					  <h1>Page Not Found !</h1>
 					  <h3>looks like, page doesn't exist</h3>
 					  <div class="my-30"><a href="{{ url_for('BLP_auth.login') }}" class="btn btn-danger">Back to dashboard</a></div>
-
-					  <form class="search-form mx-auto mt-30 w-p75">
-						<div class="input-group rounded5 overflow-h">
-						  <input type="text" name="search" class="form-control" placeholder="Search">
-						  <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa fa-search"></i></button>
-						</div>
-						<!-- /.input-group -->
-					  </form>
 				  </div>
 			  </div>				
 		  </div>

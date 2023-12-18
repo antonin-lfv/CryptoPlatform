@@ -39,6 +39,10 @@ def create_app():
     def forbidden(error):
         return render_template('errors/error_404.html')
 
+    @app.errorhandler(500)
+    def forbidden(error):
+        return render_template('errors/error_500.html')
+
     return app
 
 
