@@ -1,24 +1,11 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../images/favicon.ico">
+<head>
+{% include('includes/head_content.html') %}
 
-    <title>Specie Bootstrap 5 Admin Template</title>
-    
-	<!-- Vendors Style-->
-	<link rel="stylesheet" href="css/vendors_css.css">
-	  
-	<!-- Style-->    
-	<link rel="stylesheet" href="css/horizontal-menu.css"> 
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/skin_color.css">
-     
-  </head>
+<title>Dashboard | Crypto Admin</title>
+
+</head>
 
 <body class="layout-top-nav dark-skin theme-primary fixed">
 	
@@ -168,7 +155,7 @@
 					 <a class="dropdown-item" href="wallets.html"><i class="ti-wallet text-muted me-2"></i> My Wallet</a>
 					 <a class="dropdown-item" href="setting.html"><i class="ti-settings text-muted me-2"></i> Settings</a>
 					 <div class="dropdown-divider"></div>
-					 <a class="dropdown-item" href="auth_login.html"><i class="ti-lock text-muted me-2"></i> Logout</a>
+					 <a class="dropdown-item" href="{{ url_for('BLP_auth.logout') }}"><i class="ti-lock text-muted me-2"></i> Logout</a>
 				  </li>
 				</ul>
 			  </li>	
@@ -1489,27 +1476,7 @@
 	<!-- Page Content overlay -->
 	
 	
-	<!-- Vendor JS -->
-	<script src="js/vendors.min.js"></script>
-	<script src="js/pages/chat-popup.js"></script>
-    <script src="../assets/icons/feather-icons/feather.min.js"></script>	
-
-	<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-	<script src="https://www.amcharts.com/lib/3/serial.js"></script>
-	<script src="https://www.amcharts.com/lib/3/amstock.js"></script>
-	<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-	<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-	<script src="https://www.amcharts.com/lib/3/gauge.js" type="text/javascript"></script>
-	<script src="https://www.amcharts.com/lib/3/pie.js" type="text/javascript"></script>
-	<script src="https://www.amcharts.com/lib/3/plugins/animate/animate.min.js" type="text/javascript"></script>
-	<script src="../assets/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
-	
-	<!-- Specie Admin App -->
-	<script src="js/demo.js"></script>
-	<script src="js/jquery.smartmenus.js"></script>
-	<script src="js/menus.js"></script>
-	<script src="js/template.js"></script>
-	<script src="js/pages/dashboard2.js"></script>
+	{% include('includes/javascript_include_dashboard.html') %}
 	
 </body>
 </html>
