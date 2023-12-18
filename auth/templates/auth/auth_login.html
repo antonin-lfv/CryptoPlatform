@@ -6,60 +6,76 @@
     <title>Specie Admin - Log in </title>
 </head>
 
-<body class="hold-transition theme-primary bg-img" style="background-image: url({{ url_for('static', filename='images/auth-bg/bg-9.jpg') }})">
-	
-	<div class="container h-p100">
-		<div class="row align-items-center justify-content-md-center h-p100">	
-			
-			<div class="col-12">
-				<div class="row justify-content-center g-0">
-					<div class="col-lg-5 col-md-5 col-12">
-						<div class="bg-white rounded10 shadow-lg">
-							<div class="content-top-agile p-20 pb-0">
-								<h2 class="text-primary">Let's Get Started</h2>
-								<p class="mb-0">Sign in to continue to Specie.</p>							
-							</div>
-							<div class="p-40">
-								<form action="{{ url_for('BLP_auth.login') }}" method="POST">
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
-											<input type="text" name="login_username" class="form-control ps-15 bg-transparent" placeholder="Username">
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<span class="input-group-text  bg-transparent"><i class="ti-lock"></i></span>
-											<input type="password" name="login_password" class="form-control ps-15 bg-transparent" placeholder="Password">
-										</div>
-									</div>
-									  <div class="row">
-										<!-- /.col -->
-										<div class="col-12">
-										 <div class="fog-pwd text-end">
-											<a href="javascript:void(0)" class="hover-warning"><i class="ion ion-locked"></i> Forgot pwd?</a><br>
-										  </div>
-										</div>
-										<!-- /.col -->
-										<div class="col-12 text-center">
-										  <button type="submit" class="btn btn-danger mt-10">SIGN IN</button>
-										</div>
-										<!-- /.col -->
-									  </div>
-								</form>	
-								<div class="text-center">
-									<p class="mt-15 mb-0">Don't have an account? <a href="{{ url_for('BLP_auth.register') }}" class="text-warning ms-5">Sign Up</a></p>
-								</div>	
-							</div>						
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<body class="hold-transition theme-primary bg-img"
+      style="background-image: url({{ url_for('static', filename='images/auth-bg/bg-12.jpeg') }})">
 
+<div class="container h-p100">
+    <div class="row align-items-center justify-content-md-center h-p100">
 
-	{% include('includes/javascript_include_auth.html') %}
+        <div class="col-12">
+            <div class="row justify-content-center g-0">
+                <div class="col-lg-5 col-md-5 col-12">
+                    <div class="bg-white rounded10 shadow-lg">
+                        <div class="content-top-agile p-20 pb-0">
+                            <h2 class="text-primary">Let's Get Started</h2>
+                            <p class="mb-0">Sign in to continue to Specie.</p>
+                        </div>
+                        <div class="p-40">
+                            <form action="{{ url_for('BLP_auth.login') }}" method="POST">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
+                                        <input type="text" name="login_email"
+                                               class="form-control ps-15 bg-transparent" placeholder="Email">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text  bg-transparent"><i class="ti-lock"></i></span>
+                                        <input type="password" name="login_password"
+                                               class="form-control ps-15 bg-transparent" placeholder="Password">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <!-- /.col -->
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn btn-danger mt-10">SIGN IN</button>
+                                    </div>
+                                    <!-- /.col -->
+                                </div>
+                            </form>
+                            <div class="text-center">
+                                <p class="mt-15 mb-0">Don't have an account? <a
+                                        href="{{ url_for('BLP_auth.register') }}" class="text-warning ms-5">Sign Up</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <!-- If wrong username or password -->
+                    <div id="alertbottomright"
+                         class="myadmin-alert myadmin-alert-img alert-info myadmin-alert-bottom-right"
+                         style="display:none;">
+                        <img src="{{ url_for('static', filename='images/avatar5.png') }}" class="img" alt="img">
+                        <a href="#" class="closed">&times;</a>
+                        <h4>Message</h4>
+                        <p>Wrong username or password</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Vérifier si user_already_exists est vrai
+    {% if wrong_credentials %}
+        document.getElementById('alertbottomright').style.display = 'block';
+    {% endif %}
+</script>
+
+{% include('includes/javascript_include_auth.html') %}
 
 </body>
 </html>

@@ -13,10 +13,9 @@ BLP_auth = Blueprint('BLP_auth', __name__,
 @BLP_auth.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        print(request.form)
-        if (username := request.form.get("login_username")) and (password := request.form.get("login_password")):
-            user = User.query.filter_by(username=username).first()
-            # if user already exists
+        if (email := request.form.get("login_email")) and (password := request.form.get("login_password")):
+            user = User.query.filter_by(email=email).first()
+            # if user doesn't exist or wrong password
             if not user or not check_password_hash(user.password, password):
                 return render_template('auth/auth_login.html', wrong_credentials=True)
             login_user(user)
@@ -41,7 +40,7 @@ def register():
             # add the new user to the database
             db.session.add(new_user)
             db.session.commit()
-            flash('You have been successfully registered', 'success')
+            # flash('You have been successfully registered', 'success')
             return render_template('auth/auth_login.html', wrong_credentials=False)
     return render_template('auth/auth_register.html', already_exists=False)
 
