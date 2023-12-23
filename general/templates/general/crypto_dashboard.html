@@ -8,7 +8,7 @@
 <body class="layout-top-nav dark-skin theme-primary fixed">
 
 <div class="wrapper">
-	<div id="loader"></div>
+    <div id="loader"></div>
 
     <!-- Top navbar -->
     {% include('includes/top_navbar.html') %}
@@ -16,52 +16,95 @@
     <!-- Navbar -->
     {% include('includes/navbar.html') %}
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-	  <div class="container-full">
-		<!-- Content Header (Page header) -->
-		<div class="content-header">
-			<div class="d-flex align-items-center">
-				<div class="me-auto">
-					<h3 class="page-title">Blank page</h3>
-					<div class="d-inline-block align-items-center">
-						<nav>
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a></li>
-								<li class="breadcrumb-item active" aria-current="page">Crypto dashboard</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <div class="container-full">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="d-flex align-items-center">
+                    <div class="me-auto">
+                        <h3 class="page-title">Crypto dashboard</h3>
+                        <div class="d-inline-block align-items-center">
+                            <nav>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Crypto dashboard</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
 
-			</div>
-		</div>
+                </div>
+            </div>
 
-		<!-- Main content -->
-		<section class="content">
-			<div class="row">
-				<div class="col-12">
-					<div class="box">
-						<div class="box-header with-border">
-						  <h4 class="box-title">Title</h4>
-						</div>
-						<div class="box-body">
-						  This is some text within a card block.
-						</div>
-						<!-- /.box-body -->
-						<div class="box-footer">
-						  Footer
-						</div>
-						<!-- /.box-footer-->
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- /.content -->
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Market Capitalizations</h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dataTable no-footer table-striped"
+                                           id="dataTable_crypto" role="grid">
+                                        <thead>
+                                        <tr role="row">
+                                            <th colspan="2" rowspan="1">Currency</th>
+                                            <th class="text-end">Price</th>
+                                            <th class="text-end">Volume 24H</th>
+                                            <th class="text-end">Change % (24H)</th>
+                                            <th class="text-end">Change % (7D)</th>
+                                            <th class="text-end">Change % (30D)</th>
+                                            <th class="text-end">Chart (24D)</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for row_market in market_data.values() %}
+                                        <tr role="row">
+                                            <td><span><a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"><i class="cc {{ row_market.symbol }}"
+                                                                     title="{{ row_market.symbol }}"></i></a></span>
+                                            </td>
+                                            <td>
+                                                <small><a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"
+                                                          class="hover-warning"> {{ row_market.name }}</a></small>
+                                                <h6 class="text-muted">{{ row_market.symbol }}</h6>
+                                            </td>
+                                            <td class="text-end"><p><span>$</span> {{ row_market.price }}</p></td>
+                                            <td class="text-end"><p>{{ row_market.volume }}</p></td>
+                                            <td class="no-wrap text-end">
+                                                <label class="label label-{% if row_market.change_24h > 0 %}success{% else %}danger{% endif %}">
+                                                    <i class="fa fa-chevron-{% if row_market.change_24h > 0 %}up{% else %}down{% endif %}">
+                                                    </i> {{ row_market.change_24h }}%</label></td>
+                                            <td class="no-wrap text-end">
+                                                <label class="label label-{% if row_market.change_7d > 0 %}success{% else %}danger{% endif %}">
+                                                    <i class="fa fa-chevron-{% if row_market.change_7d > 0 %}up{% else %}down{% endif %}">
+                                                    </i> {{ row_market.change_7d }}%</label></td>
+                                            <td class="no-wrap text-end">
+                                                <label class="label label-{% if row_market.change_30d > 0 %}success{% else %}danger{% endif %}">
+                                                    <i class="fa fa-chevron-{% if row_market.change_30d > 0 %}up{% else %}down{% endif %}">
+                                                    </i> {{ row_market.change_30d }}%</label></td>
+                                            <td><a href="#"><span
+                                                    class="sparklines">{{ row_market.chart_24d }}</span></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- /.content -->
 
-	  </div>
-  </div>
-  <!-- /.content-wrapper -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
 
     <!-- Footer -->
     {% include('includes/footer.html') %}
@@ -72,7 +115,6 @@
 <!-- ./wrapper -->
 
 {% include('includes/javascript_include_dashboard.html') %}
-
 
 
 </body>

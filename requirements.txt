@@ -6,3 +6,5 @@ jsons
 pip
 requests
 Werkzeug
+SQLAlchemy
+yfinance

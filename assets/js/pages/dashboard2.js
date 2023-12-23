@@ -112,7 +112,7 @@ function generateChartData() {
   }
 }
 
-var chart = AmCharts.makeChart( "chartdiv21", {
+var chart = AmCharts.makeChart( "chart_stock_events", {
   "type": "stock",
   "theme": "light",
   "dataSets": [ {

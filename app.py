@@ -1,9 +1,8 @@
 from flask import Flask, render_template
-from configuration.config import Config as app_config
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from configuration.config import Config as app_config
 from os import path
-
 
 db = SQLAlchemy()
 
