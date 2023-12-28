@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import yfinance as yf
-from config import top_cryptos_symbols, top_cryptos_names
+from utils import top_cryptos_symbols, top_cryptos_names
+from configuration.config import Config
 from models import CryptoPrice
 from app import db
 
@@ -12,34 +13,39 @@ class CryptoDataManager:
 
     def update_crypto_data(self):
         """
-        Met à jour les données de la cryptomonnaie spécifiée.
+        Update crypto data in database.
+        Only if OFFLINE is False in config.py
         """
-        for symbol in self.top_cryptos:
-            latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
+        if Config.OFFLINE:
+            print("You are in offline mode. No data will be updated.")
+            return
+        else:
+            for symbol in self.top_cryptos:
+                latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
-            if latest_data and latest_data.date == datetime.utcnow().date():
-                print(f"Les données pour {symbol} sont déjà à jour.")
-                continue
+                if latest_data and latest_data.date == datetime.utcnow().date():
+                    print(f"Les données pour {symbol} sont déjà à jour.")
+                    continue
 
-            # Télécharge les données depuis Yahoo Finance
-            start_date = latest_data.date if latest_data else '2000-01-01'
-            data = yf.download(symbol, start=start_date)
+                # Télécharge les données depuis Yahoo Finance
+                start_date = latest_data.date if latest_data else '2000-01-01'
+                data = yf.download(symbol, start=start_date)
 
-            # Ajoute les nouvelles données dans la base de données
-            for index, row in data.iterrows():
-                index_date = index.date()
-                if not latest_data or index_date > latest_data.date:
-                    # Add new entry with : 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'
-                    new_data = CryptoPrice(
-                        symbol=symbol,
-                        date=index_date,
-                        price=row['Open'],
-                        volume=row['Volume']
-                    )
-                    db.session.add(new_data)
+                # Ajoute les nouvelles données dans la base de données
+                for index, row in data.iterrows():
+                    index_date = index.date()
+                    if not latest_data or index_date > latest_data.date:
+                        # Add new entry with : 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'
+                        new_data = CryptoPrice(
+                            symbol=symbol,
+                            date=index_date,
+                            price=row['Open'],
+                            volume=row['Volume']
+                        )
+                        db.session.add(new_data)
 
-            db.session.commit()
-            print(f"Les données pour {symbol} ont été mises à jour.")
+                db.session.commit()
+                print(f"Les données pour {symbol} ont été mises à jour.")
 
     @staticmethod
     def get_specific_crypto_data(symbol):

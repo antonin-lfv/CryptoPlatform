@@ -116,6 +116,15 @@
 
 {% include('includes/javascript_include_dashboard.html') %}
 
+<script>
+function sparkline_charts() {
+    $('.sparklines').sparkline('html');
+}
+if ($('.sparklines').length) {
+    sparkline_charts();
+}
+</script>
+
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 
@@ -50,12 +50,7 @@ def crypto_dashboard():
 @BLP_general.route('/one_crypto_dashboard/<symbol>', methods=['GET', 'POST'])
 @login_required
 def one_crypto_dashboard(symbol):
-    # Get crypto data for specific symbol
-    crypto_manager = CryptoDataManager()
-    symbol_data = crypto_manager.get_specific_crypto_data(symbol)
-    print(symbol_data)
-    return render_template('general/one_crypto_dashboard.html', user=current_user,
-                           symbol_data=symbol_data, symbol=symbol)
+    return render_template('general/one_crypto_dashboard.html', user=current_user, symbol=symbol)
 
 
 @BLP_general.route('/nft_dashboard', methods=['GET', 'POST'])
@@ -75,9 +70,18 @@ def wallet():
 @BLP_general.route('/api/get_specific_crypto_data/<symbol>', methods=['GET', 'POST'])
 @login_required
 def get_specific_crypto_data(symbol):
+    # Get crypto data for specific symbol
     crypto_manager = CryptoDataManager()
-    data = crypto_manager.get_specific_crypto_data(symbol)
-    return data
+    symbol_data = crypto_manager.get_specific_crypto_data(symbol)
+    # symbol data looks like this:
+    # {
+    #   'date': [datetime.datetime(2021, 9, 30, 0, 0), datetime.datetime(2021, 10, 1, 0, 0), ...],
+    #   'price': [465.864013671875, 456.8599853515625, ...]
+    # }
+    # Convert dates to isoformat
+    formatted_dates = [date.isoformat() for date in symbol_data['date']]
+    symbol_data['date'] = formatted_dates
+    return jsonify(symbol_data)
 
 
 @BLP_general.route('/api/get_all_crypto_data', methods=['GET', 'POST'])
