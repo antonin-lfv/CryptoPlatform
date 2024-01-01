@@ -30,3 +30,24 @@
 
 <script src="{{ url_for('static', filename='js/pages/toastr.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pages/notification.js') }}"></script>
+
+<!-- Others -->
+<script>
+    // For the theme change
+    document.addEventListener('DOMContentLoaded', function() {
+    var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
+    themeSwitch.addEventListener('change', function(event) {
+        var theme = event.target.checked ? 'dark' : 'light';
+        fetch('/set_theme?theme=' + theme, {method: 'GET'});
+    });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
+        {% if session['theme'] == 'dark' %}
+            themeSwitch.checked = true;
+        {% else %}
+            themeSwitch.checked = false;
+        {% endif %}
+    });
+
+</script>

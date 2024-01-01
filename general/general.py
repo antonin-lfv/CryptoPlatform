@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 
@@ -90,3 +90,11 @@ def get_all_crypto_data():
     crypto_manager = CryptoDataManager()
     data = crypto_manager.get_all_crypto_data()
     return data
+
+
+@BLP_general.route('/set_theme')
+def set_theme():
+    theme = request.args.get('theme', 'light')
+    print(f"Setting theme to {theme}")
+    session['theme'] = theme
+    return '', 204

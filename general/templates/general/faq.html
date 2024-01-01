@@ -5,7 +5,7 @@
     <title>FAQ</title>
 
 </head>
-<body class="layout-top-nav dark-skin theme-primary fixed">
+<body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
 	
 <div class="wrapper">
 	<div id="loader"></div>
@@ -293,8 +293,6 @@
     <!-- Footer -->
     {% include('includes/footer.html') %}
 
-    <!-- Control Sidebar -->
-    {% include('includes/sidebar_settings.html') %}
 </div>
 <!-- ./wrapper -->
 
