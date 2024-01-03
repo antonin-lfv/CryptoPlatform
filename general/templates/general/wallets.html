@@ -41,6 +41,43 @@
             <!-- Main content -->
             <section class="content">
                 <div class="row">
+                    <div class="col-lg-3 col-12">
+                      <a class="box box-link-pop text-center" href="javascript:void(0)">
+                        <div class="box-body">
+                            <p class="fs-40 text-pink">
+                                <i class="fa fa-bitcoin text-muted me-5 mb-20"></i><br>
+                                <strong>987€</strong>
+                            </p>
+                        </div>
+                        <div class="box-body py-20 bg-light">
+                            <h3 class="fw-600 mt-0">
+                                Crypto balance
+                            </h3>
+                        </div>
+                     </a>
+                    </div>
+                    <div class="col-lg-3 col-12">
+                      <a class="box box-link-pop text-center" href="javascript:void(0)">
+                        <div class="box-body">
+                            <p class="fs-40 text-pink">
+                                <i class="fa fa-image text-muted me-5 mb-20"></i><br>
+                                <strong>200</strong>
+                            </p>
+                        </div>
+                        <div class="box-body py-20 bg-light">
+                            <h3 class="fw-600 mt-0">
+                                Web3 balance
+                            </h3>
+                        </div>
+                     </a>
+                    </div>
+                    <div class="col-xl-6 col-12">
+                        <div class="box">
+                            <div class="box-body analytics-info">
+                                <div id="basic-pie" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-4 col-12">
                         <div class="box bg-primary">
                             <div class="box-body">
@@ -152,6 +189,144 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-12">
+					<div class="box">
+						<div class="box-header">
+							<h4 class="box-title">
+								Buy and Sell Coins at the Crypto without additional fees
+							</h4>
+						</div>
+						<div class="box-body">
+							<div class="exchange-calculator">
+								<input type="text" class="form-control" name="coins-exchange" placeholder="" value="10.1548">
+								<select class="coins-exchange" name="state">
+								   <option value="BTC">BTC</option>
+								   <option value="BTC">Ethereum</option>
+								   <option value="Ripple">Ripple</option>
+								   <option value="Ripple">Bitcoin Cash</option>
+								   <option value="Ripple">Cardano</option>
+								   <option value="Ripple">Litecoin</option>
+								   <option value="Ripple">NEO</option>
+								   <option value="Ripple">Stellar</option>
+								   <option value="Ripple">EOS</option>
+								   <option value="Ripple">NEM</option>
+								</select>
+								<div class="equal"> = </div>
+								<input type="text" class="form-control" name="money-exchange" placeholder="" value="125.158">
+								<select class="money-exchange" name="state">
+								   <option value="USD">USD</option>
+								   <option value="EURO">EURO</option>
+								</select>
+						   </div>
+						   <div class="text-center mt-15 mb-25">
+								<a href="#" class="btn btn-warning mx-auto">EXCHANGE NOW</a>
+						   </div>
+						</div>
+					</div>
+			  </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="box pull-up">
+                          <div class="box-body">
+                              <div class="media align-items-center p-0">
+                                <div class="text-center">
+                                  <a href="#"><i class="cc BTC me-5" title="BTC"></i></a>
+                                </div>
+                                <div>
+                                  <h3 class="no-margin text-bold">Bitcoin BTC</h3>
+                                </div>
+                              </div>
+                              <div class="flexbox align-items-center mt-5">
+                                <div>
+                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>BTC<span class="text-info">$0.04</span></p>
+                                </div>
+                                <div class="text-end">
+                                  <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="box-footer p-0 no-border">
+                            <div class="chart"><canvas id="chartjs1" class="h-80"></canvas></div>
+                        </div>
+                     </div>
+                  </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="box pull-up">
+                          <div class="box-body">
+                              <div class="media align-items-center p-0">
+                                <div class="text-center">
+                                  <a href="#"><i class="cc LTC me-5" title="LTC"></i></a>
+                                </div>
+                                <div>
+                                  <h3 class="no-margin text-bold">Litecoin LTC</h3>
+                                </div>
+                              </div>
+                              <div class="flexbox align-items-center mt-5">
+                                <div>
+                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>LTC<span class="text-info">$0.04</span></p>
+                                </div>
+                                <div class="text-end">
+                                  <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="box-footer p-0 no-border">
+                            <div class="chart"><canvas id="chartjs2" class="h-80"></canvas></div>
+                        </div>
+                     </div>
+                  </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="box pull-up">
+                          <div class="box-body">
+                              <div class="media align-items-center p-0">
+                                <div class="text-center">
+                                  <a href="#"><i class="cc NEO me-5" title="NEO"></i></a>
+                                </div>
+                                <div>
+                                  <h3 class="no-margin text-bold">Neo NEO</h3>
+                                </div>
+                              </div>
+                              <div class="flexbox align-items-center mt-5">
+                                <div>
+                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>NEO<span class="text-info">$0.04</span></p>
+                                </div>
+                                <div class="text-end">
+                                  <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="box-footer p-0 no-border">
+                            <div class="chart"><canvas id="chartjs3" class="h-80"></canvas></div>
+                        </div>
+                     </div>
+                  </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="box pull-up">
+                          <div class="box-body">
+                              <div class="media align-items-center p-0">
+                                <div class="text-center">
+                                  <a href="#"><i class="cc DASH me-5" title="DASH"></i></a>
+                                </div>
+                                <div>
+                                  <h3 class="no-margin text-bold">Dash DASH</h3>
+                                </div>
+                              </div>
+                              <div class="flexbox align-items-center mt-5">
+                                <div>
+                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>DASH<span class="text-info">$0.04</span></p>
+                                </div>
+                                <div class="text-end">
+                                  <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="box-footer p-0 no-border">
+                            <div class="chart"><canvas id="chartjs4" class="h-80"></canvas></div>
+                        </div>
+                     </div>
+                  </div>
+
                     <div class="col-xl-6 col-12">
                         <div class="box">
                             <div class="box-header">
@@ -525,6 +700,398 @@
 
 {% include('includes/javascript_include_dashboard.html') %}
 
+<script>
+    //[chartjs Javascript]
+$(function () {
+
+  'use strict';
+
+    //----chart1
+    //Get the context of the Chart canvas element we want to select
+    var dasChartjs1 = document.getElementById("chartjs1").getContext("2d");
+    // Create Linear Gradient
+    var blue_trans_gradient1 = dasChartjs1.createLinearGradient(0, 0, 0, 100);
+    blue_trans_gradient1.addColorStop(0, 'rgba(247, 147, 26,1)');
+    blue_trans_gradient1.addColorStop(1, 'rgba(255,255,255,0)');
+    // Chart Options
+    var DASStats1 = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetStrokeWidth : 3,
+        pointDotStrokeWidth : 4,
+        tooltipFillColor: "rgba(247, 147, 26,0.8)",
+        legend: {
+            display: false,
+        },
+        hover: {
+            mode: 'label'
+        },
+        scales: {
+            xAxes: [{
+                display: false,
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    min: 0,
+                    max: 85
+                },
+            }]
+        },
+        title: {
+            display: false,
+            fontColor: "#FFF",
+            fullWidth: false,
+            fontSize: 30,
+            text: '52%'
+        }
+    };
+
+    // Chart Data
+    var DASMonthData1 = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [{
+            label: "abc",
+            data: [20, 18, 35, 60, 38, 40, 70],
+            backgroundColor: blue_trans_gradient1,
+            borderColor: "#F7931A",
+            borderWidth: 1.5,
+            strokeColor : "#F7931A",
+            pointRadius: 0,
+        }]
+    };
+
+    var DASCardconfig1 = {
+        type: 'line',
+
+        // Chart Options
+        options : DASStats1,
+
+        // Chart Data
+        data : DASMonthData1
+    };
+
+    // Create the chart
+    var DASAreaChart1 = new Chart(dasChartjs1, DASCardconfig1);
+
+
+	//----chart2
+    //Get the context of the Chart canvas element we want to select
+    var dasChartjs = document.getElementById("chartjs2").getContext("2d");
+    // Create Linear Gradient
+    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+    blue_trans_gradient.addColorStop(0, 'rgba(131, 131, 131,1)');
+    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    // Chart Options
+    var DASStats = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetStrokeWidth : 3,
+        pointDotStrokeWidth : 4,
+        tooltipFillColor: "rgba(131, 131, 131,0.8)",
+        legend: {
+            display: false,
+        },
+        hover: {
+            mode: 'label'
+        },
+        scales: {
+            xAxes: [{
+                display: false,
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    min: 0,
+                    max: 85
+                },
+            }]
+        },
+        title: {
+            display: false,
+            fontColor: "#FFF",
+            fullWidth: false,
+            fontSize: 30,
+            text: '52%'
+        }
+    };
+
+    // Chart Data
+    var DASMonthData = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [{
+            label: "abc",
+            data: [40, 30, 60, 40, 45, 30, 60],
+            backgroundColor: blue_trans_gradient,
+            borderColor: "#838383",
+            borderWidth: 1.5,
+            strokeColor : "#838383",
+            pointRadius: 0,
+        }]
+    };
+
+    var DASCardconfig = {
+        type: 'line',
+        // Chart Options
+        options : DASStats,
+        // Chart Data
+        data : DASMonthData
+    };
+
+    // Create the chart
+    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+
+    //----chart3
+    //Get the context of the Chart canvas element we want to select
+    var dasChartjs = document.getElementById("chartjs3").getContext("2d");
+    // Create Linear Gradient
+    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+    blue_trans_gradient.addColorStop(0, 'rgba(27, 197, 89,1)');
+    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    // Chart Options
+    var DASStats = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetStrokeWidth : 3,
+        pointDotStrokeWidth : 4,
+        tooltipFillColor: "rgba(27, 197, 89,0.8)",
+        legend: {
+            display: false,
+        },
+        hover: {
+            mode: 'label'
+        },
+        scales: {
+            xAxes: [{
+                display: false,
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    min: 0,
+                    max: 85
+                },
+            }]
+        },
+        title: {
+            display: false,
+            fontColor: "#FFF",
+            fullWidth: false,
+            fontSize: 30,
+            text: '52%'
+        }
+    };
+
+    // Chart Data
+    var DASMonthData = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [{
+            label: "abc",
+            data: [70, 20, 35, 60, 20, 40, 30],
+            backgroundColor: blue_trans_gradient,
+            borderColor: "#499806",
+            borderWidth: 1.5,
+            strokeColor : "#499806",
+            pointRadius: 0,
+        }]
+    };
+
+    var DASCardconfig = {
+        type: 'line',
+
+        // Chart Options
+        options : DASStats,
+
+        // Chart Data
+        data : DASMonthData
+    };
+
+    // Create the chart
+    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+
+
+	 //----chart4
+    //Get the context of the Chart canvas element we want to select
+    var dasChartjs = document.getElementById("chartjs4").getContext("2d");
+    // Create Linear Gradient
+    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+    blue_trans_gradient.addColorStop(0, 'rgba(28, 117, 188,1)');
+    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    // Chart Options
+    var DASStats = {
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetStrokeWidth : 3,
+        pointDotStrokeWidth : 4,
+        tooltipFillColor: "rgba(28, 117, 188,0.8)",
+        legend: {
+            display: false,
+        },
+        hover: {
+            mode: 'label'
+        },
+        scales: {
+            xAxes: [{
+                display: false,
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    min: 0,
+                    max: 85
+                },
+            }]
+        },
+        title: {
+            display: false,
+            fontColor: "#FFF",
+            fullWidth: false,
+            fontSize: 30,
+            text: '52%'
+        }
+    };
+
+    // Chart Data
+    var DASMonthData = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [{
+            label: "abc",
+            data: [20, 50, 65, 30, 24, 60, 40],
+            backgroundColor: blue_trans_gradient,
+            borderColor: "#1c75bc",
+            borderWidth: 1.5,
+            strokeColor : "#1c75bc",
+            pointRadius: 0,
+        }]
+    };
+
+    var DASCardconfig = {
+        type: 'line',
+
+        // Chart Options
+        options : DASStats,
+
+        // Chart Data
+        data : DASMonthData
+    };
+
+    // Create the chart
+    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+
+}); // End of use strict
+
+</script>
+
+<script>
+    // for currency exchange
+    if ($('.coins-exchange').length) {
+       $('.coins-exchange').select2();
+    }
+    if ($('.money-exchange').length) {
+       $('.money-exchange').select2();
+    }
+</script>
+
+<script>
+    $(function() {
+    "use strict";
+    // ------------------------------
+    // Basic pie chart
+    // ------------------------------
+    // based on prepared DOM, initialize echarts instance
+        var basicpieChart = echarts.init(document.getElementById('basic-pie'));
+        var option = {
+            // Add title
+                title: {
+                    subtext: 'Balance repartition',
+                    x: 'center'
+                },
+
+                // Add tooltip
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+
+                // Add custom colors
+                color: ['#689f38', '#38649f'],
+
+                // Display toolbox
+                toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    feature: {
+                        mark: {
+                            show: true,
+                            title: {
+                                mark: 'Markline switch',
+                                markUndo: 'Undo markline',
+                                markClear: 'Clear markline'
+                            }
+                        },
+                        magicType: {
+                            show: true,
+                            title: {
+                                pie: 'Switch to pies',
+                                funnel: 'Switch to funnel',
+                            },
+                            type: ['pie', 'funnel'],
+                            option: {
+                                funnel: {
+                                    x: '25%',
+                                    y: '20%',
+                                    width: '50%',
+                                    height: '70%',
+                                    funnelAlign: 'left',
+                                    max: 1548
+                                }
+                            }
+                        },
+                        saveAsImage: {
+                            show: true,
+                            title: 'Same as image',
+                            lang: ['Save']
+                        }
+                    }
+                },
+
+                // Enable drag recalculate
+                calculable: true,
+
+                // Add series
+                series: [{
+                    name: 'Balance',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['50%', '57.5%'],
+                    data: [
+                        {value: 987, name: 'Crypto'},
+                        {value: 200, name: 'Web3'},
+                    ]
+                }]
+        };
+
+        basicpieChart.setOption(option);
+        //------------------------------------------------------
+       // Resize chart on menu width change and window resize
+       //------------------------------------------------------
+        $(function () {
+
+                // Resize chart on menu width change and window resize
+                $(window).on('resize', resize);
+                $(".sidebartoggler").on('click', resize);
+
+                // Resize function
+                function resize() {
+                    setTimeout(function() {
+
+                        // Resize chart
+                        basicpieChart.resize();
+                    }, 200);
+                }
+            });
+});
+</script>
 
 </body>
 </html>

@@ -10,17 +10,19 @@
 <script src="https://www.amcharts.com/lib/3/gauge.js" type="text/javascript"></script>
 <script src="https://www.amcharts.com/lib/3/pie.js" type="text/javascript"></script>
 <script src="https://www.amcharts.com/lib/3/plugins/animate/animate.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
-
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/irregular-data-series.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor_components/moment/min/moment.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-
+<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/chart.js-master/Chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/select2/dist/js/select2.full.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/echarts/dist/echarts-en.min.js') }}"></script>
 
 <!-- specific -->
 <script src="{{ url_for('static', filename='js/demo.js') }}"></script>
@@ -49,5 +51,4 @@
             themeSwitch.checked = false;
         {% endif %}
     });
-
 </script>
