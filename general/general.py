@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
+from models import User, Wallet, WalletHistory, WalletDailySnapshot
+from utils import top_cryptos_symbols, top_cryptos_names
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',
@@ -92,9 +94,57 @@ def get_all_crypto_data():
     return data
 
 
+@BLP_general.route('/api/get_user_balance', methods=['GET', 'POST'])
+@login_required
+def get_user_balance():
+    """
+    Get user balance. (crypto + web3)
+
+    Return:
+        {
+            "crypto_balance": 0, # all crypto balance in USD,
+            "web3_balance": 0,  # all web3 balance in USD,
+            "crypto_balance_by_symbol": {
+                "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                ...
+            }
+        }
+    """
+    user_balance = {"crypto_balance": 0,
+                    "web3_balance": 0,
+                    "crypto_balance_by_symbol": {}
+                    }
+    # Add balance by symbol
+    for symbol in top_cryptos_symbols:
+        user_balance["crypto_balance_by_symbol"][symbol] = {
+            "quantity": 0,
+            "balance": 0
+        }
+    # Get user wallets
+    user = User.query.filter_by(id=current_user.id).first()
+    wallets = user.wallets
+    # Get crypto data
+    crypto_manager = CryptoDataManager()
+    data = crypto_manager.get_all_crypto_data()
+    # Loop over wallets
+    for wallet in wallets:
+        # Get latest price
+        latest_price = data[wallet.symbol]['price'][-1]
+        # Get balance
+        balance = latest_price * wallet.quantity
+        # Add to total balance
+        user_balance["crypto_balance"] += balance
+        # Add to balance by symbol
+        user_balance["crypto_balance_by_symbol"][wallet.symbol] = {
+            "quantity": wallet.quantity,
+            "balance": balance
+        }
+    return jsonify(user_balance)
+
+
 @BLP_general.route('/set_theme')
 def set_theme():
     theme = request.args.get('theme', 'light')
-    print(f"Setting theme to {theme}")
     session['theme'] = theme
     return '', 204

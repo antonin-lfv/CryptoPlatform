@@ -40,7 +40,6 @@ def register():
             # add the new user to the database
             db.session.add(new_user)
             db.session.commit()
-            # flash('You have been successfully registered', 'success')
             return render_template('auth/auth_login.html', wrong_credentials=False)
     return render_template('auth/auth_register.html', already_exists=False)
 

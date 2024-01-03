@@ -27,7 +27,8 @@
                         <div class="d-inline-block align-items-center">
                             <nav>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a>
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">Your Wallet</li>
                                 </ol>
@@ -42,34 +43,34 @@
             <section class="content">
                 <div class="row">
                     <div class="col-lg-3 col-12">
-                      <a class="box box-link-pop text-center" href="javascript:void(0)">
-                        <div class="box-body">
-                            <p class="fs-40 text-pink">
-                                <i class="fa fa-bitcoin text-muted me-5 mb-20"></i><br>
-                                <strong>987€</strong>
-                            </p>
-                        </div>
-                        <div class="box-body py-20 bg-light">
-                            <h3 class="fw-600 mt-0">
-                                Crypto balance
-                            </h3>
-                        </div>
-                     </a>
+                        <a class="box box-link-pop text-center" href="javascript:void(0)">
+                            <div class="box-body">
+                                <p class="fs-40 text-pink">
+                                    <i class="fa fa-bitcoin text-muted me-5 mb-20"></i><br>
+                                    <strong id="crypto_balance"></strong>
+                                </p>
+                            </div>
+                            <div class="box-body py-20 bg-light">
+                                <h3 class="fw-600 mt-0">
+                                    Crypto balance
+                                </h3>
+                            </div>
+                        </a>
                     </div>
                     <div class="col-lg-3 col-12">
-                      <a class="box box-link-pop text-center" href="javascript:void(0)">
-                        <div class="box-body">
-                            <p class="fs-40 text-pink">
-                                <i class="fa fa-image text-muted me-5 mb-20"></i><br>
-                                <strong>200</strong>
-                            </p>
-                        </div>
-                        <div class="box-body py-20 bg-light">
-                            <h3 class="fw-600 mt-0">
-                                Web3 balance
-                            </h3>
-                        </div>
-                     </a>
+                        <a class="box box-link-pop text-center" href="javascript:void(0)">
+                            <div class="box-body">
+                                <p class="fs-40 text-pink">
+                                    <i class="fa fa-image text-muted me-5 mb-20"></i><br>
+                                    <strong id="web3_balance"></strong>
+                                </p>
+                            </div>
+                            <div class="box-body py-20 bg-light">
+                                <h3 class="fw-600 mt-0">
+                                    Web3 balance
+                                </h3>
+                            </div>
+                        </a>
                     </div>
                     <div class="col-xl-6 col-12">
                         <div class="box">
@@ -191,141 +192,159 @@
                     </div>
 
                     <div class="col-12">
-					<div class="box">
-						<div class="box-header">
-							<h4 class="box-title">
-								Buy and Sell Coins at the Crypto without additional fees
-							</h4>
-						</div>
-						<div class="box-body">
-							<div class="exchange-calculator">
-								<input type="text" class="form-control" name="coins-exchange" placeholder="" value="10.1548">
-								<select class="coins-exchange" name="state">
-								   <option value="BTC">BTC</option>
-								   <option value="BTC">Ethereum</option>
-								   <option value="Ripple">Ripple</option>
-								   <option value="Ripple">Bitcoin Cash</option>
-								   <option value="Ripple">Cardano</option>
-								   <option value="Ripple">Litecoin</option>
-								   <option value="Ripple">NEO</option>
-								   <option value="Ripple">Stellar</option>
-								   <option value="Ripple">EOS</option>
-								   <option value="Ripple">NEM</option>
-								</select>
-								<div class="equal"> = </div>
-								<input type="text" class="form-control" name="money-exchange" placeholder="" value="125.158">
-								<select class="money-exchange" name="state">
-								   <option value="USD">USD</option>
-								   <option value="EURO">EURO</option>
-								</select>
-						   </div>
-						   <div class="text-center mt-15 mb-25">
-								<a href="#" class="btn btn-warning mx-auto">EXCHANGE NOW</a>
-						   </div>
-						</div>
-					</div>
-			  </div>
+                        <div class="box">
+                            <div class="box-header">
+                                <h4 class="box-title">
+                                    Buy and Sell Coins at the Crypto without additional fees
+                                </h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="exchange-calculator">
+                                    <input type="text" class="form-control" name="coins-exchange" placeholder=""
+                                           value="10.1548">
+                                    <select class="coins-exchange" name="state">
+                                        <option value="BTC">BTC</option>
+                                        <option value="BTC">Ethereum</option>
+                                        <option value="Ripple">Ripple</option>
+                                        <option value="Ripple">Bitcoin Cash</option>
+                                        <option value="Ripple">Cardano</option>
+                                        <option value="Ripple">Litecoin</option>
+                                        <option value="Ripple">NEO</option>
+                                        <option value="Ripple">Stellar</option>
+                                        <option value="Ripple">EOS</option>
+                                        <option value="Ripple">NEM</option>
+                                    </select>
+                                    <div class="equal"> =</div>
+                                    <input type="text" class="form-control" name="money-exchange" placeholder=""
+                                           value="125.158">
+                                    <select class="money-exchange" name="state">
+                                        <option value="USD">USD</option>
+                                        <option value="EURO">EURO</option>
+                                    </select>
+                                </div>
+                                <div class="text-center mt-15 mb-25">
+                                    <a href="#" class="btn btn-warning mx-auto">EXCHANGE NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-lg-3 col-md-6">
                         <div class="box pull-up">
-                          <div class="box-body">
-                              <div class="media align-items-center p-0">
-                                <div class="text-center">
-                                  <a href="#"><i class="cc BTC me-5" title="BTC"></i></a>
+                            <div class="box-body">
+                                <div class="media align-items-center p-0">
+                                    <div class="text-center">
+                                        <a href="#"><i class="cc BTC me-5" title="BTC"></i></a>
+                                    </div>
+                                    <div>
+                                        <h3 class="no-margin text-bold">Bitcoin BTC</h3>
+                                    </div>
                                 </div>
-                                <div>
-                                  <h3 class="no-margin text-bold">Bitcoin BTC</h3>
+                                <div class="flexbox align-items-center mt-5">
+                                    <div>
+                                        <p class="no-margin fw-600"><span
+                                                class="text-warning">0.00000434 </span>BTC<span
+                                                class="text-info">$0.04</span></p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="flexbox align-items-center mt-5">
-                                <div>
-                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>BTC<span class="text-info">$0.04</span></p>
+                            </div>
+                            <div class="box-footer p-0 no-border">
+                                <div class="chart">
+                                    <canvas id="chartjs1" class="h-80"></canvas>
                                 </div>
-                                <div class="text-end">
-                                  <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
-                                </div>
-                              </div>
+                            </div>
                         </div>
-                        <div class="box-footer p-0 no-border">
-                            <div class="chart"><canvas id="chartjs1" class="h-80"></canvas></div>
-                        </div>
-                     </div>
-                  </div>
+                    </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="box pull-up">
-                          <div class="box-body">
-                              <div class="media align-items-center p-0">
-                                <div class="text-center">
-                                  <a href="#"><i class="cc LTC me-5" title="LTC"></i></a>
+                            <div class="box-body">
+                                <div class="media align-items-center p-0">
+                                    <div class="text-center">
+                                        <a href="#"><i class="cc LTC me-5" title="LTC"></i></a>
+                                    </div>
+                                    <div>
+                                        <h3 class="no-margin text-bold">Litecoin LTC</h3>
+                                    </div>
                                 </div>
-                                <div>
-                                  <h3 class="no-margin text-bold">Litecoin LTC</h3>
+                                <div class="flexbox align-items-center mt-5">
+                                    <div>
+                                        <p class="no-margin fw-600"><span
+                                                class="text-warning">0.00000434 </span>LTC<span
+                                                class="text-info">$0.04</span></p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="flexbox align-items-center mt-5">
-                                <div>
-                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>LTC<span class="text-info">$0.04</span></p>
+                            </div>
+                            <div class="box-footer p-0 no-border">
+                                <div class="chart">
+                                    <canvas id="chartjs2" class="h-80"></canvas>
                                 </div>
-                                <div class="text-end">
-                                  <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
-                                </div>
-                              </div>
+                            </div>
                         </div>
-                        <div class="box-footer p-0 no-border">
-                            <div class="chart"><canvas id="chartjs2" class="h-80"></canvas></div>
-                        </div>
-                     </div>
-                  </div>
+                    </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="box pull-up">
-                          <div class="box-body">
-                              <div class="media align-items-center p-0">
-                                <div class="text-center">
-                                  <a href="#"><i class="cc NEO me-5" title="NEO"></i></a>
+                            <div class="box-body">
+                                <div class="media align-items-center p-0">
+                                    <div class="text-center">
+                                        <a href="#"><i class="cc NEO me-5" title="NEO"></i></a>
+                                    </div>
+                                    <div>
+                                        <h3 class="no-margin text-bold">Neo NEO</h3>
+                                    </div>
                                 </div>
-                                <div>
-                                  <h3 class="no-margin text-bold">Neo NEO</h3>
+                                <div class="flexbox align-items-center mt-5">
+                                    <div>
+                                        <p class="no-margin fw-600"><span
+                                                class="text-warning">0.00000434 </span>NEO<span
+                                                class="text-info">$0.04</span></p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="flexbox align-items-center mt-5">
-                                <div>
-                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>NEO<span class="text-info">$0.04</span></p>
+                            </div>
+                            <div class="box-footer p-0 no-border">
+                                <div class="chart">
+                                    <canvas id="chartjs3" class="h-80"></canvas>
                                 </div>
-                                <div class="text-end">
-                                  <p class="no-margin fw-600"><span class="text-danger">-1.35%</span></p>
-                                </div>
-                              </div>
+                            </div>
                         </div>
-                        <div class="box-footer p-0 no-border">
-                            <div class="chart"><canvas id="chartjs3" class="h-80"></canvas></div>
-                        </div>
-                     </div>
-                  </div>
+                    </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="box pull-up">
-                          <div class="box-body">
-                              <div class="media align-items-center p-0">
-                                <div class="text-center">
-                                  <a href="#"><i class="cc DASH me-5" title="DASH"></i></a>
+                            <div class="box-body">
+                                <div class="media align-items-center p-0">
+                                    <div class="text-center">
+                                        <a href="#"><i class="cc DASH me-5" title="DASH"></i></a>
+                                    </div>
+                                    <div>
+                                        <h3 class="no-margin text-bold">Dash DASH</h3>
+                                    </div>
                                 </div>
-                                <div>
-                                  <h3 class="no-margin text-bold">Dash DASH</h3>
+                                <div class="flexbox align-items-center mt-5">
+                                    <div>
+                                        <p class="no-margin fw-600"><span
+                                                class="text-warning">0.00000434 </span>DASH<span
+                                                class="text-info">$0.04</span></p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="flexbox align-items-center mt-5">
-                                <div>
-                                  <p class="no-margin fw-600"><span class="text-warning">0.00000434 </span>DASH<span class="text-info">$0.04</span></p>
+                            </div>
+                            <div class="box-footer p-0 no-border">
+                                <div class="chart">
+                                    <canvas id="chartjs4" class="h-80"></canvas>
                                 </div>
-                                <div class="text-end">
-                                  <p class="no-margin fw-600"><span class="text-success">+1.35%</span></p>
-                                </div>
-                              </div>
+                            </div>
                         </div>
-                        <div class="box-footer p-0 no-border">
-                            <div class="chart"><canvas id="chartjs4" class="h-80"></canvas></div>
-                        </div>
-                     </div>
-                  </div>
+                    </div>
 
                     <div class="col-xl-6 col-12">
                         <div class="box">
@@ -406,62 +425,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="box-footer p-0 bg-light">
-                                <a href="#" class="d-block p-15 text-center"><i class="fa fa-plus"></i> Add New
-                                    Wallet</a>
-                            </div>
                         </div>
                     </div>
                     <div class="col-xl-6 col-12">
                         <div class="box">
-                            <div class="box-header with-border p-0">
-                                <ul class="nav nav-tabs nav-fill das-tab" role="tablist">
-                                    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tabid1"
-                                                            role="tab">Buy</a></li>
-                                    <li class="nav-item"><a class="nav-link sell-tab" data-toggle="tab" href="#tabid2"
-                                                            role="tab">Sell</a></li>
-                                </ul>
-                            </div>
                             <div class="box-body">
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="tabid1" role="tabpanel">
-                                        <h4 class="box-title mb-15">Currency</h4>
-                                        <div class="row bb-1 pb-15 mb-15">
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="coin-type" id="sell-1" checked>
-                                                    <label for="sell-1" class="sel-coin-type">
-                                                        <i class="cc BTC me-0"></i>
-                                                        <span class="d-block mb-5">Bitcoin</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="coin-type" id="sell-2">
-                                                    <label for="sell-2" class="sel-coin-type">
-                                                        <i class="text-warning cc ETH me-0"></i>
-                                                        <span class="d-block mb-5">Ethereum</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="coin-type" id="sell-3">
-                                                    <label for="sell-3" class="sel-coin-type">
-                                                        <i class="cc LTC me-0"></i>
-                                                        <span class="d-block mb-5">Lite</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <h4 class="box-title mb-15">Payment Method</h4>
                                         <div class="row bb-1 pb-15 mb-15">
                                             <div class="col-xxxl-4 col-md-6 col-12">
@@ -470,7 +440,7 @@
                                                     <label for="pay-1" class="sel-coin-type">
                                                         <i class="fa fa-google-wallet"></i>
                                                         <span class="d-block mb-5">Wallet</span>
-                                                        <span class="d-block mb-0"><small>$209.00</small></span>
+                                                        <span class="d-block mb-0"><small>$200.00</small></span>
                                                     </label>
                                                 </div>
                                             </div>
@@ -481,6 +451,16 @@
                                                         <i class="fa fa-bank"></i>
                                                         <span class="d-block mb-5">USA Bank</span>
                                                         <span class="d-block mb-0"><small>**** **** 8907</small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xxxl-4 col-md-6 col-12">
+                                                <div class="sel-coin-type-outer">
+                                                    <input type="radio" name="pay-type" id="pay-3">
+                                                    <label for="pay-3" class="sel-coin-type">
+                                                        <i class="fa fa-bank"></i>
+                                                        <span class="d-block mb-5">USA Bank</span>
+                                                        <span class="d-block mb-0"><small>**** **** 1992</small></span>
                                                     </label>
                                                 </div>
                                             </div>
@@ -702,395 +682,426 @@
 
 <script>
     //[chartjs Javascript]
-$(function () {
+    $(function () {
 
-  'use strict';
+        'use strict';
 
-    //----chart1
-    //Get the context of the Chart canvas element we want to select
-    var dasChartjs1 = document.getElementById("chartjs1").getContext("2d");
-    // Create Linear Gradient
-    var blue_trans_gradient1 = dasChartjs1.createLinearGradient(0, 0, 0, 100);
-    blue_trans_gradient1.addColorStop(0, 'rgba(247, 147, 26,1)');
-    blue_trans_gradient1.addColorStop(1, 'rgba(255,255,255,0)');
-    // Chart Options
-    var DASStats1 = {
-        responsive: true,
-        maintainAspectRatio: false,
-        datasetStrokeWidth : 3,
-        pointDotStrokeWidth : 4,
-        tooltipFillColor: "rgba(247, 147, 26,0.8)",
-        legend: {
-            display: false,
-        },
-        hover: {
-            mode: 'label'
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-            }],
-            yAxes: [{
-                display: false,
-                ticks: {
-                    min: 0,
-                    max: 85
-                },
-            }]
-        },
-        title: {
-            display: false,
-            fontColor: "#FFF",
-            fullWidth: false,
-            fontSize: 30,
-            text: '52%'
-        }
-    };
-
-    // Chart Data
-    var DASMonthData1 = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        datasets: [{
-            label: "abc",
-            data: [20, 18, 35, 60, 38, 40, 70],
-            backgroundColor: blue_trans_gradient1,
-            borderColor: "#F7931A",
-            borderWidth: 1.5,
-            strokeColor : "#F7931A",
-            pointRadius: 0,
-        }]
-    };
-
-    var DASCardconfig1 = {
-        type: 'line',
-
+        //----chart1
+        //Get the context of the Chart canvas element we want to select
+        var dasChartjs1 = document.getElementById("chartjs1").getContext("2d");
+        // Create Linear Gradient
+        var blue_trans_gradient1 = dasChartjs1.createLinearGradient(0, 0, 0, 100);
+        blue_trans_gradient1.addColorStop(0, 'rgba(247, 147, 26,1)');
+        blue_trans_gradient1.addColorStop(1, 'rgba(255,255,255,0)');
         // Chart Options
-        options : DASStats1,
+        var DASStats1 = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetStrokeWidth: 3,
+            pointDotStrokeWidth: 4,
+            tooltipFillColor: "rgba(247, 147, 26,0.8)",
+            legend: {
+                display: false,
+            },
+            hover: {
+                mode: 'label'
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                }],
+                yAxes: [{
+                    display: false,
+                    ticks: {
+                        min: 0,
+                        max: 85
+                    },
+                }]
+            },
+            title: {
+                display: false,
+                fontColor: "#FFF",
+                fullWidth: false,
+                fontSize: 30,
+                text: '52%'
+            }
+        };
 
         // Chart Data
-        data : DASMonthData1
-    };
-
-    // Create the chart
-    var DASAreaChart1 = new Chart(dasChartjs1, DASCardconfig1);
-
-
-	//----chart2
-    //Get the context of the Chart canvas element we want to select
-    var dasChartjs = document.getElementById("chartjs2").getContext("2d");
-    // Create Linear Gradient
-    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-    blue_trans_gradient.addColorStop(0, 'rgba(131, 131, 131,1)');
-    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-    // Chart Options
-    var DASStats = {
-        responsive: true,
-        maintainAspectRatio: false,
-        datasetStrokeWidth : 3,
-        pointDotStrokeWidth : 4,
-        tooltipFillColor: "rgba(131, 131, 131,0.8)",
-        legend: {
-            display: false,
-        },
-        hover: {
-            mode: 'label'
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-            }],
-            yAxes: [{
-                display: false,
-                ticks: {
-                    min: 0,
-                    max: 85
-                },
+        var DASMonthData1 = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [{
+                label: "abc",
+                data: [20, 18, 35, 60, 38, 40, 70],
+                backgroundColor: blue_trans_gradient1,
+                borderColor: "#F7931A",
+                borderWidth: 1.5,
+                strokeColor: "#F7931A",
+                pointRadius: 0,
             }]
-        },
-        title: {
-            display: false,
-            fontColor: "#FFF",
-            fullWidth: false,
-            fontSize: 30,
-            text: '52%'
-        }
-    };
+        };
 
-    // Chart Data
-    var DASMonthData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        datasets: [{
-            label: "abc",
-            data: [40, 30, 60, 40, 45, 30, 60],
-            backgroundColor: blue_trans_gradient,
-            borderColor: "#838383",
-            borderWidth: 1.5,
-            strokeColor : "#838383",
-            pointRadius: 0,
-        }]
-    };
+        var DASCardconfig1 = {
+            type: 'line',
 
-    var DASCardconfig = {
-        type: 'line',
+            // Chart Options
+            options: DASStats1,
+
+            // Chart Data
+            data: DASMonthData1
+        };
+
+        // Create the chart
+        var DASAreaChart1 = new Chart(dasChartjs1, DASCardconfig1);
+
+
+        //----chart2
+        //Get the context of the Chart canvas element we want to select
+        var dasChartjs = document.getElementById("chartjs2").getContext("2d");
+        // Create Linear Gradient
+        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+        blue_trans_gradient.addColorStop(0, 'rgba(131, 131, 131,1)');
+        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
         // Chart Options
-        options : DASStats,
-        // Chart Data
-        data : DASMonthData
-    };
-
-    // Create the chart
-    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
-
-    //----chart3
-    //Get the context of the Chart canvas element we want to select
-    var dasChartjs = document.getElementById("chartjs3").getContext("2d");
-    // Create Linear Gradient
-    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-    blue_trans_gradient.addColorStop(0, 'rgba(27, 197, 89,1)');
-    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-    // Chart Options
-    var DASStats = {
-        responsive: true,
-        maintainAspectRatio: false,
-        datasetStrokeWidth : 3,
-        pointDotStrokeWidth : 4,
-        tooltipFillColor: "rgba(27, 197, 89,0.8)",
-        legend: {
-            display: false,
-        },
-        hover: {
-            mode: 'label'
-        },
-        scales: {
-            xAxes: [{
+        var DASStats = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetStrokeWidth: 3,
+            pointDotStrokeWidth: 4,
+            tooltipFillColor: "rgba(131, 131, 131,0.8)",
+            legend: {
                 display: false,
-            }],
-            yAxes: [{
+            },
+            hover: {
+                mode: 'label'
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                }],
+                yAxes: [{
+                    display: false,
+                    ticks: {
+                        min: 0,
+                        max: 85
+                    },
+                }]
+            },
+            title: {
                 display: false,
-                ticks: {
-                    min: 0,
-                    max: 85
-                },
-            }]
-        },
-        title: {
-            display: false,
-            fontColor: "#FFF",
-            fullWidth: false,
-            fontSize: 30,
-            text: '52%'
-        }
-    };
-
-    // Chart Data
-    var DASMonthData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        datasets: [{
-            label: "abc",
-            data: [70, 20, 35, 60, 20, 40, 30],
-            backgroundColor: blue_trans_gradient,
-            borderColor: "#499806",
-            borderWidth: 1.5,
-            strokeColor : "#499806",
-            pointRadius: 0,
-        }]
-    };
-
-    var DASCardconfig = {
-        type: 'line',
-
-        // Chart Options
-        options : DASStats,
+                fontColor: "#FFF",
+                fullWidth: false,
+                fontSize: 30,
+                text: '52%'
+            }
+        };
 
         // Chart Data
-        data : DASMonthData
-    };
-
-    // Create the chart
-    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
-
-
-	 //----chart4
-    //Get the context of the Chart canvas element we want to select
-    var dasChartjs = document.getElementById("chartjs4").getContext("2d");
-    // Create Linear Gradient
-    var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-    blue_trans_gradient.addColorStop(0, 'rgba(28, 117, 188,1)');
-    blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-    // Chart Options
-    var DASStats = {
-        responsive: true,
-        maintainAspectRatio: false,
-        datasetStrokeWidth : 3,
-        pointDotStrokeWidth : 4,
-        tooltipFillColor: "rgba(28, 117, 188,0.8)",
-        legend: {
-            display: false,
-        },
-        hover: {
-            mode: 'label'
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-            }],
-            yAxes: [{
-                display: false,
-                ticks: {
-                    min: 0,
-                    max: 85
-                },
+        var DASMonthData = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [{
+                label: "abc",
+                data: [40, 30, 60, 40, 45, 30, 60],
+                backgroundColor: blue_trans_gradient,
+                borderColor: "#838383",
+                borderWidth: 1.5,
+                strokeColor: "#838383",
+                pointRadius: 0,
             }]
-        },
-        title: {
-            display: false,
-            fontColor: "#FFF",
-            fullWidth: false,
-            fontSize: 30,
-            text: '52%'
-        }
-    };
+        };
 
-    // Chart Data
-    var DASMonthData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        datasets: [{
-            label: "abc",
-            data: [20, 50, 65, 30, 24, 60, 40],
-            backgroundColor: blue_trans_gradient,
-            borderColor: "#1c75bc",
-            borderWidth: 1.5,
-            strokeColor : "#1c75bc",
-            pointRadius: 0,
-        }]
-    };
+        var DASCardconfig = {
+            type: 'line',
+            // Chart Options
+            options: DASStats,
+            // Chart Data
+            data: DASMonthData
+        };
 
-    var DASCardconfig = {
-        type: 'line',
+        // Create the chart
+        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
 
+        //----chart3
+        //Get the context of the Chart canvas element we want to select
+        var dasChartjs = document.getElementById("chartjs3").getContext("2d");
+        // Create Linear Gradient
+        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+        blue_trans_gradient.addColorStop(0, 'rgba(27, 197, 89,1)');
+        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
         // Chart Options
-        options : DASStats,
+        var DASStats = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetStrokeWidth: 3,
+            pointDotStrokeWidth: 4,
+            tooltipFillColor: "rgba(27, 197, 89,0.8)",
+            legend: {
+                display: false,
+            },
+            hover: {
+                mode: 'label'
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                }],
+                yAxes: [{
+                    display: false,
+                    ticks: {
+                        min: 0,
+                        max: 85
+                    },
+                }]
+            },
+            title: {
+                display: false,
+                fontColor: "#FFF",
+                fullWidth: false,
+                fontSize: 30,
+                text: '52%'
+            }
+        };
 
         // Chart Data
-        data : DASMonthData
-    };
+        var DASMonthData = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [{
+                label: "abc",
+                data: [70, 20, 35, 60, 20, 40, 30],
+                backgroundColor: blue_trans_gradient,
+                borderColor: "#499806",
+                borderWidth: 1.5,
+                strokeColor: "#499806",
+                pointRadius: 0,
+            }]
+        };
 
-    // Create the chart
-    var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+        var DASCardconfig = {
+            type: 'line',
 
-}); // End of use strict
+            // Chart Options
+            options: DASStats,
+
+            // Chart Data
+            data: DASMonthData
+        };
+
+        // Create the chart
+        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+
+
+        //----chart4
+        //Get the context of the Chart canvas element we want to select
+        var dasChartjs = document.getElementById("chartjs4").getContext("2d");
+        // Create Linear Gradient
+        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
+        blue_trans_gradient.addColorStop(0, 'rgba(28, 117, 188,1)');
+        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        // Chart Options
+        var DASStats = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetStrokeWidth: 3,
+            pointDotStrokeWidth: 4,
+            tooltipFillColor: "rgba(28, 117, 188,0.8)",
+            legend: {
+                display: false,
+            },
+            hover: {
+                mode: 'label'
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                }],
+                yAxes: [{
+                    display: false,
+                    ticks: {
+                        min: 0,
+                        max: 85
+                    },
+                }]
+            },
+            title: {
+                display: false,
+                fontColor: "#FFF",
+                fullWidth: false,
+                fontSize: 30,
+                text: '52%'
+            }
+        };
+
+        // Chart Data
+        var DASMonthData = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [{
+                label: "abc",
+                data: [20, 50, 65, 30, 24, 60, 40],
+                backgroundColor: blue_trans_gradient,
+                borderColor: "#1c75bc",
+                borderWidth: 1.5,
+                strokeColor: "#1c75bc",
+                pointRadius: 0,
+            }]
+        };
+
+        var DASCardconfig = {
+            type: 'line',
+
+            // Chart Options
+            options: DASStats,
+
+            // Chart Data
+            data: DASMonthData
+        };
+
+        // Create the chart
+        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
+
+    }); // End of use strict
 
 </script>
 
 <script>
     // for currency exchange
     if ($('.coins-exchange').length) {
-       $('.coins-exchange').select2();
+        $('.coins-exchange').select2();
     }
     if ($('.money-exchange').length) {
-       $('.money-exchange').select2();
+        $('.money-exchange').select2();
     }
 </script>
 
 <script>
-    $(function() {
-    "use strict";
-    // ------------------------------
-    // Basic pie chart
-    // ------------------------------
-    // based on prepared DOM, initialize echarts instance
-        var basicpieChart = echarts.init(document.getElementById('basic-pie'));
-        var option = {
-            // Add title
-                title: {
-                    subtext: 'Balance repartition',
-                    x: 'center'
-                },
+    // Get crypto balance from API : /api/get_user_balance
+    /* That's return a JSON like this (via jinja):
+    {
+            "crypto_balance": 0, # all crypto balance in USD,
+            'web3_balance': 0,   # web3 balance in USD,
+            "crypto_balance_by_symbol": {
+                "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                ...
+            }
+        }
 
-                // Add tooltip
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b}: {c} ({d}%)"
-                },
+     */
 
-                // Add custom colors
-                color: ['#689f38', '#38649f'],
+    // using ajax to get the data
+    var url = "/api/get_user_balance";
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (data) {
+            // Get the response data
+            var user_balance = data;
+            console.log(user_balance);
+            // Update the balance in the div with id="crypto_balance"
+            $("#crypto_balance").html(user_balance.crypto_balance+" USD");
+            $("#web3_balance").html(user_balance.web3_balance+" USD");
 
-                // Display toolbox
-                toolbox: {
-                    show: true,
-                    orient: 'vertical',
-                    feature: {
-                        mark: {
-                            show: true,
-                            title: {
-                                mark: 'Markline switch',
-                                markUndo: 'Undo markline',
-                                markClear: 'Clear markline'
-                            }
-                        },
-                        magicType: {
-                            show: true,
-                            title: {
-                                pie: 'Switch to pies',
-                                funnel: 'Switch to funnel',
-                            },
-                            type: ['pie', 'funnel'],
-                            option: {
-                                funnel: {
-                                    x: '25%',
-                                    y: '20%',
-                                    width: '50%',
-                                    height: '70%',
-                                    funnelAlign: 'left',
-                                    max: 1548
+            // Pie chart
+            $(function () {
+                "use strict";
+                // ------------------------------
+                // Basic pie chart
+                // ------------------------------
+                // based on prepared DOM, initialize echarts instance
+                var basicpieChart = echarts.init(document.getElementById('basic-pie'));
+                var option = {
+                    // Add title
+                    title: {
+                        subtext: 'Balance repartition',
+                        x: 'center'
+                    },
+
+                    // Add tooltip
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+
+                    // Add custom colors
+                    color: ['#689f38', '#38649f'],
+
+                    // Display toolbox
+                    toolbox: {
+                        show: true,
+                        orient: 'vertical',
+                        feature: {
+                            mark: {
+                                show: true,
+                                title: {
+                                    mark: 'Markline switch',
+                                    markUndo: 'Undo markline',
+                                    markClear: 'Clear markline'
                                 }
+                            },
+                            magicType: {
+                                show: true,
+                                title: {
+                                    pie: 'Switch to pies',
+                                    funnel: 'Switch to funnel',
+                                },
+                                type: ['pie', 'funnel'],
+                                option: {
+                                    funnel: {
+                                        x: '25%',
+                                        y: '20%',
+                                        width: '50%',
+                                        height: '70%',
+                                        funnelAlign: 'left',
+                                        max: 1548
+                                    }
+                                }
+                            },
+                            saveAsImage: {
+                                show: true,
+                                title: 'Same as image',
+                                lang: ['Save']
                             }
-                        },
-                        saveAsImage: {
-                            show: true,
-                            title: 'Same as image',
-                            lang: ['Save']
                         }
-                    }
-                },
+                    },
 
-                // Enable drag recalculate
-                calculable: true,
+                    // Enable drag recalculate
+                    calculable: true,
 
-                // Add series
-                series: [{
-                    name: 'Balance',
-                    type: 'pie',
-                    radius: '70%',
-                    center: ['50%', '57.5%'],
-                    data: [
-                        {value: 987, name: 'Crypto'},
-                        {value: 200, name: 'Web3'},
-                    ]
-                }]
-        };
+                    // Add series
+                    series: [{
+                        name: 'Balance',
+                        type: 'pie',
+                        radius: '70%',
+                        center: ['50%', '57.5%'],
+                        data: [
+                            {value: user_balance["crypto_balance"], name: 'Crypto'},
+                            {value: user_balance["web3_balance"], name: 'Web3'}
+                        ]
+                    }]
+                };
 
-        basicpieChart.setOption(option);
-        //------------------------------------------------------
-       // Resize chart on menu width change and window resize
-       //------------------------------------------------------
-        $(function () {
-
+                basicpieChart.setOption(option);
+                //------------------------------------------------------
                 // Resize chart on menu width change and window resize
-                $(window).on('resize', resize);
-                $(".sidebartoggler").on('click', resize);
+                //------------------------------------------------------
+                $(function () {
 
-                // Resize function
-                function resize() {
-                    setTimeout(function() {
+                    // Resize chart on menu width change and window resize
+                    $(window).on('resize', resize);
+                    $(".sidebartoggler").on('click', resize);
 
-                        // Resize chart
-                        basicpieChart.resize();
-                    }, 200);
-                }
+                    // Resize function
+                    function resize() {
+                        setTimeout(function () {
+
+                            // Resize chart
+                            basicpieChart.resize();
+                        }, 200);
+                    }
+                });
             });
-});
+        }
+    });
+
 </script>
 
 </body>

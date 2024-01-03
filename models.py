@@ -21,7 +21,7 @@ class Wallet(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC
+    symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC-USD
     quantity = db.Column(db.Float, nullable=False)     # Quantité détenue
 
 
