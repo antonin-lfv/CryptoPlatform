@@ -61,6 +61,26 @@ class CryptoDataManager:
             'price': [d.price for d in data]
         }
 
+    def get_USD_from_crypto(self, symbol, quantity):
+        """
+        Get the USD value of a quantity of a specific crypto.
+
+        Return:
+            float
+        """
+        data = self.get_specific_crypto_data(symbol)
+        return data['price'][-1] * quantity
+
+    def get_crypto_from_USD(self, symbol, USD):
+        """
+        Get the quantity of a specific crypto from a USD amount.
+
+        Return:
+            float
+        """
+        data = self.get_specific_crypto_data(symbol)
+        return USD / data['price'][-1]
+
     def get_all_crypto_data(self):
         """
         Get crypto data for all symbols. Stored in dictionary with symbol as key.

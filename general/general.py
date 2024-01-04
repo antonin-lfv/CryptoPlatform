@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
+from wallet_manager import wallet_manager
 from models import User, Wallet, WalletHistory, WalletDailySnapshot
 from utils import top_cryptos_symbols, top_cryptos_names
 
@@ -99,48 +100,42 @@ def get_all_crypto_data():
 def get_user_balance():
     """
     Get user balance. (crypto + web3)
-
-    Return:
-        {
-            "crypto_balance": 0, # all crypto balance in USD,
-            "web3_balance": 0,  # all web3 balance in USD,
-            "crypto_balance_by_symbol": {
-                "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
-                "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
-                ...
-            }
-        }
     """
-    user_balance = {"crypto_balance": 0,
-                    "web3_balance": 0,
-                    "crypto_balance_by_symbol": {}
-                    }
-    # Add balance by symbol
-    for symbol in top_cryptos_symbols:
-        user_balance["crypto_balance_by_symbol"][symbol] = {
-            "quantity": 0,
-            "balance": 0
-        }
-    # Get user wallets
-    user = User.query.filter_by(id=current_user.id).first()
-    wallets = user.wallets
-    # Get crypto data
-    crypto_manager = CryptoDataManager()
-    data = crypto_manager.get_all_crypto_data()
-    # Loop over wallets
-    for wallet in wallets:
-        # Get latest price
-        latest_price = data[wallet.symbol]['price'][-1]
-        # Get balance
-        balance = latest_price * wallet.quantity
-        # Add to total balance
-        user_balance["crypto_balance"] += balance
-        # Add to balance by symbol
-        user_balance["crypto_balance_by_symbol"][wallet.symbol] = {
-            "quantity": wallet.quantity,
-            "balance": balance
-        }
+    user_balance = wallet_manager().get_user_balance(current_user)
     return jsonify(user_balance)
+
+
+@BLP_general.route('/api/get_game_wallet', methods=['GET', 'POST'])
+@login_required
+def get_game_wallet():
+    """
+    Get game wallet of user
+    """
+    game_wallet = wallet_manager().get_game_wallet(current_user)
+    return jsonify(game_wallet)
+
+
+@BLP_general.route('/api/buy_crypto_with_USD/<symbol>/<From>/<quantity>/<quantity_type>', methods=['GET', 'POST'])
+@login_required
+def buy_crypto_with_USD(symbol, From, quantity, quantity_type):
+    """
+    Buy crypto with USD
+
+    Parameters:
+        symbol: str
+            Symbol of the crypto to buy
+        From: str
+            'mini_wallet' or 'bank_wallet'
+        quantity: float
+            Quantity of crypto to buy (usd or crypto depending on quantity_type)
+        quantity_type: str
+            'crypto' or 'USD'
+    """
+    if quantity_type == 'crypto':
+        wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_crypto=quantity)
+    else:
+        wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_USD=quantity)
+    return '', 204
 
 
 @BLP_general.route('/set_theme')
