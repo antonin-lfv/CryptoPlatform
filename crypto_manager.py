@@ -69,7 +69,7 @@ class CryptoDataManager:
             float
         """
         data = self.get_specific_crypto_data(symbol)
-        return data['price'][-1] * quantity
+        return data['price'][-1] * float(quantity)
 
     def get_crypto_from_USD(self, symbol, USD):
         """
@@ -79,7 +79,7 @@ class CryptoDataManager:
             float
         """
         data = self.get_specific_crypto_data(symbol)
-        return USD / data['price'][-1]
+        return float(USD) / data['price'][-1]
 
     def get_all_crypto_data(self):
         """

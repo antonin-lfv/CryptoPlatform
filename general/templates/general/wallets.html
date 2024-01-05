@@ -355,78 +355,30 @@
                             </div>
                             <div class="box-body p-0">
                                 <div>
-                                    <div class="d-flex bb-1 py-10 px-15">
-                                        <div><i class="cc BTC"></i></div>
-                                        <div>
-                                            <h4 class="mb-0">BTC Wallet</h4>
-                                            <p class="text-fade"><small>0.001 BTC ~ $ 875.86</small></p>
+                                    {% for symbol, name in zip(top_cryptos_symbols,top_cryptos_names) %}
+                                        <div class="d-flex bb-1 py-10 px-15 crypto-wallet" data-symbol="{{ symbol }}">
+                                            <div><i class="cc {{ symbol.split('-')[0] }}"></i></div>
                                             <div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-primary mb-5">
-                                                    <i class="fa fa-paper-plane"></i> Send
-                                                </button>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-info mb-5">
-                                                    <i class="fa fa-money"></i> Receive
-                                                </button>
+                                                <h4 class="mb-0">{{ name }} Wallet</h4>
+                                                <p class="text-fade crypto-balance"><small></small></p>
+                                                <div>
+                                                    <button type="button"
+                                                            class="waves-effect waves-light btn btn-outline btn-primary mb-5">
+                                                        <i class="fa fa-paper-plane"></i> Send
+                                                    </button>
+                                                    <button type="button"
+                                                            class="waves-effect waves-light btn btn-outline btn-info mb-5">
+                                                        <i class="fa fa-money"></i> Receive
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="d-flex bb-1 py-10 px-15">
-                                        <div><i class="cc DASH"></i></div>
-                                        <div>
-                                            <h4 class="mb-0">DASH Wallet</h4>
-                                            <p class="text-fade"><small>0.000000000DASH ~ $0.00</small></p>
-                                            <div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-primary mb-5">
-                                                    <i class="fa fa-paper-plane"></i> Send
-                                                </button>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-info mb-5">
-                                                    <i class="fa fa-money"></i> Receive
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex bb-1 py-10 px-15">
-                                        <div><i class="text-warning cc ETH"></i></div>
-                                        <div>
-                                            <h4 class="mb-0">Ethereum Wallet</h4>
-                                            <p class="text-fade"><small>0.00ETH ~ $0.00</small></p>
-                                            <div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-primary mb-5">
-                                                    <i class="fa fa-paper-plane"></i> Send
-                                                </button>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-info mb-5">
-                                                    <i class="fa fa-money"></i> Receive
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex bb-1 py-10 px-15">
-                                        <div><i class="cc LTC"></i></div>
-                                        <div>
-                                            <h4 class="mb-0">Litecoin Wallet</h4>
-                                            <p class="text-fade"><small>0.00LTC ~ $0.00</small></p>
-                                            <div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-primary mb-5">
-                                                    <i class="fa fa-paper-plane"></i> Send
-                                                </button>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-info mb-5">
-                                                    <i class="fa fa-money"></i> Receive
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-xl-6 col-12">
                         <div class="box">
                             <div class="box-body">
@@ -462,8 +414,7 @@
                                                 <div class="buy-input-block-content row">
                                                     <div class="buy-input-box col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" class="form-control"
-                                                                   placeholder="10 USD">
+                                                            <input type="text" class="form-control" id="input_usd" placeholder="10 USD">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 text-center">
@@ -471,103 +422,12 @@
                                                     </div>
                                                     <div class="buy-input-box col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="1 BTC">
+                                                            <input type="text" class="form-control" id="input_crypto" placeholder="1 BTC">
+
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-primary mt-10 d-block w-p100">
-                                                    Buy Bitcoin
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane" id="tabid2" role="tabpanel">
-
-                                        <h4 class="box-title mb-15">Currency</h4>
-                                        <div class="row bb-1 pb-15 mb-15">
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="sell-coin-type" id="sell-4" checked>
-                                                    <label for="sell-4" class="sel-coin-type">
-                                                        <i class="cc BTC me-0"></i>
-                                                        <span class="d-block mb-5">Bitcoin</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="sell-coin-type" id="sell-5">
-                                                    <label for="sell-5" class="sel-coin-type">
-                                                        <i class="text-warning cc ETH me-0"></i>
-                                                        <span class="d-block mb-5">Ethereum</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-md-4 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="sell-coin-type" id="sell-6">
-                                                    <label for="sell-6" class="sel-coin-type">
-                                                        <i class="cc LTC me-0"></i>
-                                                        <span class="d-block mb-5">Lite</span>
-                                                        <small>@</small>
-                                                        <span class="d-block mb-0"><small>8670.07</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <h4 class="box-title mb-15">Payment Method</h4>
-                                        <div class="row bb-1 pb-15 mb-15">
-                                            <div class="col-xxxl-4 col-md-6 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="sell-pay-type" id="pay-3" checked>
-                                                    <label for="pay-3" class="sel-coin-type">
-                                                        <i class="fa fa-google-wallet"></i>
-                                                        <span class="d-block mb-5">Wallet</span>
-                                                        <span class="d-block mb-0"><small>$209.00</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxxl-4 col-md-6 col-12">
-                                                <div class="sel-coin-type-outer">
-                                                    <input type="radio" name="sell-pay-type" id="pay-4">
-                                                    <label for="pay-4" class="sel-coin-type">
-                                                        <i class="fa fa-bank"></i>
-                                                        <span class="d-block mb-5">USA Bank</span>
-                                                        <span class="d-block mb-0"><small>**** **** 8907</small></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <h4 class="box-title mb-15">Amount</h4>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="buy-input-block-content row">
-                                                    <div class="buy-input-box col-md-5">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control"
-                                                                   placeholder="899 USD">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2 text-center">
-                                                        <i class="fa fa-exchange dir-icon"></i>
-                                                    </div>
-                                                    <div class="buy-input-box col-md-5">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="8 BTC">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-primary mt-10 d-block w-p100">
-                                                    Sell Bitcoin
-                                                </button>
+                                                <button type="button" id="buy_button" class="waves-effect waves-light btn btn-primary mt-10 d-block w-p100">Buy Bitcoin</button>
                                             </div>
                                         </div>
                                     </div>
@@ -590,13 +450,11 @@
 <!-- ./wrapper -->
 
 <!-- Page Content overlay -->
-
-
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
     //[chartjs Javascript]
-    $(function () {
+    $(document).ready(function() {
 
         'use strict';
 
@@ -887,153 +745,334 @@
 </script>
 
 <script>
-    // Get crypto balance from API : /api/get_user_balance
-    /* That's return a JSON like this:
-    {
-            "crypto_balance": 0, # all crypto balance in USD,
-            'web3_balance': 0,   # web3 balance in USD,
-            "crypto_balance_by_symbol": {
-                "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
-                "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
-                ...
+    function updateWalletBalances() {
+        /*
+        Update the 2 divs with id="crypto_balance" and "web3_balance" with the balance of the user
+        Update the Pie chart with the repartition of the balance
+        Update the amount for each crypto in the divs with class="crypto-wallet"
+        */
+        // Get crypto balance from API : /api/get_user_balance
+        /* That's return a JSON like this:
+        {
+                "crypto_balance": 0, # all crypto balance in USD,
+                'web3_balance': 0,   # web3 balance in USD,
+                "crypto_balance_by_symbol": {
+                    "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                    "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                    ...
+                }
+            }
+
+         */
+        // using ajax to get the data
+        var url = "/api/get_user_balance";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the response data
+                var user_balance = data;
+
+                // Update the balance in the div with id="crypto_balance"
+                $("#crypto_balance").html(user_balance.crypto_balance + " USD");
+                $("#web3_balance").html(user_balance.web3_balance + " USD");
+
+                // Pie chart
+                $(function () {
+                    "use strict";
+                    // ------------------------------
+                    // Basic pie chart
+                    // ------------------------------
+                    // based on prepared DOM, initialize echarts instance
+                    var basicpieChart = echarts.init(document.getElementById('basic-pie'));
+                    var option = {
+                        // Add title
+                        title: {
+                            subtext: 'Balance repartition',
+                            x: 'center'
+                        },
+
+                        // Add tooltip
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+
+                        // Add custom colors
+                        color: ['#689f38', '#38649f'],
+
+                        // Display toolbox
+                        toolbox: {
+                            show: true,
+                            orient: 'vertical',
+                            feature: {
+                                mark: {
+                                    show: true,
+                                    title: {
+                                        mark: 'Markline switch',
+                                        markUndo: 'Undo markline',
+                                        markClear: 'Clear markline'
+                                    }
+                                },
+                                magicType: {
+                                    show: true,
+                                    title: {
+                                        pie: 'Switch to pies',
+                                        funnel: 'Switch to funnel',
+                                    },
+                                    type: ['pie', 'funnel'],
+                                    option: {
+                                        funnel: {
+                                            x: '25%',
+                                            y: '20%',
+                                            width: '50%',
+                                            height: '70%',
+                                            funnelAlign: 'left',
+                                            max: 1548
+                                        }
+                                    }
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    title: 'Same as image',
+                                    lang: ['Save']
+                                }
+                            }
+                        },
+
+                        // Enable drag recalculate
+                        calculable: true,
+
+                        // Add series
+                        series: [{
+                            name: 'Balance',
+                            type: 'pie',
+                            radius: '70%',
+                            center: ['50%', '57.5%'],
+                            data: [
+                                {value: user_balance["crypto_balance"], name: 'Crypto'},
+                                {value: user_balance["web3_balance"], name: 'Web3'}
+                            ]
+                        }]
+                    };
+
+                    basicpieChart.setOption(option);
+                    //------------------------------------------------------
+                    // Resize chart on menu width change and window resize
+                    //------------------------------------------------------
+                    $(function () {
+
+                        // Resize chart on menu width change and window resize
+                        $(window).on('resize', resize);
+                        $(".sidebartoggler").on('click', resize);
+
+                        // Resize function
+                        function resize() {
+                            setTimeout(function () {
+
+                                // Resize chart
+                                basicpieChart.resize();
+                            }, 200);
+                        }
+                    });
+                });
+
+                // Display amount for each crypto
+                // Go through each crypto-wallet div
+                $(".crypto-wallet").each(function () {
+                    var symbol = $(this).data("symbol"); // Récupérer le symbole de la cryptomonnaie
+                    var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol];
+                    if (balanceInfo) {
+                        // Update the balance in the div with id="crypto_balance"
+                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol + " ~ $" + balanceInfo["balance"]);
+                    }
+                });
+            }
+        });
+    }
+
+    function update_game_wallet() {
+        /*
+        Update the 2 divs with id="mini_wallet" and "bank_wallet" with the balance of the user
+        */
+        // Get game_wallet balance from API : /api/get_game_wallet
+        // using ajax to get the data
+        var url = "/api/get_game_wallet";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the response data
+                var game_wallet = data;
+                console.log(game_wallet);
+                // Update the balance in the div with id="mini_wallet" and "bank_wallet"
+                $("#mini_wallet").html(game_wallet["mini_wallet"]+"$");
+                $("#bank_wallet").html(game_wallet["bank_wallet"]+"$");
+            }
+        });
+    }
+
+    // Function to disable the buy button if the amount is not valid
+    function validateAmount() {
+        var balanceUSD = 0;  // Variable pour stocker le montant disponible
+        var selectedWallet = "mini_wallet";  // Wallet sélectionné par défaut
+
+        // Fonction pour récupérer le montant disponible dans le wallet sélectionné
+        function fetchWalletBalance() {
+            $.ajax({
+                url: "/api/get_game_wallet",
+                type: "GET",
+                success: function(data){
+                    balanceUSD = data[selectedWallet];
+                    validateAmount();
+                }
+            });
+        }
+
+        // Mise à jour du wallet sélectionné
+        $("input[name='pay-type']").change(function(){
+            selectedWallet = $(this).is("#pay-1") ? "mini_wallet" : "bank_wallet";
+            fetchWalletBalance();
+        });
+
+        // Fonction pour valider le montant et activer/désactiver le bouton d'achat
+        function validateAmount() {
+            var usdAmount = parseFloat($("#input_usd").val().replace(" USD", ""));
+            if (!isNaN(usdAmount) && usdAmount <= balanceUSD) {
+                $("#buy_button").prop('disabled', false);
+            } else {
+                $("#buy_button").prop('disabled', true);
             }
         }
 
-     */
+        // Vos fonctions existantes pour les conversions...
+        // Assurez-vous d'appeler validateAmount() à la fin des fonctions success de vos appels AJAX
 
-    // using ajax to get the data
-    var url = "/api/get_user_balance";
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (data) {
-            // Get the response data
-            var user_balance = data;
-            console.log(user_balance);
-            // Update the balance in the div with id="crypto_balance"
-            $("#crypto_balance").html(user_balance.crypto_balance+" USD");
-            $("#web3_balance").html(user_balance.web3_balance+" USD");
+        // Vérifier le montant à chaque modification des valeurs
+        $("#input_usd, #input_crypto").on('input', function(){
+            validateAmount();
+        });
 
-            // Pie chart
-            $(function () {
-                "use strict";
-                // ------------------------------
-                // Basic pie chart
-                // ------------------------------
-                // based on prepared DOM, initialize echarts instance
-                var basicpieChart = echarts.init(document.getElementById('basic-pie'));
-                var option = {
-                    // Add title
-                    title: {
-                        subtext: 'Balance repartition',
-                        x: 'center'
-                    },
+        // Récupération initiale du montant disponible
+        fetchWalletBalance();
+    }
 
-                    // Add tooltip
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b}: {c} ({d}%)"
-                    },
+    function reset_by_usd() {
+        // Reset the input fields of the buy form from USD
+        $("#input_usd").val("");
+        $("#input_crypto").val("");
+    }
 
-                    // Add custom colors
-                    color: ['#689f38', '#38649f'],
-
-                    // Display toolbox
-                    toolbox: {
-                        show: true,
-                        orient: 'vertical',
-                        feature: {
-                            mark: {
-                                show: true,
-                                title: {
-                                    mark: 'Markline switch',
-                                    markUndo: 'Undo markline',
-                                    markClear: 'Clear markline'
-                                }
-                            },
-                            magicType: {
-                                show: true,
-                                title: {
-                                    pie: 'Switch to pies',
-                                    funnel: 'Switch to funnel',
-                                },
-                                type: ['pie', 'funnel'],
-                                option: {
-                                    funnel: {
-                                        x: '25%',
-                                        y: '20%',
-                                        width: '50%',
-                                        height: '70%',
-                                        funnelAlign: 'left',
-                                        max: 1548
-                                    }
-                                }
-                            },
-                            saveAsImage: {
-                                show: true,
-                                title: 'Same as image',
-                                lang: ['Save']
-                            }
-                        }
-                    },
-
-                    // Enable drag recalculate
-                    calculable: true,
-
-                    // Add series
-                    series: [{
-                        name: 'Balance',
-                        type: 'pie',
-                        radius: '70%',
-                        center: ['50%', '57.5%'],
-                        data: [
-                            {value: user_balance["crypto_balance"], name: 'Crypto'},
-                            {value: user_balance["web3_balance"], name: 'Web3'}
-                        ]
-                    }]
-                };
-
-                basicpieChart.setOption(option);
-                //------------------------------------------------------
-                // Resize chart on menu width change and window resize
-                //------------------------------------------------------
-                $(function () {
-
-                    // Resize chart on menu width change and window resize
-                    $(window).on('resize', resize);
-                    $(".sidebartoggler").on('click', resize);
-
-                    // Resize function
-                    function resize() {
-                        setTimeout(function () {
-
-                            // Resize chart
-                            basicpieChart.resize();
-                        }, 200);
-                    }
-                });
-            });
+    function setupEventHandlers() {
+        // Fonction pour enlever les unités de la valeur
+        function cleanInputValue(value, unit) {
+            return value.replace(unit, '').trim();
         }
-    });
+
+        $("#buy_button").click(function(){
+            // Récupérer le symbole de la cryptomonnaie (ici, je suppose que c'est toujours BTC-USD)
+            var symbol = "BTC-USD";
+
+            // Déterminer la source du paiement sélectionnée
+            var paymentSource = $("input[name='pay-type']:checked").is("#pay-1") ? "mini_wallet" : "bank_wallet";
+
+            // Récupérer et nettoyer les montants entrés
+            var cryptoAmount = cleanInputValue($("#input_crypto").val(), "BTC");
+            var usdAmount = cleanInputValue($("#input_usd").val(), "USD");
+
+            // Construire l'URL pour l'appel AJAX
+            var url = "/api/buy_crypto_with_USD/" + symbol + "/" + paymentSource + "/" + usdAmount + "/" + 'USD';
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                success: function(){
+                    // Actions supplémentaires après l'achat réussi
+                    updateWalletBalances();
+                    update_game_wallet();
+                    validateAmount()
+                    swal("Achat réussi!", "Votre achat de " + cryptoAmount + " BTC a été effectué avec succès.", "success");
+                    reset_by_usd();
+                },
+                error: function(){
+                    swal("Erreur!", "Une erreur est survenue lors de l'achat de cryptomonnaie.", "error");
+                }
+            });
+        });
+    }
 
 </script>
 
 <script>
-    // Get game_wallet balance from API : /api/get_game_wallet
-
-    // using ajax to get the data
-    var url = "/api/get_game_wallet";
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (data) {
-            // Get the response data
-            var game_wallet = data;
-            console.log(game_wallet);
-            // Update the balance in the div with id="mini_wallet" and "bank_wallet"
-            $("#mini_wallet").html(game_wallet["mini_wallet"]+"$");
-            $("#bank_wallet").html(game_wallet["bank_wallet"]+"$");
+    // Display the conversion in the exchange calculator
+    $(document).ready(function(){
+        // Fonction pour valider si l'entrée est un nombre
+        function isValidNumber(value) {
+            return !isNaN(value) && value.trim() !== '';
         }
+
+        // Fonction pour enlever l'unité des valeurs
+        function cleanInputValue(value, unit) {
+            return value.replace(unit, '').trim();
+        }
+
+        // Fonction pour mettre à jour la valeur en USD lorsque la crypto change
+        $("#input_crypto").on('input', function(){
+            var cryptoQuantity = cleanInputValue($(this).val(), "BTC");
+            var symbol = "BTC-USD";
+
+            if (isValidNumber(cryptoQuantity)) {
+                var url = "/api/get_USD_from_crypto/" + symbol + "/" + cryptoQuantity;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data){
+                        $("#input_usd").val(data + " USD");
+                    },
+                    error: function(){
+                        $("#input_usd").val("Erreur");
+                    }
+                });
+            } else {
+                // if empty, set the value to '', else set it to 'Erreur'
+                $("#input_usd").val(cryptoQuantity === '' ? '' : 'Erreur');
+            }
+        });
+
+        // Fonction pour mettre à jour la valeur en crypto lorsque l'USD change
+        $("#input_usd").on('input', function(){
+            var usdAmount = cleanInputValue($(this).val(), "USD");
+            var symbol = "BTC-USD";
+
+            if (isValidNumber(usdAmount)) {
+                var url = "/api/get_crypto_from_USD/" + symbol + "/" + usdAmount;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data){
+                        $("#input_crypto").val(data + " BTC");
+                    },
+                    error: function(){
+                        $("#input_crypto").val("Erreur");
+                    }
+                });
+            } else {
+                // if empty, set the value to '', else set it to 'Erreur'
+                $("#input_crypto").val(usdAmount === '' ? '' : 'Erreur');
+            }
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        updateWalletBalances();
+        update_game_wallet();
+        validateAmount();
+        setupEventHandlers();
     });
 </script>
 

@@ -26,8 +26,8 @@ class wallet_manager:
                 "crypto_balance": 0, # all crypto balance in USD,
                 "web3_balance": 0,  # all web3 balance in USD,
                 "crypto_balance_by_symbol": {
-                    "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
-                    "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                    "BTC-USD": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                    "ETH-USD": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
                     ...
                 }
             }
@@ -55,6 +55,10 @@ class wallet_manager:
                 "quantity": wallet.quantity,
                 "balance": balance
             }
+            # Round balance to 2 decimals
+            user_balance["crypto_balance"] = round(user_balance["crypto_balance"], 2)
+            user_balance["crypto_balance_by_symbol"][wallet.symbol]["balance"] = (
+                round(user_balance["crypto_balance_by_symbol"][wallet.symbol]["balance"], 2))
 
         return user_balance
 
@@ -101,15 +105,34 @@ class wallet_manager:
         # Get game wallet
         game_wallet = user.game_wallet[0]
         # Update game wallet
-        if quantity_USD:
-            game_wallet[From] -= quantity_USD
-        else:
+        if quantity_crypto:
             # convert quantity_crypto to USD
             quantity_USD = self.crypto_manager.get_USD_from_crypto(symbol, quantity_crypto)
-            game_wallet[From] -= quantity_USD
+
+        # convert quantity_USD to float if needed
+        if isinstance(quantity_USD, str):
+            quantity_USD = float(quantity_USD)
+
+        # Update game wallet
+        if From == 'mini_wallet':
+            game_wallet.mini_wallet -= quantity_USD
+            game_wallet.mini_wallet_last_update = datetime.utcnow()
+        else:
+            game_wallet.bank_wallet -= quantity_USD
+            game_wallet.bank_wallet_last_update = datetime.utcnow()
 
         # Update user wallet
-        wallet = user.wallets.filter_by(symbol=symbol).first()
+        print(f"Symbol: {symbol}")
+        wallet = Wallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        # If wallet does not exist, create it
+        if not wallet:
+            wallet = Wallet()
+            wallet.user_id = user.id
+            wallet.symbol = symbol
+            wallet.quantity = 0
+            db.session.add(wallet)
+
+        # Update wallet
         if quantity_USD:
             wallet.quantity += self.crypto_manager.get_crypto_from_USD(symbol, quantity_USD)
         else:
@@ -117,12 +140,17 @@ class wallet_manager:
 
         # Add transaction to wallet history
         if quantity_USD:
-            self.add_transaction_to_wallet_history(wallet, 'buy', self.crypto_manager.get_crypto_from_USD(symbol, quantity_USD))
+            self.add_transaction_to_wallet_history(wallet, 'buy',
+                                                   self.crypto_manager.get_crypto_from_USD(symbol, quantity_USD),
+                                                   symbol)
         else:
-            self.add_transaction_to_wallet_history(wallet, 'buy', quantity_crypto)
+            self.add_transaction_to_wallet_history(wallet, 'buy', quantity_crypto, symbol)
+
+        # Commit changes
+        db.session.commit()
 
     @staticmethod
-    def add_transaction_to_wallet_history(wallet, transaction_type, quantity):
+    def add_transaction_to_wallet_history(wallet, transaction_type, quantity, symbol):
         """
         Add transaction to wallet history
 
@@ -130,10 +158,12 @@ class wallet_manager:
             - wallet: Wallet object, the wallet where the transaction is made
             - transaction_type: str, 'buy' or 'sell'
             - quantity: float, quantity of crypto bought/sold
+            - symbol: str, symbol of the crypto bought/sold
         """
         transaction = WalletHistory()
         transaction.wallet_id = wallet.id
         transaction.transaction_type = transaction_type
         transaction.quantity = quantity
+        transaction.symbol = symbol
         db.session.add(transaction)
         db.session.commit()

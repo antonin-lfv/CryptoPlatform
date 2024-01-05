@@ -48,6 +48,7 @@ class WalletHistory(db.Model):
     wallet_id = db.Column(db.Integer, db.ForeignKey('wallet.id'), nullable=False)
     transaction_type = db.Column(db.String(10), nullable=False)  # 'buy' ou 'sell'
     quantity = db.Column(db.Float, nullable=False)   # Quantity of crypto bought/sold
+    symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
 

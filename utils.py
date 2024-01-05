@@ -24,5 +24,8 @@ top_cryptos_names = [
     "NEO",
 ]
 
+mini_wallet = 1000
+bank_wallet = 10000
+
 
 # ===== Functions

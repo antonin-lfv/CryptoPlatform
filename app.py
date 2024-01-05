@@ -14,8 +14,10 @@ def create_app():
     # ===== Blueprint
     from auth.auth import BLP_auth
     from general.general import BLP_general
+    from API.api import BLP_api
     app.register_blueprint(BLP_auth)
     app.register_blueprint(BLP_general)
+    app.register_blueprint(BLP_api)
     # ===== init SQLAlchemy
     db.init_app(app)
     if not path.exists("db.sqlite"):
@@ -41,8 +43,6 @@ def create_app():
     @app.errorhandler(500)
     def forbidden(error):
         return render_template('errors/error_500.html')
-
-    # ==== Init wallet
 
     return app
 
