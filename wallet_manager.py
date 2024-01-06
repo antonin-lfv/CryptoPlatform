@@ -85,6 +85,37 @@ class wallet_manager:
                 "bank_wallet": 0
             }
 
+    @staticmethod
+    def get_wallet_history(user):
+        """
+        Get wallet history of user
+
+        Return:
+            {
+                "wallet_history": [
+                    {
+                        "symbol": ...,
+                        "transaction_type": ...,
+                        "quantity": ...,
+                        "date": ...
+                    },
+                    ...
+                ]
+            }
+        """
+        wallet_history = []
+        history_wallet = WalletHistory.query.filter_by(wallet_id=user.wallets[0].id).all()
+        for transaction in history_wallet:
+            wallet_history.append({
+                "symbol": transaction.symbol.split('-')[0],
+                "transaction_type": transaction.transaction_type,
+                "quantity": transaction.quantity,
+                "date": transaction.date
+            })
+        return {
+            "wallet_history": wallet_history
+        }
+
     def buy_crypto_with_USD(self, user, symbol, From, quantity_crypto=None, quantity_USD=None):
         """
         Buy crypto with USD
@@ -111,15 +142,25 @@ class wallet_manager:
 
         # convert quantity_USD to float if needed
         if isinstance(quantity_USD, str):
-            quantity_USD = float(quantity_USD)
+            # try to convert to float, if not just return None
+            try:
+                quantity_USD = float(quantity_USD)
+            except ValueError:
+                return {'error': 'Not a valid quantity'}
 
         # Update game wallet
         if From == 'mini_wallet':
             game_wallet.mini_wallet -= quantity_USD
             game_wallet.mini_wallet_last_update = datetime.utcnow()
+            # test if mini_wallet is negative, and return an error if it is
+            if game_wallet.mini_wallet < 0:
+                return {'error': 'Not enough money in wallet'}
         else:
             game_wallet.bank_wallet -= quantity_USD
             game_wallet.bank_wallet_last_update = datetime.utcnow()
+            # test if bank_wallet is negative, and return an error if it is
+            if game_wallet.bank_wallet < 0:
+                return {'error': 'Not enough money in bank'}
 
         # Update user wallet
         print(f"Symbol: {symbol}")
@@ -148,6 +189,8 @@ class wallet_manager:
 
         # Commit changes
         db.session.commit()
+
+        return {'success': 'Transaction successful'}
 
     @staticmethod
     def add_transaction_to_wallet_history(wallet, transaction_type, quantity, symbol):

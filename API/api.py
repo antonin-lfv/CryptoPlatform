@@ -68,10 +68,10 @@ def buy_crypto_with_USD(symbol, From, quantity, quantity_type):
             'crypto' or 'USD'
     """
     if quantity_type == 'crypto':
-        wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_crypto=quantity)
+        response = wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_crypto=quantity)
     else:
-        wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_USD=quantity)
-    return '', 204
+        response = wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_USD=quantity)
+    return jsonify(response)
 
 
 @BLP_api.route('/api/get_USD_from_crypto/<symbol>/<quantity>', methods=['GET', 'POST'])
@@ -98,6 +98,16 @@ def get_crypto_from_USD(symbol, USD):
     """
     data = CryptoDataManager().get_crypto_from_USD(symbol, USD)
     return jsonify(data)
+
+
+@BLP_api.route('/api/get_wallet_history', methods=['GET', 'POST'])
+@login_required
+def get_wallet_history():
+    """
+    Get wallet history of user
+    """
+    wallet_history = wallet_manager().get_wallet_history(current_user)
+    return jsonify(wallet_history)
 
 
 @BLP_api.route('/set_theme')
