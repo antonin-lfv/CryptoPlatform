@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user
-from models import User, GameWallet
+from models import User, GameWallet, WalletDailySnapshot
 from app import db
 from utils import mini_wallet, bank_wallet
+from datetime import datetime
 
 BLP_auth = Blueprint('BLP_auth', __name__,
                      template_folder='templates',
@@ -45,6 +46,12 @@ def register():
             game_wallet.mini_wallet = mini_wallet
             game_wallet.bank_wallet = bank_wallet
             db.session.add(game_wallet)
+            # Create the first wallet daily snapshot
+            wallet_daily_snapshot = WalletDailySnapshot()
+            wallet_daily_snapshot.user_id = User.query.filter_by(email=email).first().id
+            wallet_daily_snapshot.date = datetime.utcnow()
+            wallet_daily_snapshot.quantity = 0
+            db.session.add(wallet_daily_snapshot)
 
             db.session.commit()
             return render_template('auth/auth_login.html', wrong_credentials=False)

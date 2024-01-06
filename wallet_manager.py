@@ -104,6 +104,11 @@ class wallet_manager:
             }
         """
         wallet_history = []
+        if not user.wallets:
+            # If user has no wallet, return empty history
+            return {
+                "wallet_history": wallet_history
+            }
         history_wallet = WalletHistory.query.filter_by(wallet_id=user.wallets[0].id).all()
         for transaction in history_wallet:
             wallet_history.append({
@@ -130,7 +135,6 @@ class wallet_manager:
             - quantity_USD: float, quantity of USD to spend
 
         There is either a quantity_crypto or a quantity_USD, not both.
-
         """
         assert quantity_crypto or quantity_USD
         # Get game wallet
@@ -187,6 +191,13 @@ class wallet_manager:
         else:
             self.add_transaction_to_wallet_history(wallet, 'buy', quantity_crypto, symbol)
 
+        # Update wallet daily snapshot with the usd value of the transaction
+        if quantity_USD:
+            self.update_wallet_daily_snapshot(user, quantity_USD)
+        else:
+            self.update_wallet_daily_snapshot(user,
+                                              self.crypto_manager.get_USD_from_crypto(symbol, quantity_crypto))
+
         # Commit changes
         db.session.commit()
 
@@ -210,3 +221,28 @@ class wallet_manager:
         transaction.symbol = symbol
         db.session.add(transaction)
         db.session.commit()
+
+    @staticmethod
+    def update_wallet_daily_snapshot(user, quantity):
+        """
+        Update wallet daily snapshot
+
+        Parameters:
+            - user: User object, the user who buys crypto
+            - quantity: float, quantity of crypto bought/sold
+        """
+        # Get latest snapshot
+        latest_snapshot = WalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
+            WalletDailySnapshot.date.desc()).first()
+        # If latest snapshot is not today, add new snapshot
+        if not latest_snapshot or latest_snapshot.date != datetime.utcnow().date():
+            new_snapshot = WalletDailySnapshot()
+            new_snapshot.user_id = user.id
+            new_snapshot.date = datetime.utcnow().date()
+            new_snapshot.quantity = quantity
+            db.session.add(new_snapshot)
+            db.session.commit()
+        else:
+            # Update latest snapshot by adding the quantity of the transaction
+            latest_snapshot.quantity += quantity
+            db.session.commit()

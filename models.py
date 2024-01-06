@@ -57,7 +57,7 @@ class WalletDailySnapshot(db.Model):
     Table to record the daily snapshots of the wallets
     """
     id = db.Column(db.Integer, primary_key=True)
-    wallet_id = db.Column(db.Integer, db.ForeignKey('wallet.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
     date = db.Column(db.Date, default=date.today)  # Date of the snapshot
     quantity = db.Column(db.Float, nullable=False)  # USD value of the wallet at this date
 
