@@ -33,7 +33,7 @@ class wallet_manager:
             }
         """
         user_balance = {"crypto_balance": 0,
-                        "web3_balance": 0,
+                        "web3_balance": 1000,
                         "crypto_balance_by_symbol": {}
                         }
         # Add balance by symbol

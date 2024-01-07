@@ -163,7 +163,6 @@
                                                                     <input type="text" class="form-control"
                                                                            id="input_crypto"
                                                                            placeholder="1 BTC">
-
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -755,7 +754,7 @@
         // Assurez-vous d'appeler validateAmount() à la fin des fonctions success de vos appels AJAX
 
         // Vérifier le montant à chaque modification des valeurs
-        $("#input_usd, #input_crypto").on('input', function () {
+        $("#input_usd, #input_crypto").on('keyup', function () {
             validateAmount();
         });
 
