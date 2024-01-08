@@ -6,7 +6,8 @@ File: scss
 /*------------------------------------------------------------------
 [Table of contents]
 
-Body, layout, Basic
+Body, layout, custom
+Basic
 Header
 Sidebar
 Form-element and progress bar
@@ -122,13 +123,26 @@ body {
   line-height: 1.5;
   background-color: #f1f5f8; }
 
+/*---Custom ---*/
+.crypto-wallet {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /*---basic---*/
 a {
   color: #31297e; }
 
 a:hover, a:active, a:focus {
   outline: 0;
-  text-decoration: none; }
+  text-decoration: none;
+}
+
+a.active{
+  background-color: #34c38f;
+  color: #fff;
+}
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: "Rubik", sans-serif;

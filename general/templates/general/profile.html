@@ -28,7 +28,8 @@
                         <div class="d-inline-block align-items-center">
                             <nav>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a>
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">My Profile</li>
                                 </ol>
@@ -58,76 +59,132 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-6 col-12">
+                        <a class="box box-link-pop text-center" href="javascript:void(0)">
+                            <div class="box-body">
+                                <p class="fs-30 text-pink">
+                                    <i class="fa fa-bitcoin text-muted me-5 mb-20"></i><br>
+                                    <strong id="crypto_balance"></strong>
+                                </p>
+                            </div>
+                            <div class="box-body py-20 bg-light">
+                                <h3 class="fw-600 mt-0">
+                                    Crypto balance
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <a class="box box-link-pop text-center" href="javascript:void(0)">
+                            <div class="box-body">
+                                <p class="fs-30 text-pink">
+                                    <i class="fa fa-image text-muted me-5 mb-20"></i><br>
+                                    <strong id="web3_balance"></strong>
+                                </p>
+                            </div>
+                            <div class="box-body py-20 bg-light">
+                                <h3 class="fw-600 mt-0">
+                                    Web3 balance
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xl-12 col-12">
+                        <div class="box">
+                            <div class="box-body analytics-info">
+                                <div id="basic-pie" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12">
-				  <div class="box">
-					<div class="box-body">
-						<div class="table-responsive">
-							<table class="table no-border">
-								<tr>
-									<td>
-										<div class="new-progress-wrap px-25">
-											<ul class="new-progress-line row list-unstyled mt-80 mb-50">
-											  <li class="col-2 done-1 bg-primary">
-												  <div class="history text-dark">87459 BTC raised</div>
-												  <div class="scale text-dark">
-													 Round First
-												  </div>
-											  </li>
-											  <li class="col-2 done-2 bg-info">
-												  <div class="scale text-dark">
-													Round Second
-												  </div>
-												  <div class="history text-dark">23% <div class="progress-badge badge badge-pill badge-success">bonus</div></div>
-											  </li>
-											  <li class="col-2 done-3 bg-info">
-												  <div class="scale text-dark">
-													2600 BTC
-												  </div>
-												  <div class="history text-dark">14% <div class="progress-badge badge badge-pill badge-success">bonus</div></div>
-											  </li>
-											  <li class="col-2 done-3 bg-info">
-												  <div class="history text-dark">15% <div class="progress-badge badge badge-pill badge-success">bonus</div></div>
-												  <div class="scale text-dark">
-													  3900 BTC
-												  </div>
-											  </li>
-											  <li class="col-2 current">
-												 <div class="filled bg-warning" style="width:66%;white-space: nowrap;z-index: 10;">5468 BTC</div>
-												 <div class="bg-warning"></div>
-												  <div class="history flash text-dark">7% <div class="progress-badge badge badge-pill badge-success">bonus</div></div>
-												  <div class="scale text-dark">
-													  7900 BTC
-												  </div>
-											  </li>
-											  <li class="col-2 done-6">
-												  <div class="scale text-dark">
-													19000 BTC
-												  </div>
-												  <div class="history text-dark">Last-chance!</div>
-												  <div class="scale last text-dark">
-													32000 BTC
-												  </div>
-											  </li>
-											</ul>
-										</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-					<!-- /.box-body -->
-				  </div>
-				  <!-- /.box -->
-				</div>
+                        <div class="box">
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table no-border">
+                                        <tr>
+                                            <td>
+                                                <div class="new-progress-wrap px-25">
+                                                    <ul class="new-progress-line row list-unstyled mt-80 mb-50">
+                                                        <li class="col-2 done-1 bg-primary">
+                                                            <div class="history text-dark">87459 BTC raised</div>
+                                                            <div class="scale text-dark">
+                                                                Round First
+                                                            </div>
+                                                        </li>
+                                                        <li class="col-2 done-2 bg-info">
+                                                            <div class="scale text-dark">
+                                                                Round Second
+                                                            </div>
+                                                            <div class="history text-dark">23%
+                                                                <div class="progress-badge badge badge-pill badge-success">
+                                                                    bonus
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="col-2 done-3 bg-info">
+                                                            <div class="scale text-dark">
+                                                                2600 BTC
+                                                            </div>
+                                                            <div class="history text-dark">14%
+                                                                <div class="progress-badge badge badge-pill badge-success">
+                                                                    bonus
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="col-2 done-3 bg-info">
+                                                            <div class="history text-dark">15%
+                                                                <div class="progress-badge badge badge-pill badge-success">
+                                                                    bonus
+                                                                </div>
+                                                            </div>
+                                                            <div class="scale text-dark">
+                                                                3900 BTC
+                                                            </div>
+                                                        </li>
+                                                        <li class="col-2 current">
+                                                            <div class="filled bg-warning"
+                                                                 style="width:66%;white-space: nowrap;z-index: 10;">5468
+                                                                BTC
+                                                            </div>
+                                                            <div class="bg-warning"></div>
+                                                            <div class="history flash text-dark">7%
+                                                                <div class="progress-badge badge badge-pill badge-success">
+                                                                    bonus
+                                                                </div>
+                                                            </div>
+                                                            <div class="scale text-dark">
+                                                                7900 BTC
+                                                            </div>
+                                                        </li>
+                                                        <li class="col-2 done-6">
+                                                            <div class="scale text-dark">
+                                                                19000 BTC
+                                                            </div>
+                                                            <div class="history text-dark">Last-chance!</div>
+                                                            <div class="scale last text-dark">
+                                                                32000 BTC
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
                 </div>
             </section>
-    <!-- /.content -->
+            <!-- /.content -->
 
-</div>
-</div>
-<!-- /.content-wrapper -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
 
-<!-- Footer -->
+    <!-- Footer -->
     {% include('includes/footer.html') %}
 
 </div>
@@ -139,6 +196,157 @@
 
 {% include('includes/javascript_include_dashboard.html') %}
 
+<script>
+    function updateWalletBalances() {
+        /*
+        Update the 2 divs with id="crypto_balance" and "web3_balance" with the balance of the user
+        Update the Pie chart with the repartition of the balance
+        Update the amount for each crypto in the divs with class="crypto-wallet"
+        */
+        // Get crypto balance from API : /api/get_user_balance
+        /* That's return a JSON like this:
+        {
+                "crypto_balance": 0, # all crypto balance in USD,
+                'web3_balance': 0,   # web3 balance in USD,
+                "crypto_balance_by_symbol": {
+                    "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                    "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                    ...
+                }
+            }
+
+         */
+        // using ajax to get the data
+        var url = "/api/get_user_balance";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the response data
+                var user_balance = data;
+
+                // Update the balance in the div with id="crypto_balance"
+                $("#crypto_balance").html(user_balance.crypto_balance + " USD");
+                $("#web3_balance").html(user_balance.web3_balance + " USD");
+
+                // Pie chart
+                $(function () {
+                    "use strict";
+                    // ------------------------------
+                    // Basic pie chart
+                    // ------------------------------
+                    // based on prepared DOM, initialize echarts instance
+                    var basicpieChart = echarts.init(document.getElementById('basic-pie'));
+                    var option = {
+                        // Add title
+                        title: {
+                            subtext: 'Balance repartition',
+                            x: 'center'
+                        },
+
+                        // Add tooltip
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+
+                        // Add custom colors
+                        color: ['#689f38', '#38649f'],
+
+                        // Display toolbox
+                        toolbox: {
+                            show: true,
+                            orient: 'vertical',
+                            feature: {
+                                mark: {
+                                    show: true,
+                                    title: {
+                                        mark: 'Markline switch',
+                                        markUndo: 'Undo markline',
+                                        markClear: 'Clear markline'
+                                    }
+                                },
+                                magicType: {
+                                    show: true,
+                                    title: {
+                                        pie: 'Switch to pies',
+                                        funnel: 'Switch to funnel',
+                                    },
+                                    type: ['pie', 'funnel'],
+                                    option: {
+                                        funnel: {
+                                            x: '25%',
+                                            y: '20%',
+                                            width: '50%',
+                                            height: '70%',
+                                            funnelAlign: 'left',
+                                            max: 1548
+                                        }
+                                    }
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    title: 'Same as image',
+                                    lang: ['Save']
+                                }
+                            }
+                        },
+
+                        // Enable drag recalculate
+                        calculable: true,
+
+                        // Add series
+                        series: [{
+                            name: 'Balance',
+                            type: 'pie',
+                            radius: '70%',
+                            center: ['50%', '57.5%'],
+                            data: [
+                                {value: user_balance["crypto_balance"], name: 'Crypto'},
+                                {value: user_balance["web3_balance"], name: 'Web3'}
+                            ]
+                        }]
+                    };
+
+                    basicpieChart.setOption(option);
+                    //------------------------------------------------------
+                    // Resize chart on menu width change and window resize
+                    //------------------------------------------------------
+                    $(function () {
+
+                        // Resize chart on menu width change and window resize
+                        $(window).on('resize', resize);
+                        $(".sidebartoggler").on('click', resize);
+
+                        // Resize function
+                        function resize() {
+                            setTimeout(function () {
+
+                                // Resize chart
+                                basicpieChart.resize();
+                            }, 200);
+                        }
+                    });
+                });
+
+                // Display amount for each crypto
+                // Go through each crypto-wallet div
+                $(".crypto-wallet").each(function () {
+                    var symbol = $(this).data("symbol"); // Récupérer le symbole de la cryptomonnaie
+                    var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol];
+                    if (balanceInfo) {
+                        // Update the balance in the div with id="crypto_balance"
+                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol + " ~ $" + balanceInfo["balance"]);
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        updateWalletBalances();
+    });
+</script>
 
 </body>
 </html>

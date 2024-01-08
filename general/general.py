@@ -60,10 +60,10 @@ def nft_dashboard():
     return render_template('general/nft_dashboard.html', user=current_user)
 
 
-@BLP_general.route('/wallet', methods=['GET', 'POST'])
+@BLP_general.route('/crypto_wallet', methods=['GET', 'POST'])
 @login_required
-def wallet():
-    return render_template('general/wallets.html', user=current_user,
+def crypto_wallet():
+    return render_template('general/crypto_wallets.html', user=current_user,
                            top_cryptos_symbols=top_cryptos_symbols,
                            top_cryptos_names=top_cryptos_names,
                            zip=zip)
