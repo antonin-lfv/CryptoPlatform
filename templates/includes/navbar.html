@@ -10,16 +10,16 @@
     <ul id="main-menu" class="sm sm-blue">
         <li>
             <a href="{{ url_for('BLP_general.home') }}"
-               class="{{ 'active' if request.path == url_for('BLP_general.home') else '' }}"><i
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.home') else '' }}"><i
                     data-feather="monitor"></i>Dashboard</a>
         </li>
 
         <li><a href="{{ url_for('BLP_general.crypto_dashboard') }}"
-               class="{{ 'active' if request.path == url_for('BLP_general.crypto_dashboard') else '' }}"><i
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.crypto_dashboard') else '' }}"><i
                 data-feather="cpu"></i>Crypto</a>
         </li>
         <li><a href="{{ url_for('BLP_general.nft_dashboard') }}"
-               class="{{ 'active' if request.path == url_for('BLP_general.nft_dashboard') else '' }}"><i
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.nft_dashboard') else '' }}"><i
                 data-feather="box"></i>NFT</a></li>
 
         <li><a href="#"><i data-feather="lock"></i>Login &amp; Error</a>

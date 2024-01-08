@@ -139,9 +139,9 @@ a:hover, a:active, a:focus {
   text-decoration: none;
 }
 
-a.active{
+a.active_navbar{
   background-color: #34c38f;
-  color: #fff;
+  color: #fff !important;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {

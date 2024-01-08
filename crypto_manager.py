@@ -180,8 +180,13 @@ class CryptoDataManager:
             # Get chart data (24d) in list of floats
             latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
             data = list(CryptoPrice.query.filter_by(symbol=symbol).filter(
-                CryptoPrice.date >= latest_data.date - timedelta(days=24)).all())
-            market_data[symbol]['chart_24d'] = ','.join([str(round(d.price, 2)) for d in data])
+                CryptoPrice.date >= latest_data.date - timedelta(days=30)).all())
+            market_data[symbol]['chart_30d'] = ','.join([str(round(d.price, 2)) for d in data])
+
+        # Order by price
+        market_data = {k: v for k, v in sorted(market_data.items(),
+                                               key=lambda item: float(item[1]['price'].replace(',', '')),
+                                               reverse=True)}
 
         return market_data
 

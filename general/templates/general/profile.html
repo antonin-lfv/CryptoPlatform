@@ -226,8 +226,8 @@
                 var user_balance = data;
 
                 // Update the balance in the div with id="crypto_balance"
-                $("#crypto_balance").html(user_balance.crypto_balance + " USD");
-                $("#web3_balance").html(user_balance.web3_balance + " USD");
+                $("#crypto_balance").html(user_balance["crypto_balance"].toLocaleString() + " USD");
+                $("#web3_balance").html(user_balance["web3_balance"].toLocaleString() + " USD");
 
                 // Pie chart
                 $(function () {

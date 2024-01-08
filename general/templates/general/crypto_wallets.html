@@ -494,7 +494,8 @@
                     var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol];
                     if (balanceInfo) {
                         // Update the balance in the div with id="crypto_balance"
-                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol + " ~ $" + balanceInfo["balance"]);
+                        // The balance in USD must be formatted with commas to separate thousands
+                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol + " ~ $" + balanceInfo["balance"].toLocaleString());
                     }
                 });
             }
@@ -515,8 +516,8 @@
                 // Get the response data
                 var game_wallet = data;
                 // Update the balance in the div with id="mini_wallet" and "bank_wallet"
-                $("#mini_wallet").html(game_wallet["mini_wallet"] + "$");
-                $("#bank_wallet").html(game_wallet["bank_wallet"] + "$");
+                $("#mini_wallet").html(game_wallet["mini_wallet"].toLocaleString() + "$");
+                $("#bank_wallet").html(game_wallet["bank_wallet"].toLocaleString() + "$");
             }
         });
     }

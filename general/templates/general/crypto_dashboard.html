@@ -58,38 +58,41 @@
                                             <th class="text-end">Change % (24H)</th>
                                             <th class="text-end">Change % (7D)</th>
                                             <th class="text-end">Change % (30D)</th>
-                                            <th class="text-end">Chart (24D)</th>
+                                            <th class="text-end">Chart (30D)</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {% for row_market in market_data.values() %}
-                                        <tr role="row">
-                                            <td><span><a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"><i class="cc {{ row_market.symbol }}"
-                                                                     title="{{ row_market.symbol }}"></i></a></span>
-                                            </td>
-                                            <td>
-                                                <small><a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"
-                                                          class="hover-warning"> {{ row_market.name }}</a></small>
-                                                <h6 class="text-muted">{{ row_market.symbol }}</h6>
-                                            </td>
-                                            <td class="text-end"><p><span>$</span> {{ row_market.price }}</p></td>
-                                            <td class="text-end"><p>{{ row_market.volume }}</p></td>
-                                            <td class="no-wrap text-end">
-                                                <label class="label label-{% if row_market.change_24h > 0 %}success{% else %}danger{% endif %}">
-                                                    <i class="fa fa-chevron-{% if row_market.change_24h > 0 %}up{% else %}down{% endif %}">
-                                                    </i> {{ row_market.change_24h }}%</label></td>
-                                            <td class="no-wrap text-end">
-                                                <label class="label label-{% if row_market.change_7d > 0 %}success{% else %}danger{% endif %}">
-                                                    <i class="fa fa-chevron-{% if row_market.change_7d > 0 %}up{% else %}down{% endif %}">
-                                                    </i> {{ row_market.change_7d }}%</label></td>
-                                            <td class="no-wrap text-end">
-                                                <label class="label label-{% if row_market.change_30d > 0 %}success{% else %}danger{% endif %}">
-                                                    <i class="fa fa-chevron-{% if row_market.change_30d > 0 %}up{% else %}down{% endif %}">
-                                                    </i> {{ row_market.change_30d }}%</label></td>
-                                            <td><a href="#"><span
-                                                    class="sparklines">{{ row_market.chart_24d }}</span></a>
-                                            </td>
-                                        </tr>
+                                            <tr role="row">
+                                                <td><span><a
+                                                        href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"><i
+                                                        class="cc {{ row_market.symbol }}"
+                                                        title="{{ row_market.symbol }}"></i></a></span>
+                                                </td>
+                                                <td>
+                                                    <small><a
+                                                            href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row_market.API_symbol ) }}"
+                                                            class="hover-warning"> {{ row_market.name }}</a></small>
+                                                    <h6 class="text-muted">{{ row_market.symbol }}</h6>
+                                                </td>
+                                                <td class="text-end"><p><span>$</span> {{ row_market.price }}</p></td>
+                                                <td class="text-end"><p>{{ row_market.volume }}</p></td>
+                                                <td class="no-wrap text-end">
+                                                    <label class="label label-{% if row_market.change_24h > 0 %}success{% else %}danger{% endif %}">
+                                                        <i class="fa fa-chevron-{% if row_market.change_24h > 0 %}up{% else %}down{% endif %}">
+                                                        </i> {{ row_market.change_24h }}%</label></td>
+                                                <td class="no-wrap text-end">
+                                                    <label class="label label-{% if row_market.change_7d > 0 %}success{% else %}danger{% endif %}">
+                                                        <i class="fa fa-chevron-{% if row_market.change_7d > 0 %}up{% else %}down{% endif %}">
+                                                        </i> {{ row_market.change_7d }}%</label></td>
+                                                <td class="no-wrap text-end">
+                                                    <label class="label label-{% if row_market.change_30d > 0 %}success{% else %}danger{% endif %}">
+                                                        <i class="fa fa-chevron-{% if row_market.change_30d > 0 %}up{% else %}down{% endif %}">
+                                                        </i> {{ row_market.change_30d }}%</label></td>
+                                                <td><a href="#"><span
+                                                        class="sparklines">{{ row_market.chart_30d }}</span></a>
+                                                </td>
+                                            </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
@@ -115,12 +118,13 @@
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
-function sparkline_charts() {
-    $('.sparklines').sparkline('html');
-}
-if ($('.sparklines').length) {
-    sparkline_charts();
-}
+    function sparkline_charts() {
+        $('.sparklines').sparkline('html');
+    }
+
+    if ($('.sparklines').length) {
+        sparkline_charts();
+    }
 </script>
 
 
