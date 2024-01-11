@@ -65,64 +65,70 @@
                                                 <div type="button"
                                                      class="waves-effect waves-light btn btn-outline btn-primary mb-5"
                                                      data-bs-toggle="modal"
-                                                     data-bs-target=".bs-example-modal-lg">
+                                                     data-bs-target=".bs-example-modal-lg"
+                                                     onclick="$('.selected_crypto_to_sell').html('{{ name }}'); init_pop_up()">
                                                     <i class="fa fa-paper-plane"></i> Convert
-                                                </div>
-                                                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
-                                                     aria-labelledby="myLargeModalLabel" aria-hidden="true"
-                                                     style="display: none;">
-                                                    <div class="modal-dialog modal-lg">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title" id="myLargeModalLabel">
-                                                                    Convert {{ symbol.split('-')[0] }}</h4>
-                                                                <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>
-                                                                    You're about to convert
-                                                                    <strong>{{ symbol.split('-')[0] }}</strong> to
-                                                                    <strong id="selected_crypto_to_convert"></strong>.
-                                                                </p>
-                                                                <div class="box" style="text-align: center">
-                                                                    <div class="exchange-calculator">
-                                                                        <input type="text" class="form-control"
-                                                                               name="coins-exchange"
-                                                                               placeholder=""
-                                                                               value="10.1548 {{ symbol.split('-')[0] }}">
-                                                                        <div class="equal"> =</div>
-                                                                        <input type="text" class="form-control"
-                                                                               name="money-exchange"
-                                                                               placeholder="" value="125.158">
-                                                                        <select class="coins-exchange front-select"
-                                                                                name="state"
-                                                                                onchange="update_modal_info()">
-                                                                            {% for other_crypto in top_cryptos_names %}
-                                                                                {% if other_crypto != name %}
-                                                                                    <option value="{{ other_crypto }}">
-                                                                                        {{ other_crypto }}</option>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-success btn-outline-success text-start"
-                                                                        data-bs-dismiss="modal">Exchange
-                                                                </button>
-                                                                <button type="button" class="btn btn-danger btn-outline-danger text-start"
-                                                                        data-bs-dismiss="modal">Cancel
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     {% endfor %}
+                                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                                         aria-labelledby="myLargeModalLabel" aria-hidden="true"
+                                         style="display: none;">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="myLargeModalLabel">
+                                                        Convert </h4>
+                                                    <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        You're about to convert
+                                                        <strong class="selected_crypto_to_sell"></strong> to
+                                                        <strong class="selected_crypto_to_buy"></strong>.
+                                                    </p>
+                                                    <p>
+                                                        You have <strong id="balance_crypto_to_sell"></strong>
+                                                        and <strong id="balance_crypto_to_buy"></strong>.
+                                                    </p>
+                                                    <div class="box" style="text-align: center">
+                                                        <div class="exchange-calculator">
+                                                            <input type="text"
+                                                                   class="form-control"
+                                                                   name="coins-exchange"
+                                                                   placeholder=""
+                                                                   value="1"
+                                                                   id="input_crypto_to_sell"
+                                                            >
+                                                            <div class="equal"> =</div>
+                                                            <input type="text" class="form-control"
+                                                                   name="money-exchange"
+                                                                   placeholder="" value="125.158"
+                                                                   id="input_crypto_to_buy">
+                                                            <select class="coins-exchange front-select"
+                                                                    name="state"
+                                                                    onchange="update_modal_info()">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn btn-success btn-outline-success text-start"
+                                                            data-bs-dismiss="modal"
+                                                    onclick="button_convert_crypto()">Exchange
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-outline-danger text-start"
+                                                            data-bs-dismiss="modal">Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -220,289 +226,6 @@
 <!-- Page Content overlay -->
 {% include('includes/javascript_include_dashboard.html') %}
 
-<script>
-    /*
-    // For the little graphique with value and graph (not in this page anymore)
-    //[chartjs Javascript]
-    $(document).ready(function () {
-
-        'use strict';
-
-        //----chart1
-        //Get the context of the Chart canvas element we want to select
-        var dasChartjs1 = document.getElementById("chartjs1").getContext("2d");
-        // Create Linear Gradient
-        var blue_trans_gradient1 = dasChartjs1.createLinearGradient(0, 0, 0, 100);
-        blue_trans_gradient1.addColorStop(0, 'rgba(247, 147, 26,1)');
-        blue_trans_gradient1.addColorStop(1, 'rgba(255,255,255,0)');
-        // Chart Options
-        var DASStats1 = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetStrokeWidth: 3,
-            pointDotStrokeWidth: 4,
-            tooltipFillColor: "rgba(247, 147, 26,0.8)",
-            legend: {
-                display: false,
-            },
-            hover: {
-                mode: 'label'
-            },
-            scales: {
-                xAxes: [{
-                    display: false,
-                }],
-                yAxes: [{
-                    display: false,
-                    ticks: {
-                        min: 0,
-                        max: 85
-                    },
-                }]
-            },
-            title: {
-                display: false,
-                fontColor: "#FFF",
-                fullWidth: false,
-                fontSize: 30,
-                text: '52%'
-            }
-        };
-
-        // Chart Data
-        var DASMonthData1 = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-            datasets: [{
-                label: "abc",
-                data: [20, 18, 35, 60, 38, 40, 70],
-                backgroundColor: blue_trans_gradient1,
-                borderColor: "#F7931A",
-                borderWidth: 1.5,
-                strokeColor: "#F7931A",
-                pointRadius: 0,
-            }]
-        };
-
-        var DASCardconfig1 = {
-            type: 'line',
-
-            // Chart Options
-            options: DASStats1,
-
-            // Chart Data
-            data: DASMonthData1
-        };
-
-        // Create the chart
-        var DASAreaChart1 = new Chart(dasChartjs1, DASCardconfig1);
-
-
-        //----chart2
-        //Get the context of the Chart canvas element we want to select
-        var dasChartjs = document.getElementById("chartjs2").getContext("2d");
-        // Create Linear Gradient
-        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-        blue_trans_gradient.addColorStop(0, 'rgba(131, 131, 131,1)');
-        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-        // Chart Options
-        var DASStats = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetStrokeWidth: 3,
-            pointDotStrokeWidth: 4,
-            tooltipFillColor: "rgba(131, 131, 131,0.8)",
-            legend: {
-                display: false,
-            },
-            hover: {
-                mode: 'label'
-            },
-            scales: {
-                xAxes: [{
-                    display: false,
-                }],
-                yAxes: [{
-                    display: false,
-                    ticks: {
-                        min: 0,
-                        max: 85
-                    },
-                }]
-            },
-            title: {
-                display: false,
-                fontColor: "#FFF",
-                fullWidth: false,
-                fontSize: 30,
-                text: '52%'
-            }
-        };
-
-        // Chart Data
-        var DASMonthData = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-            datasets: [{
-                label: "abc",
-                data: [40, 30, 60, 40, 45, 30, 60],
-                backgroundColor: blue_trans_gradient,
-                borderColor: "#838383",
-                borderWidth: 1.5,
-                strokeColor: "#838383",
-                pointRadius: 0,
-            }]
-        };
-
-        var DASCardconfig = {
-            type: 'line',
-            // Chart Options
-            options: DASStats,
-            // Chart Data
-            data: DASMonthData
-        };
-
-        // Create the chart
-        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
-
-        //----chart3
-        //Get the context of the Chart canvas element we want to select
-        var dasChartjs = document.getElementById("chartjs3").getContext("2d");
-        // Create Linear Gradient
-        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-        blue_trans_gradient.addColorStop(0, 'rgba(27, 197, 89,1)');
-        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-        // Chart Options
-        var DASStats = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetStrokeWidth: 3,
-            pointDotStrokeWidth: 4,
-            tooltipFillColor: "rgba(27, 197, 89,0.8)",
-            legend: {
-                display: false,
-            },
-            hover: {
-                mode: 'label'
-            },
-            scales: {
-                xAxes: [{
-                    display: false,
-                }],
-                yAxes: [{
-                    display: false,
-                    ticks: {
-                        min: 0,
-                        max: 85
-                    },
-                }]
-            },
-            title: {
-                display: false,
-                fontColor: "#FFF",
-                fullWidth: false,
-                fontSize: 30,
-                text: '52%'
-            }
-        };
-
-        // Chart Data
-        var DASMonthData = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-            datasets: [{
-                label: "abc",
-                data: [70, 20, 35, 60, 20, 40, 30],
-                backgroundColor: blue_trans_gradient,
-                borderColor: "#499806",
-                borderWidth: 1.5,
-                strokeColor: "#499806",
-                pointRadius: 0,
-            }]
-        };
-
-        var DASCardconfig = {
-            type: 'line',
-
-            // Chart Options
-            options: DASStats,
-
-            // Chart Data
-            data: DASMonthData
-        };
-
-        // Create the chart
-        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
-
-
-        //----chart4
-        //Get the context of the Chart canvas element we want to select
-        var dasChartjs = document.getElementById("chartjs4").getContext("2d");
-        // Create Linear Gradient
-        var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
-        blue_trans_gradient.addColorStop(0, 'rgba(28, 117, 188,1)');
-        blue_trans_gradient.addColorStop(1, 'rgba(255,255,255,0)');
-        // Chart Options
-        var DASStats = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetStrokeWidth: 3,
-            pointDotStrokeWidth: 4,
-            tooltipFillColor: "rgba(28, 117, 188,0.8)",
-            legend: {
-                display: false,
-            },
-            hover: {
-                mode: 'label'
-            },
-            scales: {
-                xAxes: [{
-                    display: false,
-                }],
-                yAxes: [{
-                    display: false,
-                    ticks: {
-                        min: 0,
-                        max: 85
-                    },
-                }]
-            },
-            title: {
-                display: false,
-                fontColor: "#FFF",
-                fullWidth: false,
-                fontSize: 30,
-                text: '52%'
-            }
-        };
-
-        // Chart Data
-        var DASMonthData = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-            datasets: [{
-                label: "abc",
-                data: [20, 50, 65, 30, 24, 60, 40],
-                backgroundColor: blue_trans_gradient,
-                borderColor: "#1c75bc",
-                borderWidth: 1.5,
-                strokeColor: "#1c75bc",
-                pointRadius: 0,
-            }]
-        };
-
-        var DASCardconfig = {
-            type: 'line',
-
-            // Chart Options
-            options: DASStats,
-
-            // Chart Data
-            data: DASMonthData
-        };
-
-        // Create the chart
-        var DASAreaChart = new Chart(dasChartjs, DASCardconfig);
-
-    }); // End of use strict
-    */
-</script>
 
 <script>
     // for currency exchange
@@ -608,9 +331,6 @@
                 $("#buy_button").prop('disabled', true);
             }
         }
-
-        // Vos fonctions existantes pour les conversions...
-        // Assurez-vous d'appeler validateAmount() à la fin des fonctions success de vos appels AJAX
 
         // Vérifier le montant à chaque modification des valeurs
         $("#input_usd, #input_crypto").on('keyup', function () {
@@ -781,11 +501,51 @@
 
     // update modal info (popup) when user select a crypto to convert
     function update_modal_info() {
-        var selected_crypto_to_convert = $(".coins-exchange").val();
-        $("#selected_crypto_to_convert").html(selected_crypto_to_convert);
+        // == text at the top of the modal
+        var selected_crypto = $(".coins-exchange").val();
+        $(".selected_crypto_to_buy").html(selected_crypto);
+        // display the amount of the crypto to sell and to buy
+        var symbol_to_buy = name_to_symbol[$(".selected_crypto_to_buy").html()];
+        var symbol_to_sell = name_to_symbol[$(".selected_crypto_to_sell").html()];
+        var url = "/api/get_user_balance";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the response data
+                var user_balance = data;
+                // Get the balance of the crypto to sell
+                var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol_to_sell];
+                var balance_to_sell = balanceInfo["quantity"];
+                // Get the balance of the crypto to buy
+                var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol_to_buy];
+                var balance_to_buy = balanceInfo["quantity"];
+                // display the balance of the crypto to sell and to buy
+                $("#balance_crypto_to_sell").html(balance_to_sell + " " + symbol_to_sell.split("-")[0]);
+                $("#balance_crypto_to_buy").html(balance_to_buy + " " + symbol_to_buy.split("-")[0]);
+            }
+        });
     }
 
-    // Display the conversion in the exchange calculator from crypto to crypto
+    // init popup
+    function init_pop_up(){
+        // Create the option for the select with the jinja list top_cryptos_names
+        // removing the selected crypto
+        var selected_crypto = $(".selected_crypto_to_sell").html();
+        var options = "";
+        {% for symbol, name in zip(top_cryptos_symbols,top_cryptos_names) %}
+            if ("{{ name }}" !== selected_crypto) {
+                options += '<option value="{{ name }}">{{ name }}</option>';
+            }
+        {% endfor %}
+        $(".coins-exchange").html(options);
+        update_modal_info();
+    }
+
+    // Convert crypto to crypto
+    function button_convert_crypto(){
+
+    }
 </script>
 
 

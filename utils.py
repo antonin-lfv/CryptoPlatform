@@ -27,5 +27,11 @@ top_cryptos_names = [
 mini_wallet = 1000
 bank_wallet = 10000
 
+# dict to get name from symbol
+symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))
+
+# dict to get symbol from name
+name_to_symbol = dict(zip(top_cryptos_names, top_cryptos_symbols))
+
 
 # ===== Functions
