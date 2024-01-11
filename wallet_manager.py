@@ -167,7 +167,6 @@ class wallet_manager:
                 return {'error': 'Not enough money in bank'}
 
         # Update user wallet
-        print(f"Symbol: {symbol}")
         wallet = Wallet.query.filter_by(user_id=user.id, symbol=symbol).first()
         # If wallet does not exist, create it
         if not wallet:

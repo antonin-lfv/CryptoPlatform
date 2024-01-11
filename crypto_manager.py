@@ -28,7 +28,7 @@ class CryptoDataManager:
                     latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
                     if latest_data and latest_data.date == datetime.utcnow().date():
-                        print(f"Les données pour {symbol} sont déjà à jour.")
+                        # print(f"Les données pour {symbol} sont déjà à jour.")
                         continue
 
                     try:
@@ -49,7 +49,7 @@ class CryptoDataManager:
                                 db.session.add(new_data)
 
                         db.session.commit()
-                        print(f"Les données pour {symbol} ont été mises à jour.")
+                        # print(f"Les données pour {symbol} ont été mises à jour.")
 
                     except KeyError as e:
                         print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
@@ -63,7 +63,7 @@ class CryptoDataManager:
                 latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
                 if latest_data and latest_data.date == datetime.utcnow().date():
-                    print(f"Les données pour {symbol} sont déjà à jour.")
+                    # print(f"Les données pour {symbol} sont déjà à jour.")
                     return
 
                 try:
@@ -84,14 +84,13 @@ class CryptoDataManager:
                             db.session.add(new_data)
 
                     db.session.commit()
-                    print(f"Les données pour {symbol} ont été mises à jour.")
+                    # print(f"Les données pour {symbol} ont été mises à jour.")
 
                 except KeyError as e:
                     print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}.")
 
                 except Exception as e:
                     print(f"Une erreur inattendue est survenue: {e}.")
-
 
     @staticmethod
     def get_specific_crypto_data(symbol):

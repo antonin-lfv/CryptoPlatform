@@ -8,3 +8,6 @@ requests
 Werkzeug
 SQLAlchemy
 yfinance
+flask_sqlalchemy
+flask_login
+gunicorn
