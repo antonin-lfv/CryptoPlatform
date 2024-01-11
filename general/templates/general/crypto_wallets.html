@@ -62,10 +62,64 @@
                                                 </div>
                                             </a>
                                             <div>
-                                                <button type="button"
-                                                        class="waves-effect waves-light btn btn-outline btn-primary mb-5">
+                                                <div type="button"
+                                                     class="waves-effect waves-light btn btn-outline btn-primary mb-5"
+                                                     data-bs-toggle="modal"
+                                                     data-bs-target=".bs-example-modal-lg">
                                                     <i class="fa fa-paper-plane"></i> Convert
-                                                </button>
+                                                </div>
+                                                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+                                                     aria-labelledby="myLargeModalLabel" aria-hidden="true"
+                                                     style="display: none;">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title" id="myLargeModalLabel">
+                                                                    Convert {{ symbol.split('-')[0] }}</h4>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>
+                                                                    You're about to convert
+                                                                    <strong>{{ symbol.split('-')[0] }}</strong> to
+                                                                    <strong id="selected_crypto_to_convert"></strong>.
+                                                                </p>
+                                                                <div class="box" style="text-align: center">
+                                                                    <div class="exchange-calculator">
+                                                                        <input type="text" class="form-control"
+                                                                               name="coins-exchange"
+                                                                               placeholder=""
+                                                                               value="10.1548 {{ symbol.split('-')[0] }}">
+                                                                        <div class="equal"> =</div>
+                                                                        <input type="text" class="form-control"
+                                                                               name="money-exchange"
+                                                                               placeholder="" value="125.158">
+                                                                        <select class="coins-exchange front-select"
+                                                                                name="state"
+                                                                                onchange="update_modal_info()">
+                                                                            {% for other_crypto in top_cryptos_names %}
+                                                                                {% if other_crypto != name %}
+                                                                                    <option value="{{ other_crypto }}">
+                                                                                        {{ other_crypto }}</option>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-success btn-outline-success text-start"
+                                                                        data-bs-dismiss="modal">Exchange
+                                                                </button>
+                                                                <button type="button" class="btn btn-danger btn-outline-danger text-start"
+                                                                        data-bs-dismiss="modal">Cancel
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -141,7 +195,7 @@
                             </div>
                             <div class="col-xl-12 col-12">
                                 <div class="box">
-                                    <h3 class="title w-p100 mt-10 mb-0 p-20">Last crypto transactions</h3>
+                                    <h3 class="title w-p100 mt-10 mb-0 p-20">Last 7 crypto transactions</h3>
                                     <div class="media-list media-list-hover w-p100 mt-0">
                                         <div id="wallet_history_container"></div>
                                     </div>
@@ -453,11 +507,11 @@
 <script>
     // for currency exchange
     if ($('.coins-exchange').length) {
-        $('.coins-exchange').select2();
+        $('.coins-exchange').select2({
+            minimumResultsForSearch: -1,
+        });
     }
-    if ($('.money-exchange').length) {
-        $('.money-exchange').select2();
-    }
+
 </script>
 
 <script>
@@ -583,30 +637,39 @@
                 $("#wallet_history_container").empty();
 
                 // Limit to the last 5 transactions
-                var wallet_history = data["wallet_history"].slice(-5);
+                var wallet_history = data["wallet_history"].slice(-7);
                 // Reverse the list to have the last transaction first
                 wallet_history.reverse();
                 console.log(wallet_history);
 
-                // Créer et ajouter les éléments HTML pour chaque transaction
-                wallet_history.forEach(function (transaction) {
-                    var historyElement = '<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
+                // Si l'historique est vide, afficher un message : "No transaction yet"
+                if (wallet_history.length === 0) {
+                    $("#wallet_history_container").append('<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
                         '<span>' +
-                        '<i class="fa fa-circle ' + (transaction.transaction_type === 'sell' ? 'text-danger' : 'text-success') + ' pe-10 fs-12"></i>' +
-                        transaction.date + '<br>' +
+                        '<i class="fa fa-circle text-danger pe-10 fs-12"></i>' +
+                        'No transaction yet' +
                         '</span>' +
-                        '<span class="text-end pull-right">' +
-                        '<span class="badge badge-sm badge-' + (transaction.transaction_type === 'sell' ? 'danger' : 'success') + ' mb-10">' +
-                        transaction.transaction_type + '</span><br>' +
-                        transaction.quantity + ' ' + transaction.symbol +
-                        '</span>' +
-                        '</h5>';
-                    $("#wallet_history_container").append(historyElement);
-                });
+                        '</h5>');
+                } else {
+                    // Créer et ajouter les éléments HTML pour chaque transaction
+                    wallet_history.forEach(function (transaction) {
+                        var historyElement = '<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
+                            '<span>' +
+                            '<i class="fa fa-circle ' + (transaction.transaction_type === 'sell' ? 'text-danger' : 'text-success') + ' pe-10 fs-12"></i>' +
+                            transaction.date + '<br>' +
+                            '</span>' +
+                            '<span class="text-end pull-right">' +
+                            '<span class="badge badge-sm badge-' + (transaction.transaction_type === 'sell' ? 'danger' : 'success') + ' mb-10">' +
+                            transaction.transaction_type + '</span><br>' +
+                            transaction.quantity + ' ' + transaction.symbol +
+                            '</span>' +
+                            '</h5>';
+                        $("#wallet_history_container").append(historyElement);
+                    });
+                }
             }
         });
     }
-
 
     function setupEventHandlers() {
         // Fonction pour enlever les unités de la valeur
@@ -655,7 +718,7 @@
 </script>
 
 <script>
-    // Display the conversion in the exchange calculator
+    // Display the conversion in the exchange calculator from mini or bank wallet
     $(document).ready(function () {
         // Fonction pour valider si l'entrée est un nombre
         function isValidNumber(value) {
@@ -715,6 +778,14 @@
             }
         });
     });
+
+    // update modal info (popup) when user select a crypto to convert
+    function update_modal_info() {
+        var selected_crypto_to_convert = $(".coins-exchange").val();
+        $("#selected_crypto_to_convert").html(selected_crypto_to_convert);
+    }
+
+    // Display the conversion in the exchange calculator from crypto to crypto
 </script>
 
 
@@ -725,6 +796,8 @@
         validateAmount();
         setupEventHandlers();
         update_wallet_history();
+
+        update_modal_info()
     });
 </script>
 
