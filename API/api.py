@@ -67,10 +67,37 @@ def buy_crypto_with_USD(symbol, From, quantity, quantity_type):
         quantity_type: str
             'crypto' or 'USD'
     """
+    assert quantity_type in ['crypto', 'USD']
     if quantity_type == 'crypto':
         response = wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_crypto=quantity)
     else:
         response = wallet_manager().buy_crypto_with_USD(current_user, symbol, From, quantity_USD=quantity)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/buy_crypto_with_crypto/<symbol_to_sell>/<symbol_to_buy>/<quantity>/<action_on_quantity>',
+               methods=['GET', 'POST'])
+@login_required
+def buy_crypto_with_crypto(symbol_to_sell, symbol_to_buy, quantity, action_on_quantity):
+    """
+    Parameters:
+        symbol_to_sell: str
+            Symbol of the crypto to sell
+        symbol_to_buy: str
+            Symbol of the crypto to buy
+        quantity: float
+            Quantity of crypto
+        action_on_quantity: str
+            'sell' or 'buy', if 'sell' then quantity is the quantity of crypto to sell, if 'buy' then quantity is the
+            quantity of crypto to buy
+    """
+    assert action_on_quantity in ['sell', 'buy']
+    if action_on_quantity == 'sell':
+        response = wallet_manager().buy_crypto_with_crypto(current_user, symbol_to_sell,
+                                                           symbol_to_buy, quantity_to_sell=quantity)
+    else:
+        response = wallet_manager().buy_crypto_with_crypto(current_user, symbol_to_sell,
+                                                           symbol_to_buy, quantity_to_buy=quantity)
     return jsonify(response)
 
 
@@ -97,6 +124,19 @@ def get_crypto_from_USD(symbol, USD):
         float
     """
     data = CryptoDataManager().get_crypto_from_USD(symbol, USD)
+    return jsonify(data)
+
+
+@BLP_api.route('/api/get_crypto_from_crypto/<symbol_from>/<symbol_to>/<quantity>', methods=['GET', 'POST'])
+@login_required
+def get_crypto_from_crypto(symbol_from, symbol_to, quantity):
+    """
+    Get the quantity of a specific crypto from a USD amount.
+
+    Return:
+        float
+    """
+    data = CryptoDataManager().get_crypto_from_crypto(symbol_from, symbol_to, quantity)
     return jsonify(data)
 
 
