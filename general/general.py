@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
+from wallet_manager import wallet_manager
+from notification_manager import Notification_manager
 from utils import top_cryptos_symbols, top_cryptos_names
 
 BLP_general = Blueprint('BLP_general', __name__,
@@ -8,11 +10,17 @@ BLP_general = Blueprint('BLP_general', __name__,
                         static_folder='static')
 
 
-# Decorator to update prices before each route if needed
 @BLP_general.before_request
 def update_prices():
+    # Update prices if needed
     crypto_manager = CryptoDataManager()
     crypto_manager.update_crypto_data()
+    # Update game wallet if needed
+    w_manager = wallet_manager()
+    w_manager.update_game_wallet(current_user)
+    # Delete old notifications
+    notification_manager = Notification_manager()
+    notification_manager.delete_old_notifications(current_user)
 
 
 @BLP_general.route('/home', methods=['GET', 'POST'])

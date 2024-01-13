@@ -86,6 +86,23 @@ class wallet_manager:
             }
 
     @staticmethod
+    def update_game_wallet(user):
+        """
+        Update game wallet of user
+
+        if col mini_wallet_last_update is older than 1 day, set mini_wallet to 1000
+        if col bank_wallet_last_update is older than 2 days, set bank_wallet to 10000
+        """
+        game_wallet = user.game_wallet[0]
+        if game_wallet.mini_wallet_last_update < datetime.utcnow() - timedelta(days=1):
+            game_wallet.mini_wallet = 1000
+            game_wallet.mini_wallet_last_update = datetime.utcnow()
+        if game_wallet.bank_wallet_last_update < datetime.utcnow() - timedelta(days=2):
+            game_wallet.bank_wallet = 10000
+            game_wallet.bank_wallet_last_update = datetime.utcnow()
+        db.session.commit()
+
+    @staticmethod
     def get_wallet_history(user):
         """
         Get wallet history of user

@@ -2,10 +2,21 @@ from flask import Blueprint, render_template, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
+from notification_manager import Notification_manager
 
 BLP_api = Blueprint('BLP_api', __name__)
 
+# Index
+# 1. Crypto data
+# 2. Wallet
+# 3. Buy crypto
+# 4. Notifications
+# 5. General functions
 
+
+# ================================
+# Crypto data
+# ================================
 @BLP_api.route('/api/get_specific_crypto_data/<symbol>', methods=['GET', 'POST'])
 @login_required
 def get_specific_crypto_data(symbol):
@@ -31,6 +42,49 @@ def get_all_crypto_data():
     return data
 
 
+@BLP_api.route('/api/get_USD_from_crypto/<symbol>/<quantity>', methods=['GET', 'POST'])
+@login_required
+def get_USD_from_crypto(symbol, quantity):
+    """
+    Get the USD value of a quantity of a specific crypto.
+
+    Return:
+        float
+    """
+    data = CryptoDataManager().get_USD_from_crypto(symbol, quantity)
+    return jsonify(data)
+
+
+@BLP_api.route('/api/get_crypto_from_USD/<symbol>/<USD>', methods=['GET', 'POST'])
+@login_required
+def get_crypto_from_USD(symbol, USD):
+    """
+    Get the quantity of a specific crypto from a USD amount.
+
+    Return:
+        float
+    """
+    data = CryptoDataManager().get_crypto_from_USD(symbol, USD)
+    return jsonify(data)
+
+
+@BLP_api.route('/api/get_crypto_from_crypto/<symbol_from>/<symbol_to>/<quantity>', methods=['GET', 'POST'])
+@login_required
+def get_crypto_from_crypto(symbol_from, symbol_to, quantity):
+    """
+    Get the quantity of a specific crypto from a USD amount.
+
+    Return:
+        float
+    """
+    data = CryptoDataManager().get_crypto_from_crypto(symbol_from, symbol_to, quantity)
+    return jsonify(data)
+
+
+# ================================
+# Wallet
+# ================================
+
 @BLP_api.route('/api/get_user_balance', methods=['GET', 'POST'])
 @login_required
 def get_user_balance():
@@ -50,6 +104,20 @@ def get_game_wallet():
     game_wallet = wallet_manager().get_game_wallet(current_user)
     return jsonify(game_wallet)
 
+
+@BLP_api.route('/api/get_wallet_history', methods=['GET', 'POST'])
+@login_required
+def get_wallet_history():
+    """
+    Get wallet history of user
+    """
+    wallet_history = wallet_manager().get_wallet_history(current_user)
+    return jsonify(wallet_history)
+
+
+# ================================
+# Buy crypto
+# ================================
 
 @BLP_api.route('/api/buy_crypto_with_USD/<symbol>/<From>/<quantity>/<quantity_type>', methods=['GET', 'POST'])
 @login_required
@@ -101,54 +169,48 @@ def buy_crypto_with_crypto(symbol_to_sell, symbol_to_buy, quantity, action_on_qu
     return jsonify(response)
 
 
-@BLP_api.route('/api/get_USD_from_crypto/<symbol>/<quantity>', methods=['GET', 'POST'])
+# ================================
+# Notifications
+# ================================
+
+
+@BLP_api.route('/api/get_notifications', methods=['GET', 'POST'])
 @login_required
-def get_USD_from_crypto(symbol, quantity):
+def get_notifications():
     """
-    Get the USD value of a quantity of a specific crypto.
-
-    Return:
-        float
+    Get all notifications of the user
     """
-    data = CryptoDataManager().get_USD_from_crypto(symbol, quantity)
-    return jsonify(data)
+    notifications = Notification_manager().get_notifications(current_user)
+    if not notifications:
+        notifications = []
+    return jsonify(notifications)
 
 
-@BLP_api.route('/api/get_crypto_from_USD/<symbol>/<USD>', methods=['GET', 'POST'])
+@BLP_api.route('/api/add_notification', methods=['GET', 'POST'])
 @login_required
-def get_crypto_from_USD(symbol, USD):
+def add_notification():
     """
-    Get the quantity of a specific crypto from a USD amount.
-
-    Return:
-        float
+    Add a notification to the database
     """
-    data = CryptoDataManager().get_crypto_from_USD(symbol, USD)
-    return jsonify(data)
+    text = request.args.get('text', '')
+    icon = request.args.get('icon', 'user')
+    Notification_manager().add_notification(current_user.id, text, icon)
+    return {'status': 'success'}
 
 
-@BLP_api.route('/api/get_crypto_from_crypto/<symbol_from>/<symbol_to>/<quantity>', methods=['GET', 'POST'])
+@BLP_api.route('/api/delete_all_notifications', methods=['GET', 'POST'])
 @login_required
-def get_crypto_from_crypto(symbol_from, symbol_to, quantity):
+def delete_all_notifications():
     """
-    Get the quantity of a specific crypto from a USD amount.
-
-    Return:
-        float
+    Delete all notifications from the database
     """
-    data = CryptoDataManager().get_crypto_from_crypto(symbol_from, symbol_to, quantity)
-    return jsonify(data)
+    Notification_manager().delete_all_notifications(current_user)
+    return {'status': 'success'}
 
 
-@BLP_api.route('/api/get_wallet_history', methods=['GET', 'POST'])
-@login_required
-def get_wallet_history():
-    """
-    Get wallet history of user
-    """
-    wallet_history = wallet_manager().get_wallet_history(current_user)
-    return jsonify(wallet_history)
-
+# ================================
+# General functions
+# ================================
 
 @BLP_api.route('/set_theme')
 def set_theme():

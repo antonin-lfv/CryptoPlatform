@@ -14,17 +14,28 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/irregular-data-series.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/moment/min/moment.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/chart.js-master/Chart.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/select2/dist/js/select2.full.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/echarts/dist/echarts-en.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/sweetalert/sweetalert.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='vendor_components/sweetalert/jquery.sweet-alert.custom.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/irregular-data-series.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/apexcharts-bundle/dist/apexcharts.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/Web-Ticker-master/jquery.webticker.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/moment/min/moment.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/chart.js-master/Chart.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/select2/dist/js/select2.full.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/echarts/dist/echarts-en.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/sweetalert/jquery.sweet-alert.custom.js') }}"></script>
 
 <!-- specific -->
 <script src="{{ url_for('static', filename='js/demo.js') }}"></script>
@@ -38,14 +49,14 @@
 <!-- Others -->
 <script>
     // For the theme change
-    document.addEventListener('DOMContentLoaded', function() {
-    var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
-    themeSwitch.addEventListener('change', function(event) {
-        var theme = event.target.checked ? 'dark' : 'light';
-        fetch('/set_theme?theme=' + theme, {method: 'GET'});
+    document.addEventListener('DOMContentLoaded', function () {
+        var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
+        themeSwitch.addEventListener('change', function (event) {
+            var theme = event.target.checked ? 'dark' : 'light';
+            fetch('/set_theme?theme=' + theme, {method: 'GET'});
+        });
     });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
         {% if session['theme'] == 'dark' %}
             themeSwitch.checked = true;
@@ -54,7 +65,109 @@
         {% endif %}
     });
 
-    var symbol_to_name = {'BTC-USD': 'Bitcoin', 'ETH-USD': 'Ethereum', 'LTC-USD': 'Litecoin', 'USDT-USD': 'Tether', 'ADA-USD': 'Cardano', 'XRP-USD': 'XRP', 'DOGE-USD': 'Dogecoin', 'QTUM-USD': 'Qtum', 'BAT-USD': 'Basic Attention Token', 'NEO-USD': 'NEO'}
-    var name_to_symbol = {'Bitcoin': 'BTC-USD', 'Ethereum': 'ETH-USD', 'Litecoin': 'LTC-USD', 'Tether': 'USDT-USD', 'Cardano': 'ADA-USD', 'XRP': 'XRP-USD', 'Dogecoin': 'DOGE-USD', 'Qtum': 'QTUM-USD', 'Basic Attention Token': 'BAT-USD', 'NEO': 'NEO-USD'}
+    var symbol_to_name = {
+        'BTC-USD': 'Bitcoin',
+        'ETH-USD': 'Ethereum',
+        'LTC-USD': 'Litecoin',
+        'USDT-USD': 'Tether',
+        'ADA-USD': 'Cardano',
+        'XRP-USD': 'XRP',
+        'DOGE-USD': 'Dogecoin',
+        'QTUM-USD': 'Qtum',
+        'BAT-USD': 'Basic Attention Token',
+        'NEO-USD': 'NEO'
+    }
+    var name_to_symbol = {
+        'Bitcoin': 'BTC-USD',
+        'Ethereum': 'ETH-USD',
+        'Litecoin': 'LTC-USD',
+        'Tether': 'USDT-USD',
+        'Cardano': 'ADA-USD',
+        'XRP': 'XRP-USD',
+        'Dogecoin': 'DOGE-USD',
+        'Qtum': 'QTUM-USD',
+        'Basic Attention Token': 'BAT-USD',
+        'NEO': 'NEO-USD'
+    }
+
+    // Notification manager
+    document.addEventListener('DOMContentLoaded', function () {
+        var dropdownButton = document.querySelector('.dropdown-toggle');
+        dropdownButton.onclick = function () {
+            get_notifications()
+        };
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var clearButton = document.getElementById('clear_notifications_button')
+        clearButton.onclick = function (event) {
+            event.preventDefault(); // Empêche le comportement par défaut du lien
+            event.stopPropagation(); // Empêche l'événement de se propager aux éléments parents
+            clear_notifications();
+        };
+    });
+
+    // insert all notifications in the ul with id="notifications_space"
+    // API url is '/api/get_notifications'
+    // each notification looks like :
+    /* <li>
+            <a href="#">
+                <i class="fa fa-ICON text-info"></i> TEXT
+            </a>
+        </li>
+    */
+    // where ICON is the icon to be used and TEXT is the text to be displayed
+    function get_notifications() {
+        $.ajax({
+            url: '/api/get_notifications',
+            type: 'GET',
+            success: function (data) {
+                var notifications_space = document.getElementById('notifications_space');
+                notifications_space.innerHTML = '';
+
+                if (data.length === 0) { // Vérifier si data est vide
+                    var li = document.createElement('li');
+                    var a = document.createElement('a');
+                    var icon = document.createElement('i');
+                    icon.setAttribute('class', 'fa fa-check text-success');
+                    a.appendChild(icon);
+                    a.appendChild(document.createTextNode('No new notifications'));
+                    li.appendChild(a);
+                    notifications_space.appendChild(li);
+
+                    // hide the clear all button
+                    var clear_all_button = document.getElementById('clear_notifications');
+                    clear_all_button.style.display = 'none';
+                } else {
+                    // Affichage des notifications
+                    data.forEach(function (notification) { // Utiliser forEach pour itérer sur les notifications
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        var icon = document.createElement('i');
+                        icon.setAttribute('class', 'fa fa-' + notification['icon'] + ' text-info');
+                        a.appendChild(icon);
+                        a.appendChild(document.createTextNode(notification['message']));
+                        li.appendChild(a);
+                        notifications_space.appendChild(li);
+                    });
+                }
+            },
+            error: function (error) {
+                alert('Error while getting notifications: ' + JSON.stringify(error));
+            }
+        });
+    }
+
+    function clear_notifications() {
+        $.ajax({
+            url: '/api/delete_all_notifications',
+            type: 'GET',
+            success: function (data) {
+                get_notifications();
+            },
+            error: function (error) {
+                alert('Error while clearing notifications: ' + JSON.stringify(error));
+            }
+        });
+    }
 
 </script>

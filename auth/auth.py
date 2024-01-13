@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user
 from models import User, GameWallet, WalletDailySnapshot
+from notification_manager import Notification_manager
 from app import db
 from utils import mini_wallet, bank_wallet
 from datetime import datetime
@@ -52,6 +53,10 @@ def register():
             wallet_daily_snapshot.date = datetime.utcnow()
             wallet_daily_snapshot.quantity = 0
             db.session.add(wallet_daily_snapshot)
+            # Add a notification to welcome the user
+            Notification_manager().add_notification(user_id=User.query.filter_by(email=email).first().id,
+                                                    message=f"Welcome to CryptoSim {username}!",
+                                                    icon="user")
 
             db.session.commit()
             return render_template('auth/auth_login.html', wrong_credentials=False)

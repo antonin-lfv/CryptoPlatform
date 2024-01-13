@@ -23,7 +23,7 @@ class Wallet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC-USD
-    quantity = db.Column(db.Float, nullable=False)     # Quantité détenue
+    quantity = db.Column(db.Float, nullable=False)  # Quantité détenue
 
 
 class GameWallet(db.Model):
@@ -47,7 +47,7 @@ class WalletHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     wallet_id = db.Column(db.Integer, db.ForeignKey('wallet.id'), nullable=False)
     transaction_type = db.Column(db.String(10), nullable=False)  # 'buy' ou 'sell'
-    quantity = db.Column(db.Float, nullable=False)   # Quantity of crypto bought/sold
+    quantity = db.Column(db.Float, nullable=False)  # Quantity of crypto bought/sold
     symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -70,10 +70,34 @@ class CryptoPrice(db.Model):
     Table to record the prices of cryptocurrencies
     """
     id = db.Column(db.Integer, primary_key=True)
-    symbol = db.Column(db.String(10), nullable=False)   # Symbole de la cryptomonnaie, par ex. BTC
+    symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, par ex. BTC
     date = db.Column(db.Date, default=datetime.utcnow)  # Date de la valeur du prix
-    price = db.Column(db.Float)                          # Prix d'ouverture
-    volume = db.Column(db.Integer)                      # Volume de transactions
+    price = db.Column(db.Float)  # Prix d'ouverture
+    volume = db.Column(db.Integer)  # Volume de transactions
 
     def __repr__(self):
         return f'<CryptoPrice {self.symbol} {self.date}>'
+
+
+class Notification(db.Model):
+    """
+    Table to record the notifications of the users
+
+    Icon can be:
+    - users
+    - user
+    - warning
+    - shopping-cart
+
+    Example:
+        <li>
+            <a href="#">
+                <i class="fa fa-users text-info"></i> Some notification text
+            </a>
+        </li>
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
+    date = db.Column(db.DateTime, default=datetime.utcnow)  # Date of the notification
+    message = db.Column(db.String(1000), nullable=False)  # Message of the notification
+    icon = db.Column(db.String(1000), nullable=False)  # Icon of the notification

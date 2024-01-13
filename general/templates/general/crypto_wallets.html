@@ -117,9 +117,13 @@
                                                 <div class="modal-footer">
                                                     <button type="button"
                                                             class="btn btn-success btn-outline-success text-start"
-                                                            data-bs-dismiss="modal"
                                                             onclick="button_convert_crypto()"
-                                                            id="btn_convert_crypto">Exchange
+                                                            id="btn_convert_crypto">Convert
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-warning btn-outline-warning text-start"
+                                                            onclick="set_max_amount()"
+                                                            id="sell_max_crypto">Convert Max
                                                     </button>
                                                     <button type="button"
                                                             class="btn btn-danger btn-outline-danger text-start"
@@ -226,57 +230,8 @@
 <!-- Page Content overlay -->
 {% include('includes/javascript_include_dashboard.html') %}
 
-
 <script>
-    // for currency exchange
-    if ($('.coins-exchange').length) {
-        $('.coins-exchange').select2({
-            minimumResultsForSearch: -1,
-        });
-    }
-</script>
-
-<script>
-    function updateWalletBalances() {
-        /*
-        Update the amount for each crypto in the divs with class="crypto-wallet"
-        */
-        // Get crypto balance from API : /api/get_user_balance
-        /* That's return a JSON like this:
-        {
-                "crypto_balance": 0, # all crypto balance in USD,
-                'web3_balance': 0,   # web3 balance in USD,
-                "crypto_balance_by_symbol": {
-                    "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
-                    "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
-                    ...
-                }
-            }
-
-         */
-        // using ajax to get the data
-        var url = "/api/get_user_balance";
-        $.ajax({
-            url: url,
-            type: "GET",
-            success: function (data) {
-                // Get the response data
-                var user_balance = data;
-
-                // Display amount for each crypto
-                // Go through each crypto-wallet div
-                $(".crypto-wallet").each(function () {
-                    var symbol = $(this).data("symbol"); // Récupérer le symbole de la cryptomonnaie
-                    var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol];
-                    if (balanceInfo) {
-                        // Update the balance in the div with id="crypto_balance"
-                        // The balance in USD must be formatted with commas to separate thousands
-                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol.split('-')[0] + " ~ $" + balanceInfo["balance"].toLocaleString());
-                    }
-                });
-            }
-        });
-    }
+    // GAME WALLET JAVA SCRIPT
 
     function update_game_wallet() {
         /*
@@ -344,50 +299,6 @@
         // Reset the input fields of the buy form from USD
         $("#input_usd").val("");
         $("#input_crypto").val("");
-    }
-
-    function update_wallet_history() {
-        var url = "/api/get_wallet_history";
-        $.ajax({
-            url: url,
-            type: "GET",
-            success: function (data) {
-                // Effacer l'historique existant
-                $("#wallet_history_container").empty();
-
-                // Limit to the last 5 transactions
-                var wallet_history = data["wallet_history"].slice(-7);
-                // Reverse the list to have the last transaction first
-                wallet_history.reverse();
-                console.log(wallet_history);
-
-                // Si l'historique est vide, afficher un message : "No transaction yet"
-                if (wallet_history.length === 0) {
-                    $("#wallet_history_container").append('<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
-                        '<span>' +
-                        '<i class="fa fa-circle text-danger pe-10 fs-12"></i>' +
-                        'No transaction yet' +
-                        '</span>' +
-                        '</h5>');
-                } else {
-                    // Créer et ajouter les éléments HTML pour chaque transaction
-                    wallet_history.forEach(function (transaction) {
-                        var historyElement = '<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
-                            '<span>' +
-                            '<i class="fa fa-circle ' + (transaction.transaction_type === 'sell' ? 'text-danger' : 'text-success') + ' pe-10 fs-12"></i>' +
-                            transaction.date + '<br>' +
-                            '</span>' +
-                            '<span class="text-end pull-right">' +
-                            '<span class="badge badge-sm badge-' + (transaction.transaction_type === 'sell' ? 'danger' : 'success') + ' mb-10">' +
-                            transaction.transaction_type + '</span><br>' +
-                            transaction.quantity + ' ' + transaction.symbol +
-                            '</span>' +
-                            '</h5>';
-                        $("#wallet_history_container").append(historyElement);
-                    });
-                }
-            }
-        });
     }
 
     function setupEventHandlers() {
@@ -497,7 +408,8 @@
 </script>
 
 <script>
-    // for conversion in popup
+    // POPUP JAVA SCRIPT
+
     // update modal info (popup) when user select a crypto to convert
     function update_modal_info() {
         // Updated with the select dropdown of the crypto to buy
@@ -529,19 +441,26 @@
             }
         });
         // update the placeholder of the input of the crypto to buy
-        $("#input_crypto_to_buy").attr("placeholder", "10 "+name_to_symbol[$(".coins-exchange").val()].split("-")[0]);
+        $("#input_crypto_to_buy").attr("placeholder", "10 " + name_to_symbol[$(".coins-exchange").val()].split("-")[0]);
+    }
+
+    // for currency exchange
+    if ($('.coins-exchange').length) {
+        $('.coins-exchange').select2({
+            minimumResultsForSearch: -1,
+        });
     }
 
     $("#input_crypto_to_sell").on('keyup', function () {
         // delete the buy input
         $("#input_crypto_to_buy").val("");
-        validateConversionAmount();
+        update_modal_info();
     });
 
     $("#input_crypto_to_buy").on('keyup', function () {
         // delete the sell input
         $("#input_crypto_to_sell").val("");
-        validateConversionAmount();
+        update_modal_info();
     });
 
     function reset_buy_crypto_with_crypto() {
@@ -550,9 +469,10 @@
         $("#input_crypto_to_buy").val("");
     }
 
-
     // init popup
     function init_pop_up() {
+        // clean the input fields if they are not empty
+        reset_buy_crypto_with_crypto();
         // Create the option for the select with the jinja list top_cryptos_names
         // removing the selected crypto
         var selected_crypto = $(".selected_crypto_to_sell").html();
@@ -564,8 +484,8 @@
         {% endfor %}
         $(".coins-exchange").html(options);
         // init placeholder for the input with the balance of the selected crypto and the first option
-        $("#input_crypto_to_sell").attr("placeholder", "10 "+name_to_symbol[selected_crypto].split("-")[0]);
-        $("#input_crypto_to_buy").attr("placeholder", "10 "+name_to_symbol[$(".coins-exchange").val()].split("-")[0]);
+        $("#input_crypto_to_sell").attr("placeholder", "10 " + name_to_symbol[selected_crypto].split("-")[0]);
+        $("#input_crypto_to_buy").attr("placeholder", "10 " + name_to_symbol[$(".coins-exchange").val()].split("-")[0]);
         // update the modal info
         update_modal_info();
     }
@@ -577,15 +497,6 @@
         var maxAmount = parseFloat($("#balance_crypto_to_sell").text().split(" ")[0]);
         var symbol_to_buy = name_to_symbol[$(".selected_crypto_to_buy").html()];
         var symbol_to_sell = name_to_symbol[$(".selected_crypto_to_sell").html()];
-
-        // if the amount to sell is valid
-        if (!isNaN(input_crypto_to_sell) && input_crypto_to_sell <= maxAmount && input_crypto_to_sell > 0) {
-            // display the button to convert
-            $("#btn_convert_crypto").prop('disabled', false);
-        } else {
-            // hide the button to convert
-            $("#btn_convert_crypto").prop('disabled', true);
-        }
 
         // Convert crypto to crypto
         // 2 cases:
@@ -599,9 +510,22 @@
                 success: function (data) {
                     // display the amount to sell
                     $("#input_crypto_to_buy").val(data + " " + symbol_to_buy.split("-")[0]);
+                    // add the symbol in the field to sell after the amount
+                    $("#input_crypto_to_sell").val(input_crypto_to_sell + " " + symbol_to_sell.split("-")[0]);
+                    // Display the button to convert if the amount to sell is valid
+                    if (input_crypto_to_sell <= maxAmount && input_crypto_to_sell > 0) {
+                        // display the button to convert
+                        $("#btn_convert_crypto").prop('disabled', false);
+                    } else {
+                        // hide the button to convert
+                        $("#btn_convert_crypto").prop('disabled', true);
+                    }
                 },
+
                 error: function () {
                     $("#input_crypto_to_buy").val("Erreur");
+                    // hide the button to convert
+                    $("#btn_convert_crypto").prop('disabled', true);
                 }
             });
         } else if (input_crypto_to_buy) {
@@ -614,9 +538,21 @@
                 success: function (data) {
                     // display the amount to buy
                     $("#input_crypto_to_sell").val(data + " " + symbol_to_sell.split("-")[0]);
+                    // add the symbol in the field to buy after the amount
+                    $("#input_crypto_to_buy").val(input_crypto_to_buy + " " + symbol_to_buy.split("-")[0]);
+                    // Display the button to convert if the amount to sell is valid
+                    if (data <= maxAmount && data > 0) {
+                        // display the button to convert
+                        $("#btn_convert_crypto").prop('disabled', false);
+                    } else {
+                        // hide the button to convert
+                        $("#btn_convert_crypto").prop('disabled', true);
+                    }
                 },
                 error: function () {
                     $("#input_crypto_to_sell").val("Erreur");
+                    // hide the button to convert
+                    $("#btn_convert_crypto").prop('disabled', true);
                 }
             });
         }
@@ -640,7 +576,8 @@
                     swal("Conversion successful!", "Your conversion of " + quantity_to_sell + " " + symbol_to_sell.split("-")[0] + " to " + symbol_to_buy.split("-")[0] + " has been successful.", "success");
                     reset_buy_crypto_with_crypto()
                     updateWalletBalances();
-                    update_wallet_history()
+                    update_wallet_history();
+                    update_modal_info();
                 }
             },
             error: function () {
@@ -650,10 +587,29 @@
         });
     }
 
+    function set_max_amount() {
+        // set the max amount to sell
+        var symbol_to_sell = name_to_symbol[$(".selected_crypto_to_sell").html()];
+        var url = "/api/get_user_balance";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the balance of the crypto to sell
+                var balanceInfo = data["crypto_balance_by_symbol"][symbol_to_sell];
+                var balance_to_sell = balanceInfo["quantity"];
+                // display the balance of the crypto to sell
+                $("#input_crypto_to_sell").val(balance_to_sell + " " + symbol_to_sell.split("-")[0]);
+                update_modal_info();
+            }
+        });
+    }
+
 </script>
 
 
 <script>
+    // WHOLE PAGE JAVA SCRIPT
     $(document).ready(function () {
         updateWalletBalances();
         update_game_wallet();
@@ -661,6 +617,108 @@
         setupEventHandlers();
         update_wallet_history();
     });
+
+    function updateWalletBalances() {
+        /*
+        Update the amount for each crypto in the divs with class="crypto-wallet"
+        */
+        // Get crypto balance from API : /api/get_user_balance
+        /* That's return a JSON like this:
+        {
+                "crypto_balance": 0, # all crypto balance in USD,
+                'web3_balance': 0,   # web3 balance in USD,
+                "crypto_balance_by_symbol": {
+                    "BTC": {Quantity: 0, Balance: 0},   # Quantity in BTC, Balance in USD
+                    "ETH": {Quantity: 0, Balance: 0},   # Quantity in ETH, Balance in USD
+                    ...
+                }
+            }
+
+         */
+        // using ajax to get the data
+        var url = "/api/get_user_balance";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                // Get the response data
+                var user_balance = data;
+
+                // Display amount for each crypto
+                // Go through each crypto-wallet div
+                $(".crypto-wallet").each(function () {
+                    var symbol = $(this).data("symbol"); // Récupérer le symbole de la cryptomonnaie
+                    var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol];
+                    if (balanceInfo) {
+                        // Update the balance in the div with id="crypto_balance"
+                        // The balance in USD must be formatted with commas to separate thousands
+                        $(this).find(".crypto-balance small").text(balanceInfo["quantity"] + " " + symbol.split('-')[0] + " ~ $" + balanceInfo["balance"].toLocaleString());
+                    }
+                });
+            }
+        });
+    }
+
+    function convertCryptoToUSD(transaction) {
+        return new Promise((resolve, reject) => {
+            var url = "/api/get_USD_from_crypto/" + transaction.symbol + "-USD/" + transaction.quantity;
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    transaction["USD"] = data;
+                    resolve(transaction);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    async function update_wallet_history() {
+        var url = "/api/get_wallet_history";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: async function (data) {
+                $("#wallet_history_container").empty();
+
+                var wallet_history = data["wallet_history"].slice(-7);
+                wallet_history.reverse();
+
+                if (wallet_history.length === 0) {
+                    $("#wallet_history_container").append('<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
+                        '<span>' +
+                        '<i class="fa fa-circle text-danger pe-10 fs-12"></i>' +
+                        'No transaction yet' +
+                        '</span>' +
+                        '</h5>');
+                } else {
+                    try {
+                        const transactionsWithUSD = await Promise.all(wallet_history.map(convertCryptoToUSD));
+                        transactionsWithUSD.forEach(function (transaction) {
+                            var historyElement = '<h5 class="media media-single py-10 px-0 w-p100 justify-content-between">' +
+                                '<span>' +
+                                '<i class="fa fa-circle ' + (transaction.transaction_type === 'sell' ? 'text-danger' : 'text-success') + ' pe-10 fs-12"></i>' +
+                                transaction.date + '<br>' +
+                                '</span>' +
+                                '<span class="text-end pull-right">' +
+                                '<span class="badge badge-sm badge-' + (transaction.transaction_type === 'sell' ? 'danger' : 'success') + ' mb-10">' +
+                                transaction.transaction_type + '</span><br>' +
+                                transaction.quantity + ' ' + transaction.symbol + ' ~ $' + transaction["USD"].toLocaleString() +
+                                '</span>' +
+                                '</h5>';
+                            $("#wallet_history_container").append(historyElement);
+                        });
+                    } catch (error) {
+                        console.error("Erreur lors de la conversion des cryptos en USD", error);
+                    }
+                }
+            }
+        });
+    }
+
 </script>
 
 </body>

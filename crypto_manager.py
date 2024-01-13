@@ -114,6 +114,7 @@ class CryptoDataManager:
             float
         """
         data = self.get_specific_crypto_data(symbol)
+        assert symbol in self.top_cryptos, f"Symbol {symbol} is not in top cryptos."
         return data['price'][-1] * float(quantity)
 
     def get_crypto_from_USD(self, symbol, USD):
