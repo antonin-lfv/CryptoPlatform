@@ -105,7 +105,7 @@ class wallet_manager:
     @staticmethod
     def get_wallet_history(user):
         """
-        Get wallet history of user
+        Get wallet history of user (transactions)
 
         Return:
             {
@@ -142,6 +142,74 @@ class wallet_manager:
         return {
             "wallet_history": wallet_history
         }
+
+    @staticmethod
+    def get_wallet_daily_snapshot(user):
+        """
+        Get wallet daily snapshot of user
+        Each value needs to be cumulated with the previous one
+        Because it's a snapshot of all USD spent in the game wallet during the day
+
+        Return:
+            {
+                "wallet_daily_snapshot": [
+                    {
+                        "date": ...,
+                        "quantity": ...
+                    },
+                    ...
+                ]
+            }
+        """
+        wallet_daily_snapshot = []
+        daily_snapshot_wallet = WalletDailySnapshot.query.filter_by(user_id=user.id).all()
+
+        if not daily_snapshot_wallet:
+            # If user has no wallet daily snapshot, create one with today's date and 0 quantity
+            new_snapshot = WalletDailySnapshot()
+            new_snapshot.user_id = user.id
+            new_snapshot.date = datetime.utcnow().date()
+            new_snapshot.quantity = 0
+            db.session.add(new_snapshot)
+            db.session.commit()
+
+        for snapshot in daily_snapshot_wallet:
+            wallet_daily_snapshot.append({
+                "date": snapshot.date,
+                "value": snapshot.quantity
+            })
+
+        # sort wallet history by date
+        wallet_daily_snapshot.sort(key=lambda x: x["date"], reverse=False)
+
+        # cumulate quantity
+        for i in range(len(wallet_daily_snapshot)):
+            if i > 0:
+                wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i-1]["value"]
+
+        # fill missing dates between first and today
+        if wallet_daily_snapshot[0]["date"] != datetime.utcnow().date():
+            # get first date
+            first_date = wallet_daily_snapshot[0]["date"]
+            # get today's date
+            today = datetime.utcnow().date()
+            # loop over dates between first and today
+            for i in range((today-first_date).days+1):
+                # get date
+                date = first_date + timedelta(days=i)
+                # check if date is in wallet daily snapshot
+                if date not in [snapshot["date"] for snapshot in wallet_daily_snapshot]:
+                    # if not, add it with the value of the previous day
+                    wallet_daily_snapshot.append({
+                        "date": date,
+                        "value": wallet_daily_snapshot[-1]["value"]
+                    })
+
+        # Format date to look like this: "2021-10-01"
+        for snapshot in wallet_daily_snapshot:
+            snapshot["date"] = snapshot["date"].isoformat()
+
+        return wallet_daily_snapshot
 
     def buy_crypto_with_USD(self, user, symbol, From, quantity_crypto=None, quantity_USD=None):
         """

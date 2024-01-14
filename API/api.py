@@ -115,6 +115,16 @@ def get_wallet_history():
     return jsonify(wallet_history)
 
 
+@BLP_api.route('/api/get_wallet_daily_snapshot', methods=['GET', 'POST'])
+@login_required
+def get_wallet_daily_snapshot():
+    """
+    Get wallet daily snapshot of user
+    """
+    wallet_daily_snapshot = wallet_manager().get_wallet_daily_snapshot(current_user)
+    return jsonify(wallet_daily_snapshot)
+
+
 # ================================
 # Buy crypto
 # ================================

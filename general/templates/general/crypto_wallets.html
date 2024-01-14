@@ -141,6 +141,21 @@
                         <div class="row">
                             <div class="col-xl-12 col-12">
                                 <div class="box">
+                                    <div class="box-header">
+                                        <h4 class="box-title">
+                                            Total USD spent on crypto
+                                        </h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="chart">
+                                            <div id="wallet_history" class="h-300"></div>
+                                        </div>
+                                    </div>
+                                    <!-- /.box-body -->
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-12">
+                                <div class="box">
                                     <div class="box-body">
                                         <div class="tab-content">
                                             <div class="tab-pane active" id="tabid1" role="tabpanel">
@@ -232,6 +247,97 @@
 
 <script>
     // GAME WALLET JAVA SCRIPT
+
+    // call api/get_wallet_daily_snapshot to get the daily snapshot of the wallet
+    function get_and_update_wallet_daily_snapshot() {
+        var url = "/api/get_wallet_daily_snapshot";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                var chart = AmCharts.makeChart("wallet_history", {
+                    "type": "serial",
+                    "theme": "black",
+                    "autoMarginOffset": 20,
+                    "marginRight": 20,
+                    "dataProvider": data,
+                    "valueAxes": [{
+                        "axisAlpha": 0,
+                        "position": "left"
+                    }],
+                    "graphs": [{
+                        "id": "fromGraph",
+                        "lineAlpha": 0,
+                        "showBalloon": false,
+                        "valueField": "fromValue",
+                        "fillAlphas": 0
+                    }, {
+                        "fillAlphas": 0.2,
+                        "fillToGraph": "fromGraph",
+                        "lineAlpha": 0,
+                        "showBalloon": false,
+                        "valueField": "toValue"
+                    }, {
+                        "valueField": "value",
+                        "balloonText": "<div style='margin:10px; text-align:left'><span style='font-size:11px'>allowed: [[fromValue]] - [[toValue]]</span><br><span style='font-size:18px'>Value:[[value]]</span></div>",
+                        "fillAlphas": 0
+                    }],
+                    "chartCursor": {
+                        "fullWidth": true,
+                        "cursorAlpha": 0.05,
+                        "valueLineEnabled": true,
+                        "valueLineAlpha": 0.5,
+                        "valueLineBalloonEnabled": true
+                    },
+                    "dataDateFormat": "YYYY-MM-DD",
+                    "categoryField": "date",
+                    "categoryAxis": {
+                        "position": "top",
+                        "parseDates": true,
+                        "axisAlpha": 0,
+                        "minHorizontalGap": 25,
+                        "gridAlpha": 0,
+                        "tickLength": 0,
+                        "dateFormats": [{
+                            "period": 'fff',
+                            "format": 'JJ:NN:SS'
+                        }, {
+                            "period": 'ss',
+                            "format": 'JJ:NN:SS'
+                        }, {
+                            "period": 'mm',
+                            "format": 'JJ:NN'
+                        }, {
+                            "period": 'hh',
+                            "format": 'JJ:NN'
+                        }, {
+                            "period": 'DD',
+                            "format": 'DD'
+                        }, {
+                            "period": 'WW',
+                            "format": 'DD'
+                        }, {
+                            "period": 'MM',
+                            "format": 'MMM'
+                        }, {
+                            "period": 'YYYY',
+                            "format": 'YYYY'
+                        }]
+                    },
+
+                    "chartScrollbar": {},
+
+                    "export": {
+                        "enabled": true
+                    }
+                });
+            },
+            error: function () {
+                console.log("error");
+            }
+        });
+    }
 
     function update_game_wallet() {
         /*
@@ -334,6 +440,7 @@
                         update_game_wallet();
                         validateAmount()
                         update_wallet_history();
+                        get_and_update_wallet_daily_snapshot();
                         swal("Achat réussi!", "Votre achat de " + cryptoAmount + " BTC a été effectué avec succès.", "success");
                         reset_buy_with_usd();
                     }
@@ -563,6 +670,11 @@
         var symbol_to_sell = name_to_symbol[$(".selected_crypto_to_sell").html()];
         var quantity_to_sell = parseFloat($("#input_crypto_to_sell").val());
         var url = "/api/buy_crypto_with_crypto/" + symbol_to_sell + "/" + symbol_to_buy + "/" + quantity_to_sell + "/sell";
+        // test if quantity_to_sell is a number different from 0
+        if (isNaN(quantity_to_sell) || quantity_to_sell <= 0) {
+            swal("Error", "Please enter a valid amount.", "error");
+            return;
+        }
         $.ajax({
             url: url,
             type: "POST",
@@ -607,7 +719,6 @@
 
 </script>
 
-
 <script>
     // WHOLE PAGE JAVA SCRIPT
     $(document).ready(function () {
@@ -616,6 +727,7 @@
         validateAmount();
         setupEventHandlers();
         update_wallet_history();
+        get_and_update_wallet_daily_snapshot();
     });
 
     function updateWalletBalances() {
