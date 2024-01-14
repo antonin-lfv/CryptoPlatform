@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user
-from models import User, GameWallet, WalletDailySnapshot
+from models import User, GameWallet, CryptoWalletDailySnapshot
 from notification_manager import Notification_manager
 from app import db
 from utils import mini_wallet, bank_wallet
@@ -48,7 +48,7 @@ def register():
             game_wallet.bank_wallet = bank_wallet
             db.session.add(game_wallet)
             # Create the first wallet daily snapshot
-            wallet_daily_snapshot = WalletDailySnapshot()
+            wallet_daily_snapshot = CryptoWalletDailySnapshot()
             wallet_daily_snapshot.user_id = User.query.filter_by(email=email).first().id
             wallet_daily_snapshot.date = datetime.utcnow()
             wallet_daily_snapshot.quantity = 0

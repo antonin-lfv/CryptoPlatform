@@ -22,6 +22,8 @@ def update_prices():
     # Delete old notifications
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
+    # Update crypto wallet evolution
+    w_manager.update_crypto_wallet_evolution(current_user)
 
 
 @BLP_general.route('/home', methods=['GET', 'POST'])

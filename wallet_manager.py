@@ -3,7 +3,7 @@ import yfinance as yf
 from functools import wraps
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
-from models import CryptoPrice, User, Wallet, WalletHistory, WalletDailySnapshot
+from models import CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot, CryptoWalletEvolution
 from app import db
 from crypto_manager import CryptoDataManager
 
@@ -103,6 +103,103 @@ class wallet_manager:
         db.session.commit()
 
     @staticmethod
+    def get_crypto_wallet_evolution(user):
+        """
+        Get wallet evolution of user (USD value of the whole wallet per day)
+
+        Return:
+            {
+                "wallet_evolution": [
+                    {
+                        "quantity": ...,
+                        "date": ...
+                    },
+                    ...
+                ]
+            }
+        """
+        wallet_evolution = []
+        # Get wallet evolution of user sorted by date
+        crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
+            CryptoWalletEvolution.date.desc()).all()
+
+        # If user has no wallet evolution, create one with today's date and 0 quantity
+        if not crypto_wallet_evolution:
+            new_evolution = CryptoWalletEvolution()
+            new_evolution.user_id = user.id
+            new_evolution.date = datetime.utcnow().date()
+            new_evolution.quantity = 0
+            db.session.add(new_evolution)
+            db.session.commit()
+            # Get wallet evolution of user sorted by date
+            crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
+                CryptoWalletEvolution.date.desc()).all()
+
+        for evolution in crypto_wallet_evolution:
+            wallet_evolution.append({
+                "date": evolution.date,
+                "value": evolution.quantity
+            })
+
+        # sort wallet evolution by date
+        wallet_evolution.sort(key=lambda x: x["date"], reverse=False)
+
+        # Format date to look like this: "2021-10-01"
+        for evolution in wallet_evolution:
+            evolution["date"] = evolution["date"].isoformat()
+
+        return wallet_evolution
+
+    def update_crypto_wallet_evolution(self, user):
+        """
+        Update wallet evolution of user (USD value of the whole wallet per day)
+        Go through all wallets of the user and sum the USD value of each crypto
+        If there is no wallet evolution for today, create one, else update the quantity
+        """
+        # Get wallet evolution of user sorted by date
+        crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
+            CryptoWalletEvolution.date.desc()).all()
+
+        # If user has no wallet evolution, create one with today's date and 0 quantity
+        if not crypto_wallet_evolution:
+            new_evolution = CryptoWalletEvolution()
+            new_evolution.user_id = user.id
+            new_evolution.date = datetime.utcnow().date()
+            new_evolution.quantity = 0
+            db.session.add(new_evolution)
+            db.session.commit()
+            # Get wallet evolution of user sorted by date
+            crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
+                CryptoWalletEvolution.date.desc()).all()
+
+        # Get user wallets
+        wallets = user.wallets
+        # Loop over wallets
+        quantity = 0
+        for wallet in wallets:
+            # Get latest price
+            balance = self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
+            # Add to total balance
+            quantity += balance
+            # Round balance to 2 decimals
+            quantity = round(quantity, 3)
+
+        # Check if there is a wallet evolution for today
+        if crypto_wallet_evolution[0].date == datetime.utcnow().date():
+            # If there is, update the quantity
+            crypto_wallet_evolution[0].quantity = quantity
+
+        else:
+            # If there is not, create one
+            new_evolution = CryptoWalletEvolution()
+            new_evolution.user_id = user.id
+            new_evolution.date = datetime.utcnow().date()
+            new_evolution.quantity = quantity
+            db.session.add(new_evolution)
+
+        db.session.commit()
+
+    @staticmethod
     def get_wallet_crypto_transactions_history(user):
         """
         Get wallet history of user (transactions)
@@ -127,7 +224,7 @@ class wallet_manager:
                 "wallet_history": wallet_history
             }
         for i in range(len(user.wallets)):
-            history_wallet = WalletHistory.query.filter_by(wallet_id=user.wallets[i].id).all()
+            history_wallet = CryptoTransactionHistory.query.filter_by(wallet_id=user.wallets[i].id).all()
             for transaction in history_wallet:
                 wallet_history.append({
                     "symbol": transaction.symbol.split('-')[0],
@@ -162,11 +259,11 @@ class wallet_manager:
             }
         """
         wallet_daily_snapshot = []
-        daily_snapshot_wallet = WalletDailySnapshot.query.filter_by(user_id=user.id).all()
+        daily_snapshot_wallet = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).all()
 
         if not daily_snapshot_wallet:
             # If user has no wallet daily snapshot, create one with today's date and 0 quantity
-            new_snapshot = WalletDailySnapshot()
+            new_snapshot = CryptoWalletDailySnapshot()
             new_snapshot.user_id = user.id
             new_snapshot.date = datetime.utcnow().date()
             new_snapshot.quantity = 0
@@ -257,10 +354,10 @@ class wallet_manager:
                 return {'error': 'Not enough money in bank'}
 
         # Update user wallet
-        wallet = Wallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
         # If wallet does not exist, create it
         if not wallet:
-            wallet = Wallet()
+            wallet = CryptoWallet()
             wallet.user_id = user.id
             wallet.symbol = symbol
             wallet.quantity = 0
@@ -286,6 +383,9 @@ class wallet_manager:
             self.update_wallet_daily_snapshot(user,
                                               self.crypto_manager.get_USD_from_crypto(symbol, quantity_crypto))
 
+        # Update wallet evolution
+        self.update_crypto_wallet_evolution(user)
+
         # Commit changes
         db.session.commit()
 
@@ -305,7 +405,7 @@ class wallet_manager:
 
         """
         # Get user wallet
-        wallet_crypto_to_sell = Wallet.query.filter_by(user_id=user.id, symbol=symbol_to_sell).first()
+        wallet_crypto_to_sell = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol_to_sell).first()
         # If wallet does not exist, the user does not have this crypto, so return an error
         if not wallet_crypto_to_sell:
             return {'error': 'You do not have this crypto'}
@@ -333,10 +433,10 @@ class wallet_manager:
         wallet_crypto_to_sell.quantity = max(wallet_crypto_to_sell.quantity-quantity_to_sell, 0)
 
         # Get user wallet for symbol_to_buy
-        wallet_crypto_to_buy = Wallet.query.filter_by(user_id=user.id, symbol=symbol_to_buy).first()
+        wallet_crypto_to_buy = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol_to_buy).first()
         # If wallet does not exist, create it
         if not wallet_crypto_to_buy:
-            wallet = Wallet()
+            wallet = CryptoWallet()
             wallet.user_id = user.id
             wallet.symbol = symbol_to_buy
             wallet.quantity = 0
@@ -344,7 +444,7 @@ class wallet_manager:
             # Commit changes
             db.session.commit()
             # Get user wallet for symbol_to_buy
-            wallet_crypto_to_buy = Wallet.query.filter_by(user_id=user.id, symbol=symbol_to_buy).first()
+            wallet_crypto_to_buy = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol_to_buy).first()
 
         # Update wallet
         wallet_crypto_to_buy.quantity += quantity_to_buy
@@ -352,6 +452,9 @@ class wallet_manager:
         # Add transaction to wallet history sell and buy
         self.add_transaction_to_wallet_history(wallet_crypto_to_sell, 'sell', quantity_to_sell)
         self.add_transaction_to_wallet_history(wallet_crypto_to_buy, 'buy', quantity_to_buy)
+
+        # Update wallet USD value evolution
+        self.update_crypto_wallet_evolution(user)
 
         # wallet daily snapshot is not updated because there is no upcomming transaction from outside the wallet
         # it's just a transfer inside the wallet
@@ -368,7 +471,7 @@ class wallet_manager:
             - transaction_type: str, 'buy' or 'sell'
             - quantity: float, quantity of crypto bought/sold
         """
-        transaction = WalletHistory()
+        transaction = CryptoTransactionHistory()
         transaction.wallet_id = wallet.id
         transaction.transaction_type = transaction_type
         transaction.quantity = quantity
@@ -387,11 +490,11 @@ class wallet_manager:
             - quantity: float, quantity of crypto bought/sold
         """
         # Get latest snapshot
-        latest_snapshot = WalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
-            WalletDailySnapshot.date.desc()).first()
+        latest_snapshot = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
+            CryptoWalletDailySnapshot.date.desc()).first()
         # If latest snapshot is not today, add new snapshot
         if not latest_snapshot or latest_snapshot.date != datetime.utcnow().date():
-            new_snapshot = WalletDailySnapshot()
+            new_snapshot = CryptoWalletDailySnapshot()
             new_snapshot.user_id = user.id
             new_snapshot.date = datetime.utcnow().date()
             new_snapshot.quantity = quantity

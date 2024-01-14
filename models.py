@@ -11,12 +11,12 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     username = db.Column(db.String(1000))
-    wallets = db.relationship('Wallet', backref='user', lazy=True)
+    wallets = db.relationship('CryptoWallet', backref='user', lazy=True)
     game_wallet = db.relationship('GameWallet', backref='user', lazy=True)
 
 
 # Table pour enregistrer les cryptomonnaies détenues par les utilisateurs
-class Wallet(db.Model):
+class CryptoWallet(db.Model):
     """
     Table to record the cryptocurrencies owned by users
     """
@@ -40,21 +40,21 @@ class GameWallet(db.Model):
     bank_wallet_last_update = db.Column(db.DateTime, default=datetime.utcnow)  # Last update of the bank wallet
 
 
-class WalletHistory(db.Model):
+class CryptoTransactionHistory(db.Model):
     """
     Table to record the history of transactions in the wallets
     """
     id = db.Column(db.Integer, primary_key=True)
-    wallet_id = db.Column(db.Integer, db.ForeignKey('wallet.id'), nullable=False)
+    wallet_id = db.Column(db.Integer, db.ForeignKey('crypto_wallet.id'), nullable=False)
     transaction_type = db.Column(db.String(10), nullable=False)  # 'buy' ou 'sell'
     quantity = db.Column(db.Float, nullable=False)  # Quantity of crypto bought/sold
     symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-class WalletDailySnapshot(db.Model):
+class CryptoWalletDailySnapshot(db.Model):
     """
-    Table to record the daily snapshots of the wallets
+    Table to record the daily snapshots of the wallets (USD spent per day)
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
@@ -77,6 +77,19 @@ class CryptoPrice(db.Model):
 
     def __repr__(self):
         return f'<CryptoPrice {self.symbol} {self.date}>'
+
+
+class CryptoWalletEvolution(db.Model):
+    """
+    Table to record the evolution of the wallet (in USD) per day
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
+    date = db.Column(db.Date, default=date.today)  # Date of the snapshot
+    quantity = db.Column(db.Float, nullable=False)  # USD value of the wallet at this date
+
+    def __repr__(self):
+        return f'<WalletEvolution {self.wallet_id} {self.date} {self.quantity}>'
 
 
 class Notification(db.Model):

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
-from models import CryptoPrice, User, Wallet, WalletHistory, WalletDailySnapshot
+from models import CryptoPrice, User, CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot
 from app import db
 
 

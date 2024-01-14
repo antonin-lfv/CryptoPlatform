@@ -140,6 +140,7 @@
                     <div class="col-lg-6 col-12">
                         <div class="row">
                             <div class="col-xl-12 col-12">
+                                <!-- USD spent on crypto per day -->
                                 <div class="box">
                                     <div class="box-header">
                                         <h4 class="box-title">
@@ -149,6 +150,22 @@
                                     <div class="box-body">
                                         <div class="chart">
                                             <div id="wallet_history" class="h-300"></div>
+                                        </div>
+                                    </div>
+                                    <!-- /.box-body -->
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-12">
+                                <!-- Wallet USD value evolution -->
+                                <div class="box">
+                                    <div class="box-header">
+                                        <h4 class="box-title">
+                                            Wallet USD value evolution
+                                        </h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="chart">
+                                            <div id="crypto_wallet_evolution" class="h-300"></div>
                                         </div>
                                     </div>
                                     <!-- /.box-body -->
@@ -255,8 +272,100 @@
             url: url,
             type: "GET",
             success: function (data) {
+                // USD spent on crypto per day
+                AmCharts.makeChart("wallet_history", {
+                    "type": "serial",
+                    "theme": "black",
+                    "autoMarginOffset": 20,
+                    "marginRight": 20,
+                    "dataProvider": data,
+                    "valueAxes": [{
+                        "axisAlpha": 0,
+                        "position": "left"
+                    }],
+                    "graphs": [{
+                        "id": "fromGraph",
+                        "lineAlpha": 0,
+                        "showBalloon": false,
+                        "valueField": "fromValue",
+                        "fillAlphas": 0
+                    }, {
+                        "fillAlphas": 0.2,
+                        "fillToGraph": "fromGraph",
+                        "lineAlpha": 0,
+                        "showBalloon": false,
+                        "valueField": "toValue"
+                    }, {
+                        "valueField": "value",
+                        "balloonText": "<div style='margin:10px; text-align:left'><span style='font-size:11px'>allowed: [[fromValue]] - [[toValue]]</span><br><span style='font-size:18px'>Value:[[value]]</span></div>",
+                        "fillAlphas": 0
+                    }],
+                    "chartCursor": {
+                        "fullWidth": true,
+                        "cursorAlpha": 0.05,
+                        "valueLineEnabled": true,
+                        "valueLineAlpha": 0.5,
+                        "valueLineBalloonEnabled": true
+                    },
+                    "dataDateFormat": "YYYY-MM-DD",
+                    "categoryField": "date",
+                    "categoryAxis": {
+                        "position": "top",
+                        "parseDates": true,
+                        "axisAlpha": 0,
+                        "minHorizontalGap": 25,
+                        "gridAlpha": 0,
+                        "tickLength": 0,
+                        "dateFormats": [{
+                            "period": 'fff',
+                            "format": 'JJ:NN:SS'
+                        }, {
+                            "period": 'ss',
+                            "format": 'JJ:NN:SS'
+                        }, {
+                            "period": 'mm',
+                            "format": 'JJ:NN'
+                        }, {
+                            "period": 'hh',
+                            "format": 'JJ:NN'
+                        }, {
+                            "period": 'DD',
+                            "format": 'DD'
+                        }, {
+                            "period": 'WW',
+                            "format": 'DD'
+                        }, {
+                            "period": 'MM',
+                            "format": 'MMM'
+                        }, {
+                            "period": 'YYYY',
+                            "format": 'YYYY'
+                        }]
+                    },
+
+                    "chartScrollbar": {},
+
+                    "export": {
+                        "enabled": true
+                    }
+                });
+            },
+            error: function () {
+                console.log("error");
+            }
+        });
+    }
+
+    // call /api/get_crypto_wallet_evolution to get evolution of the wallet USD value per day
+    function get_and_update_wallet_evolution() {
+        var url = "/api/get_crypto_wallet_evolution";
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
                 console.log(data);
-                var chart = AmCharts.makeChart("wallet_history", {
+                // USD spent on crypto per day
+                AmCharts.makeChart("crypto_wallet_evolution", {
                     "type": "serial",
                     "theme": "black",
                     "autoMarginOffset": 20,
@@ -441,6 +550,7 @@
                         validateAmount()
                         update_wallet_crypto_transactions_history();
                         get_and_update_wallet_daily_snapshot();
+                        get_and_update_wallet_evolution();
                         swal("Achat réussi!", "Votre achat de " + cryptoAmount + " BTC a été effectué avec succès.", "success");
                         reset_buy_with_usd();
                     }
@@ -728,6 +838,7 @@
         setupEventHandlers();
         update_wallet_crypto_transactions_history();
         get_and_update_wallet_daily_snapshot();
+        get_and_update_wallet_evolution()
     });
 
     function updateWalletBalances() {
