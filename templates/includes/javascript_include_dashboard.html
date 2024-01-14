@@ -90,7 +90,7 @@
         'NEO': 'NEO-USD'
     }
 
-    // Notification manager
+    // ---------- Notification manager
     document.addEventListener('DOMContentLoaded', function () {
         var dropdownButton = document.querySelector('.dropdown-toggle');
         dropdownButton.onclick = function () {
@@ -104,6 +104,10 @@
             event.stopPropagation(); // Empêche l'événement de se propager aux éléments parents
             clear_notifications();
         };
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        toggle_icon_notifications();
     });
 
     // insert all notifications in the ul with id="notifications_space"
@@ -123,6 +127,7 @@
             success: function (data) {
                 var notifications_space = document.getElementById('notifications_space');
                 notifications_space.innerHTML = '';
+                var clear_all_button = document.getElementById('clear_notifications_button');
 
                 if (data.length === 0) { // Vérifier si data est vide
                     var li = document.createElement('li');
@@ -135,8 +140,9 @@
                     notifications_space.appendChild(li);
 
                     // hide the clear all button
-                    var clear_all_button = document.getElementById('clear_notifications');
                     clear_all_button.style.display = 'none';
+                    // change the icon
+                    toggle_icon_notifications();
                 } else {
                     // Affichage des notifications
                     data.forEach(function (notification) { // Utiliser forEach pour itérer sur les notifications
@@ -149,12 +155,28 @@
                         li.appendChild(a);
                         notifications_space.appendChild(li);
                     });
+
+                    // show the clear all button
+                    clear_all_button.style.display = 'block';
+                    // change the icon
+                    toggle_icon_notifications();
                 }
             },
             error: function (error) {
                 alert('Error while getting notifications: ' + JSON.stringify(error));
             }
         });
+    }
+
+    function toggle_icon_notifications() {
+        var icon_notifications = document.getElementById('icon_notifications');
+        var clear_all_button = document.getElementById('clear_notifications_button');
+        if (clear_all_button.style.display === 'none') {
+            icon_notifications.setAttribute('data-feather', 'bell');
+        } else {
+            icon_notifications.setAttribute('data-feather', 'alert-circle');
+        }
+        feather.replace();
     }
 
     function clear_notifications() {
