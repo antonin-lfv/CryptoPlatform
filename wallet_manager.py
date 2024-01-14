@@ -103,7 +103,7 @@ class wallet_manager:
         db.session.commit()
 
     @staticmethod
-    def get_wallet_history(user):
+    def get_wallet_crypto_transactions_history(user):
         """
         Get wallet history of user (transactions)
 
@@ -144,7 +144,7 @@ class wallet_manager:
         }
 
     @staticmethod
-    def get_wallet_daily_snapshot(user):
+    def get_crypto_wallet_daily_snapshot(user):
         """
         Get wallet daily snapshot of user
         Each value needs to be cumulated with the previous one

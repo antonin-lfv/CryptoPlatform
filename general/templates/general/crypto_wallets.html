@@ -143,7 +143,7 @@
                                 <div class="box">
                                     <div class="box-header">
                                         <h4 class="box-title">
-                                            Total USD spent on crypto
+                                            Total USD spent on crypto per day
                                         </h4>
                                     </div>
                                     <div class="box-body">
@@ -248,9 +248,9 @@
 <script>
     // GAME WALLET JAVA SCRIPT
 
-    // call api/get_wallet_daily_snapshot to get the daily snapshot of the wallet
+    // call api/get_crypto_wallet_daily_snapshot to get the daily snapshot of the wallet
     function get_and_update_wallet_daily_snapshot() {
-        var url = "/api/get_wallet_daily_snapshot";
+        var url = "/api/get_crypto_wallet_daily_snapshot";
         $.ajax({
             url: url,
             type: "GET",
@@ -439,7 +439,7 @@
                         updateWalletBalances();
                         update_game_wallet();
                         validateAmount()
-                        update_wallet_history();
+                        update_wallet_crypto_transactions_history();
                         get_and_update_wallet_daily_snapshot();
                         swal("Achat réussi!", "Votre achat de " + cryptoAmount + " BTC a été effectué avec succès.", "success");
                         reset_buy_with_usd();
@@ -688,7 +688,7 @@
                     swal("Conversion successful!", "Your conversion of " + quantity_to_sell + " " + symbol_to_sell.split("-")[0] + " to " + symbol_to_buy.split("-")[0] + " has been successful.", "success");
                     reset_buy_crypto_with_crypto()
                     updateWalletBalances();
-                    update_wallet_history();
+                    update_wallet_crypto_transactions_history();
                     update_modal_info();
                 }
             },
@@ -726,7 +726,7 @@
         update_game_wallet();
         validateAmount();
         setupEventHandlers();
-        update_wallet_history();
+        update_wallet_crypto_transactions_history();
         get_and_update_wallet_daily_snapshot();
     });
 
@@ -788,8 +788,8 @@
         });
     }
 
-    async function update_wallet_history() {
-        var url = "/api/get_wallet_history";
+    async function update_wallet_crypto_transactions_history() {
+        var url = "/api/get_wallet_crypto_transactions_history";
         $.ajax({
             url: url,
             type: "GET",

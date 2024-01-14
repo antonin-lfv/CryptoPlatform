@@ -105,23 +105,23 @@ def get_game_wallet():
     return jsonify(game_wallet)
 
 
-@BLP_api.route('/api/get_wallet_history', methods=['GET', 'POST'])
+@BLP_api.route('/api/get_wallet_crypto_transactions_history', methods=['GET', 'POST'])
 @login_required
-def get_wallet_history():
+def get_wallet_crypto_transactions_history():
     """
     Get wallet history of user
     """
-    wallet_history = wallet_manager().get_wallet_history(current_user)
+    wallet_history = wallet_manager().get_wallet_crypto_transactions_history(current_user)
     return jsonify(wallet_history)
 
 
-@BLP_api.route('/api/get_wallet_daily_snapshot', methods=['GET', 'POST'])
+@BLP_api.route('/api/get_crypto_wallet_daily_snapshot', methods=['GET', 'POST'])
 @login_required
-def get_wallet_daily_snapshot():
+def get_crypto_wallet_daily_snapshot():
     """
     Get wallet daily snapshot of user
     """
-    wallet_daily_snapshot = wallet_manager().get_wallet_daily_snapshot(current_user)
+    wallet_daily_snapshot = wallet_manager().get_crypto_wallet_daily_snapshot(current_user)
     return jsonify(wallet_daily_snapshot)
 
 
