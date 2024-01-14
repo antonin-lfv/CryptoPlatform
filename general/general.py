@@ -27,12 +27,6 @@ def update_prices():
 @BLP_general.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    possible_icon = ['users', 'user', 'warning', 'shopping-cart']
-    # get a random icon (with random index)
-    random_icon = possible_icon[random.randint(0, len(possible_icon) - 1)]
-    Notification_manager().add_notification(user_id=current_user.id,
-                                            message=f"This is a notification!",
-                                            icon=random_icon)
     return render_template('general/index.html', user=current_user)
 
 

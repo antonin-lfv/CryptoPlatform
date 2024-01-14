@@ -106,9 +106,15 @@
         };
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    // call toggle_icon_notifications() after all page elements are loaded
+    if (document.readyState === "loading") {
+        document.addEventListener('DOMContentLoaded', function () {
+            toggle_icon_notifications();
+        });
+    } else {
         toggle_icon_notifications();
-    });
+    }
+
 
     // insert all notifications in the ul with id="notifications_space"
     // API url is '/api/get_notifications'
@@ -143,6 +149,7 @@
                     clear_all_button.style.display = 'none';
                     // change the icon
                     toggle_icon_notifications();
+
                 } else {
                     // Affichage des notifications
                     data.forEach(function (notification) { // Utiliser forEach pour itérer sur les notifications
@@ -170,13 +177,22 @@
 
     function toggle_icon_notifications() {
         var icon_notifications = document.getElementById('icon_notifications');
-        var clear_all_button = document.getElementById('clear_notifications_button');
-        if (clear_all_button.style.display === 'none') {
-            icon_notifications.setAttribute('data-feather', 'bell');
-        } else {
-            icon_notifications.setAttribute('data-feather', 'alert-circle');
-        }
-        feather.replace();
+        $.ajax({
+            url: '/api/get_notifications',
+            type: 'GET',
+            success: function (data) {
+                if (data.length === 0) { // Vérifier si data est vide
+                    icon_notifications.setAttribute('data-feather', 'bell');
+                } else {
+                    icon_notifications.setAttribute('data-feather', 'alert-circle');
+                    console.log(icon_notifications);
+                }
+                feather.replace();
+            },
+            error: function (error) {
+                alert('Error while getting notifications: ' + JSON.stringify(error));
+            }
+        });
     }
 
     function clear_notifications() {
