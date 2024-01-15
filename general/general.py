@@ -4,7 +4,6 @@ from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from utils import top_cryptos_symbols, top_cryptos_names
-import random
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',

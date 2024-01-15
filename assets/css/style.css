@@ -144,6 +144,15 @@ body {
     z-index: 1050;
 }
 
+/* For c3 graphs */
+.dark-mode .c3-axis text {
+    fill: white;
+}
+.dark-mode .c3-legend-item text {
+    fill: white;
+}
+
+
 /*---basic---*/
 a {
     color: #31297e;

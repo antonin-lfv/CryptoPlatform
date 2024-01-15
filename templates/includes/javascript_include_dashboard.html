@@ -36,6 +36,10 @@
         src="{{ url_for('static', filename='vendor_components/sweetalert/sweetalert.min.js') }}"></script>
 <script type="text/javascript"
         src="{{ url_for('static', filename='vendor_components/sweetalert/jquery.sweet-alert.custom.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/c3/c3.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='vendor_components/c3/d3.min.js') }}"></script>
 
 <!-- specific -->
 <script src="{{ url_for('static', filename='js/demo.js') }}"></script>
@@ -54,16 +58,35 @@
         themeSwitch.addEventListener('change', function (event) {
             var theme = event.target.checked ? 'dark' : 'light';
             fetch('/set_theme?theme=' + theme, {method: 'GET'});
+
+            // Obtenir l'élément conteneur du graphique et vérifier s'il existe
+            var chartContainer = document.getElementById('USD_spent_vs_crypto_wallet_value');
+            if (chartContainer) {
+                if (theme === 'dark') {
+                    chartContainer.classList.add('dark-mode');
+                } else {
+                    chartContainer.classList.remove('dark-mode');
+                }
+            }
         });
-    });
-    document.addEventListener('DOMContentLoaded', function () {
+
+        // Définir l'état initial du switch et du graphique
         var themeSwitch = document.getElementById('toggle_left_sidebar_skin');
         {% if session['theme'] == 'dark' %}
             themeSwitch.checked = true;
+            var chartContainer = document.getElementById('USD_spent_vs_crypto_wallet_value');
+            if (chartContainer) {
+                chartContainer.classList.add('dark-mode');
+            }
         {% else %}
             themeSwitch.checked = false;
+            var chartContainer = document.getElementById('USD_spent_vs_crypto_wallet_value');
+            if (chartContainer) {
+                chartContainer.classList.remove('dark-mode');
+            }
         {% endif %}
     });
+
 
     var symbol_to_name = {
         'BTC-USD': 'Bitcoin',

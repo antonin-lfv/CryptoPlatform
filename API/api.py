@@ -115,16 +115,6 @@ def get_wallet_crypto_transactions_history():
     return jsonify(wallet_history)
 
 
-@BLP_api.route('/api/get_crypto_wallet_daily_snapshot', methods=['GET', 'POST'])
-@login_required
-def get_crypto_wallet_daily_snapshot():
-    """
-    Get wallet daily snapshot of user
-    """
-    wallet_daily_snapshot = wallet_manager().get_crypto_wallet_daily_snapshot(current_user)
-    return jsonify(wallet_daily_snapshot)
-
-
 @BLP_api.route('/api/get_crypto_wallet_evolution', methods=['GET', 'POST'])
 @login_required
 def get_crypto_wallet_evolution():
@@ -132,7 +122,8 @@ def get_crypto_wallet_evolution():
     Get wallet evolution of user
     """
     wallet_evolution = wallet_manager().get_crypto_wallet_evolution(current_user)
-    return jsonify(wallet_evolution)
+    wallet_daily_snapshot = wallet_manager().get_crypto_wallet_daily_snapshot(current_user)
+    return jsonify(wallet_evolution, wallet_daily_snapshot)
 
 
 # ================================
