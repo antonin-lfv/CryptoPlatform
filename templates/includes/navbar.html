@@ -18,12 +18,12 @@
                class="{{ 'active_navbar' if request.path == url_for('BLP_general.crypto_dashboard') else '' }}"><i
                 data-feather="cpu"></i>Crypto</a>
         </li>
-        <li><a href="{{ url_for('BLP_general.nft_dashboard') }}"
-               class="{{ 'active_navbar' if request.path == url_for('BLP_general.nft_dashboard') else '' }}"><i
+        <li><a href="{{ url_for('BLP_general.nft_marketplace') }}"
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.nft_marketplace') else '' }}"><i
                 data-feather="box"></i>NFT</a></li>
 
         <li><a href="#" class="{{ 'active_navbar' if request.path in [url_for('BLP_general.mining_invoices')] else '' }}"
-        ><i data-feather="lock"></i>Mining</a>
+        ><i data-feather="server"></i>Mining</a>
             <ul>
                 <li><a href="#"
                 ><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Marketplace</a>

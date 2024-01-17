@@ -50,19 +50,17 @@
                             </div>
                             <div class="box-body no-padding mailbox-nav">
                                 <ul class="nav nav-pills flex-column">
-                                    <li class="nav-item"><a class="nav-link active" href="javascript:void(0)"><i
-                                            class="ion ion-ios-email-outline"></i> Inbox
-                                        <span class="label label-success pull-right">12</span></a></li>
-                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
-                                            class="ion ion-paper-airplane"></i> Sent</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
-                                            class="ion ion-email-unread"></i> Drafts</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
-                                            class="ion ion-star"></i> Starred <span
-                                            class="label label-warning pull-right">14</span></a>
+                                    <li class="nav-item"><a class="nav-link active" href="#"><i
+                                            class="ion ion-ios-albums-outline"></i> All</a>
                                     </li>
-                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
-                                            class="ion ion-trash-a"></i> Trash</a></li>
+                                    {% for collection in NFT_collections %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#" id="show_{{ collection.replace(' ', '_') }}_marketplace">
+                                                <i class="ion ion-ios-albums"></i>
+                                                {{ collection }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
                                 </ul>
                             </div>
                             <!-- /.box-body -->
@@ -75,11 +73,8 @@
                             <div class="box-body no-padding mailbox-nav">
                                 <ul class="nav nav-pills flex-column">
                                     <li class="nav-item"><a class="nav-link" href="#"><i
-                                            class="fa fa-circle-o text-danger"></i> Important</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#"><i
-                                            class="fa fa-circle-o text-warning"></i> Promotions</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#"><i
-                                            class="fa fa-circle-o text-info"></i> Social</a></li>
+                                            class="fa fa-heart-o text-danger"></i> Liked</a>
+                                    </li>
                                 </ul>
                             </div>
                             <!-- /.box-body -->
@@ -89,17 +84,16 @@
                     <!-- NFT grid -->
                     <div class="col-xl-10 col-lg-8 col-12">
                         <div class="row">
-                            {% for item in [1, 2, 3, 4, 5] %}
+                            {% for i, file_path in enumerate(all_paths) %}
                                 <div class="col-md-12 col-lg-3">
-                                    <div class="card box-outline-success">
+                                    <div class="card">
                                         <img class="card-img-top"
-                                             src="{{ url_for('static', filename='/images/nft-item/03.jpg') }}"
+                                             src="{{ url_for('static', filename=file_path) }}"
                                              alt="Card image cap">
                                         <div class="card-body">
-                                            <h4 class="card-title">Multiple titles</h4>
-                                            <p class="card-text">This is a wider card with supporting text below as a
-                                                natural lead-in to additional content. This content is a little bit
-                                                longer.</p>
+                                            <h4 class="card-title">City #{{ i + 1 }}</h4>
+                                            <h6 class="card-text">Cyberpunk collection</h6>
+                                            <p class="card-subtitle">0.1 ETH</p>
                                         </div>
                                         <div class="card-footer justify-content-between d-flex">
                                             <ul class="list-inline mb-0 me-2">
