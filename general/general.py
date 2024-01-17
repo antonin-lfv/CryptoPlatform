@@ -77,3 +77,9 @@ def crypto_wallet():
                            top_cryptos_symbols=top_cryptos_symbols,
                            top_cryptos_names=top_cryptos_names,
                            zip=zip)
+
+
+@BLP_general.route('/mining_invoices', methods=['GET', 'POST'])
+@login_required
+def mining_invoices():
+    return render_template('general/mining_invoices.html', user=current_user)

@@ -22,29 +22,17 @@
                class="{{ 'active_navbar' if request.path == url_for('BLP_general.nft_dashboard') else '' }}"><i
                 data-feather="box"></i>NFT</a></li>
 
-        <li><a href="#"><i data-feather="lock"></i>Login &amp; Error</a>
+        <li><a href="#" class="{{ 'active_navbar' if request.path in [url_for('BLP_general.mining_invoices')] else '' }}"
+        ><i data-feather="lock"></i>Mining</a>
             <ul>
-                <li><a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Authentication</a>
-                    <ul>
-                        <li><a href="auth_login.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Login</a></li>
-                        <li><a href="auth_register.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Register</a></li>
-                        <li><a href="auth_lockscreen.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Lockscreen</a></li>
-                        <li><a href="auth_user_pass.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Recover password</a></li>
-                    </ul>
+                <li><a href="#"
+                ><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Marketplace</a>
                 </li>
-                <li><a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Miscellaneous</a>
-                    <ul>
-                        <li><a href="error_404.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Error 404</a></li>
-                        <li><a href="error_500.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Error 500</a></li>
-                        <li><a href="error_maintenance.html"><i class="icon-Commit"><span class="path1"></span><span
-                                class="path2"></span></i>Maintenance</a></li>
-                    </ul>
+                <li><a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Your servers</a>
+                </li>
+                <li><a href="{{ url_for('BLP_general.mining_invoices')}}"
+                       class="{{ 'active_navbar' if request.path == url_for('BLP_general.mining_invoices') else '' }}"
+                ><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Invoices</a>
                 </li>
             </ul>
         </li>

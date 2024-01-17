@@ -27,7 +27,8 @@
                         <div class="d-inline-block align-items-center">
                             <nav>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a>
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">NFT dashboard</li>
                                 </ol>
@@ -41,19 +42,79 @@
             <!-- Main content -->
             <section class="content">
                 <div class="row">
-                    <div class="col-12">
+                    <!-- Research area -->
+                    <div class="col-xl-2 col-lg-4 col-12">
                         <div class="box">
                             <div class="box-header with-border">
-                                <h4 class="box-title">Title</h4>
+                                <h4 class="box-title">Collections</h4>
                             </div>
-                            <div class="box-body">
-                                This is some text within a card block.
+                            <div class="box-body no-padding mailbox-nav">
+                                <ul class="nav nav-pills flex-column">
+                                    <li class="nav-item"><a class="nav-link active" href="javascript:void(0)"><i
+                                            class="ion ion-ios-email-outline"></i> Inbox
+                                        <span class="label label-success pull-right">12</span></a></li>
+                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
+                                            class="ion ion-paper-airplane"></i> Sent</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
+                                            class="ion ion-email-unread"></i> Drafts</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
+                                            class="ion ion-star"></i> Starred <span
+                                            class="label label-warning pull-right">14</span></a>
+                                    </li>
+                                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i
+                                            class="ion ion-trash-a"></i> Trash</a></li>
+                                </ul>
                             </div>
                             <!-- /.box-body -->
-                            <div class="box-footer">
-                                Footer
+                        </div>
+                        <!-- /. box -->
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Labels</h4>
                             </div>
-                            <!-- /.box-footer-->
+                            <div class="box-body no-padding mailbox-nav">
+                                <ul class="nav nav-pills flex-column">
+                                    <li class="nav-item"><a class="nav-link" href="#"><i
+                                            class="fa fa-circle-o text-danger"></i> Important</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#"><i
+                                            class="fa fa-circle-o text-warning"></i> Promotions</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#"><i
+                                            class="fa fa-circle-o text-info"></i> Social</a></li>
+                                </ul>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                    <!-- NFT grid -->
+                    <div class="col-xl-10 col-lg-8 col-12">
+                        <div class="row">
+                            {% for item in [1, 2, 3, 4, 5] %}
+                                <div class="col-md-12 col-lg-3">
+                                    <div class="card box-outline-success">
+                                        <img class="card-img-top"
+                                             src="{{ url_for('static', filename='/images/nft-item/03.jpg') }}"
+                                             alt="Card image cap">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Multiple titles</h4>
+                                            <p class="card-text">This is a wider card with supporting text below as a
+                                                natural lead-in to additional content. This content is a little bit
+                                                longer.</p>
+                                        </div>
+                                        <div class="card-footer justify-content-between d-flex">
+                                            <ul class="list-inline mb-0 me-2">
+                                                <li class="list-inline-item">
+                                                    <a href="#"><i class="fa fa-heart-o"></i></a>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="list-inline mb-0">
+                                                <li><a href="#">Buy now</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

@@ -6,7 +6,6 @@
 $(function () {
   'use strict'
 
-
   /**
    * Get access to plugins
    */
@@ -17,49 +16,6 @@ $(function () {
   var $pushMenu       = $('[data-toggle="push-menu"]').data('lte.pushmenu')
   var $controlSidebar = $('[data-toggle="control-sidebar"]').data('lte.controlsidebar')
   var $layout         = $('body').data('lte.layout')
-
-  /**
-   * List of all the available themes
-   *
-   * @type Array
-   */
-  var mySkins = [
-    'theme-primary',
-	'theme-secondary',
-	'theme-info',
-	'theme-success',
-	'theme-danger',
-	'theme-warning',
-  ]
-
-  /**
-   * Get a prestored setting
-   *
-   * @param String name Name of of the setting
-   * @returns String The value of the setting | null
-   */
-  function get(name) {
-    if (typeof (Storage) !== 'undefined') {
-      return localStorage.getItem(name)
-    } else {
-      window.alert('Please use a modern browser to properly view this template!')
-    }
-  }
-
-  /**
-   * Store a new settings in the browser
-   *
-   * @param String name Name of the setting
-   * @param String val Value of the setting
-   * @returns void
-   */
-  function store(name, val) {
-    if (typeof (Storage) !== 'undefined') {
-      localStorage.setItem(name, val)
-    } else {
-      window.alert('Please use a modern browser to properly view this template!')
-    }
-  }
 
   /**
    * Toggles layout classes
@@ -77,38 +33,11 @@ $(function () {
   }
 
   /**
-   * Replaces the old skin with the new skin
-   * @param String cls the new skin class
-   * @returns Boolean false to prevent link's default action
-   */
-  function changeSkin(cls) {
-    $.each(mySkins, function (i) {
-      $('body').removeClass(mySkins[i])
-    })
-
-    $('body').addClass(cls)
-    store('theme', cls)
-    return false
-  }
-
-  /**
    * Retrieve default settings and apply them to the template
    *
    * @returns void
    */
   function setup() {
-    var tmp = get('theme')
-    if (tmp && $.inArray(tmp, mySkins))
-      changeSkin(tmp)
-
-    // Add the change skin listener
-    $('[data-theme]').on('click', function (e) {
-      if ($(this).hasClass('knob'))
-        return
-      e.preventDefault()
-      changeSkin($(this).data('theme'))
-    })
-
     // Add the layout manager
     $('[data-layout]').on('click', function () {
       changeLayout($(this).data('layout'))
@@ -148,31 +77,7 @@ $(function () {
         $sidebar.addClass('dark-skin')
       }
     })
-
-    //  Reset options
-    if ($('body').hasClass('fixed')) {
-      $('[data-layout="fixed"]').attr('checked', 'checked')
-    }
-    if ($('body').hasClass('layout-boxed')) {
-      $('[data-layout="layout-boxed"]').attr('checked', 'checked')
-    }
-    if ($('body').hasClass('sidebar-collapse')) {
-      $('[data-layout="sidebar-collapse"]').attr('checked', 'checked')
-    }
-    if ($('body').hasClass('rtl')) {
-      $('[data-layout="rtl"]').attr('checked', 'checked')
-    }
-   // if ($('body').hasClass('dark')) {
-//      $('[data-layout="dark"]').attr('checked', 'checked')
-//    }
-
   }
-
-  // Create the new tab
-  var $tabPane = $('<div />', {
-    'id'   : 'control-sidebar-theme-demo-options-tab',
-    'class': 'tab-pane active'
-  })
 
   // Create the tab button
   var $tabButton = $('<li />', { 'class': 'nav-item' })
@@ -187,16 +92,16 @@ $(function () {
 
   // Create the menu
   var $demoSettings = $('<div />')
-  
- 
-	
-  
+
+
+
+
   // Layout options
   $demoSettings.append(
     '<h4 class="control-sidebar-heading p-0">'
     + '</h4>'
-	  
-    // Theme Skin Toggle	  
+
+    // Theme Skin Toggle
 	+ '<div class="flexbox mb-10 pb-10 bb-1 light-on-off">'
 	+ '<label for="toggle_left_sidebar_skin" class="control-sidebar-subheading">'
     + 'Dark or Light Skin'
@@ -206,80 +111,11 @@ $(function () {
 	+ '<span class="switch-on fs-30"><i class="mdi mdi-lightbulb-on"></i></span>'
 	+ '<span class="switch-off fs-30"><i class="mdi mdi-lightbulb"></i></span>'
 	+ '</label>'
-	+ '</div>'  
-  )
-	
-  // Layout options
-  $demoSettings.append(
-    '<h4 class="control-sidebar-heading p-0">'
-    + '</h4>'
-	  
-    // rtl layout
-	+ '<div class="flexbox mb-10 pb-10 bb-1">'
-	+ '<label for="rtl" class="control-sidebar-subheading">'
-    + 'Turn RTL/LTR'
-    + '</label>'
-	+ '<label class="switch switch-border switch-danger">'
-	+ '<input type="checkbox" data-layout="rtl" id="rtl">'
-	+ '<span class="switch-indicator"></span>'
-	+ '<span class="switch-description"></span>'
-	+ '</label>'
 	+ '</div>'
   )
-
-
-  
-  var $skinsList = $('<ul />', { 'class': 'list-inline clearfix theme-switch' })
-
-  // Dark sidebar skins
-  var $themePrimary =
-        $('<li />', { style: 'padding: 5px;' })
-          .append('<a href="javascript:void(0)" data-theme="theme-primary" style="display: block;vertical-align: middle;" class="bg-primary clearfix rounded w-100 h-100 mb-5" title="Theme primary">'
-            + '</a>')
-  $skinsList.append($themePrimary)
-
-  var $themeInfo =
-        $('<li />', { style: 'padding: 5px;' })
-          .append('<a href="javascript:void(0)" data-theme="theme-info" style="display: block;vertical-align: middle;" class="bg-info clearfix rounded w-100 h-100 mb-5" title="Theme info">'
-            + '</a>')
-  $skinsList.append($themeInfo)
-
-  var $themeSuccess =
-        $('<li />', { style: 'padding: 5px;' })
-          .append('<a href="javascript:void(0)" data-theme="theme-success" style="display: block;vertical-align: middle;" class="bg-success clearfix rounded w-100 h-100 mb-5" title="Theme success">'
-            + '</a>')
-  $skinsList.append($themeSuccess)
-
-  var $themeDanger =
-        $('<li />', { style: 'padding: 5px;' })
-          .append('<a href="javascript:void(0)" data-theme="theme-danger" style="display: block;vertical-align: middle;" class="bg-danger clearfix rounded w-100 h-100 mb-5" title="Theme danger">'
-            + '</a>')
-  $skinsList.append($themeDanger)
-
-  var $themeWarning =
-        $('<li />', { style: 'padding: 5px;' })
-          .append('<a href="javascript:void(0)" data-theme="theme-warning" style="display: block;vertical-align: middle;" class="bg-warning clearfix rounded w-100 h-100 mb-5" title="Theme warning">'
-            + '</a>')
-  $skinsList.append($themeWarning)  
-
-  $demoSettings.append('<h4 class="control-sidebar-heading">Skin Colors</h4>')
-  $demoSettings.append($skinsList)
-
-  $tabPane.append($demoSettings)
-  $('#control-sidebar-home-tab').after($tabPane)
 
   setup()
 
   $('[data-toggle="tooltip"]').tooltip()
-});// End of use strict
-
-$(function () {
-  'use strict'
-	
-	$('.theme-switch li a').click(function () {
-		$('.theme-switch li a').removeClass('active').addClass('inactive');
-		$(this).toggleClass('active inactive');
-	});
-	
 });// End of use strict
 
