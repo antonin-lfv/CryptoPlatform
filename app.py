@@ -2,7 +2,10 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from configuration.config import Config as app_config
-from os import path
+import os
+from utils import NFT_collections
+import random
+import math
 
 db = SQLAlchemy()
 
@@ -18,15 +21,44 @@ def create_app():
     app.register_blueprint(BLP_auth)
     app.register_blueprint(BLP_general)
     app.register_blueprint(BLP_api)
-    # ===== init SQLAlchemy
-    db.init_app(app)
-    if not path.exists("db.sqlite"):
-        with app.app_context():
-            db.create_all()
     # ===== Login manager
     login_manager = LoginManager()
     login_manager.login_view = 'BLP_auth.login'
     login_manager.init_app(app)
+
+    with app.app_context():
+        db.init_app(app)
+        if not os.path.exists("instance/db.sqlite"):
+            # ===== init SQLAlchemy
+            db.create_all()
+
+            # ===== Init NFT marketplace
+            # Go trhough all NFTs and add them to the database
+            # Add a random price between 0.1 and 100 in crypto among :
+            # [Litecoin, Cardano, XRP, Dogecoin, Qtum, Basic Attention Token, NEO]
+            # Lower price is more probable than higher price
+            # Add a name that is the same as the collection and the index with #
+            # add the collection name
+            # add the image path
+            from models import NFT
+            print("Adding NFTs to the database")
+
+            min_prix = 0.1
+            max_prix = 100
+            core_url = '/images/nft-item/'
+            for collection in NFT_collections:
+                collection_path = core_url + collection.lower() + '/'
+                # Add as many NFTs as there is in the folder with the same name and _index (starting at 1)
+                # get the number of file in collection_path
+                nb_files = len(os.listdir('assets' + collection_path))
+                for i in range(1, nb_files + 1):
+                    name = f"{collection} #{i}"
+                    path = f"{collection_path}{collection.lower()}_{i}.png"
+                    price = round(min_prix + (max_prix - min_prix) * (1 - math.exp(-5 * random.random())), 3)
+                    nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
+                    db.session.add(nft)
+
+                db.session.commit()
 
     from models import User
 

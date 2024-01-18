@@ -3,15 +3,18 @@ from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
+from nft_manager import NFT_manager
 
 BLP_api = Blueprint('BLP_api', __name__)
 
 # Index
-# 1. Crypto data
-# 2. Wallet
-# 3. Buy crypto
-# 4. Notifications
-# 5. General functions
+# ----------------
+# Crypto data
+# NFT data
+# Wallet
+# Buy crypto
+# Notifications
+# General functions
 
 
 # ================================
@@ -79,6 +82,22 @@ def get_crypto_from_crypto(symbol_from, symbol_to, quantity):
     """
     data = CryptoDataManager().get_crypto_from_crypto(symbol_from, symbol_to, quantity)
     return jsonify(data)
+
+
+# ================================
+# NFT data
+# ================================
+
+@BLP_api.route('/api/get_NFT_marketplace', methods=['GET', 'POST'])
+@BLP_api.route('/api/get_NFT_marketplace/<collection>', methods=['GET', 'POST'])
+@login_required
+def get_NFT_marketplace(collection=None):
+    """
+    Get all NFTs from the marketplace
+    """
+    NFTs = NFT_manager().get_NFTs(collection)
+    print(f"Length of NFTs: {len(NFTs)}")
+    return jsonify(NFTs)
 
 
 # ================================

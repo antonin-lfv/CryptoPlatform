@@ -68,20 +68,8 @@ def one_crypto_dashboard(symbol):
 @BLP_general.route('/nft_marketplace', methods=['GET', 'POST'])
 @login_required
 def nft_marketplace():
-    all_paths = []
-    # Get all path for NFTs
-    core_url = '/images/nft-item/'
-    for collection in NFT_collections:
-        collection_path = core_url + collection.lower() + '/'
-        # Add as many NFTs as there is in the folder with the same name and _index (starting at 1)
-        # get the number of file in collection_path
-        nb_files = len(os.listdir('assets' + collection_path))
-        for i in range(1, nb_files + 1):
-            all_paths.append(collection_path + collection.lower() + '_' + str(i) + '.png')
-
     return render_template('general/nft_marketplace.html',
-                           user=current_user, NFT_collections=NFT_collections,
-                           all_paths=all_paths, enumerate=enumerate)
+                           user=current_user, NFT_collections=NFT_collections)
 
 
 @BLP_general.route('/crypto_wallet', methods=['GET', 'POST'])
