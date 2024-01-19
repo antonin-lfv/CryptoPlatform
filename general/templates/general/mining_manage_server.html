@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include('includes/head_content.html') %}
+
+    <title>Your servers</title>
+
+</head>
+
+<body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
+
+<div class="wrapper">
+    <div id="loader"></div>
+
+    <!-- Top navbar -->
+    {% include('includes/top_navbar.html') %}
+
+    <!-- Navbar -->
+    {% include('includes/navbar.html') %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+	  <div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h3 class="page-title">ICO Details</h3>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Mining server types</li>
+								<li class="breadcrumb-item active" aria-current="page">Server details</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="box">
+					  <div class="box-header with-border">
+						<a href="#"><i class="cc BTC no-margin me-10" title="BTC"></i></a>
+						<h4 class="box-title">Token
+						<small class="subtitle mt-0">Finance</small></h4>
+					  </div>
+					  <div class="box-body">
+						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+						  <div class="row">
+							<div class="col-12 col-lg-6">
+							  <div class="box text-center bg-info">
+								<div class="box-body">
+								  <h2 class="mt-20">Token Sale ends in</h2>
+								  <h4 class="text-bold">12 DAYS</h4>
+								  <h2 class="text-bold text-warning mt-20">$4.200.000</h2>
+								  <h4 class="text-bold">of</h4>
+								  <h4 class="text-bold mb-40">$12.000.000</h4>
+								  <a href="{{ url_for('BLP_general.mining_server_invoices', server_name='4090Ti') }}" class="btn btn-warning mb-20">Invoices</a><br>
+								  <a href="#" class="btn btn-outline btn-warning mb-30">WHITEPAPER</a>
+								  <div class="mt-10 mb-15">
+									<button class="btn btn-social-icon btn-circle btn-facebook"><i class="fa fa-facebook"></i></button>
+									<button class="btn btn-social-icon btn-circle btn-twitter"><i class="fa fa-twitter"></i></button>
+									<button class="btn btn-social-icon btn-circle btn-linkedin"><i class="fa fa-linkedin"></i></button>
+									<button class="btn btn-social-icon btn-circle btn-vimeo"><i class="fa fa-vimeo"></i></button>
+									<button class="btn btn-social-icon btn-circle btn-instagram"><i class="fa fa-instagram"></i></button>
+								  </div>
+								</div>
+							  </div>
+							</div>
+							<div class="col-12 col-lg-6">
+							  <div class="box text-center bg-success">
+								  <div class="box-header with-border">
+									  <h2 class="box-title text-white">Market Price</h2>
+								  </div>
+								<div class="box-body">
+								  <div class="div-market-price">
+									<h1 class="mb-40">$1,231.91 <small>USD</small></h1>
+									<h1 class="mb-30">$0,231.22 <small>EUR</small></h1>
+									<h1 class="mb-50">$1,245.61 <small>GBR</small></h1>
+									<h4 class="text-white p-10">Average USD/EUR/GBR market price across major bitcoin exchanges.</h4>
+								  </div>
+								</div>
+							  </div>
+							</div>
+						  </div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="box">
+						  <div class="box-header">
+							<h4 class="mb-0 fw-500">Sale</h4>
+						  </div>
+						  <div class="box-body">
+							  <div class="row mb-30">
+								<div class="col-12 col-lg-4">
+								  <h5 class="p-15 mb-0"><strong>Ticker:</strong> CARDFE</h5>
+								  <h5 class="p-15 mb-0"><strong>Token Type:</strong> ERC45</h5>
+								  <h5 class="p-15 mb-0"><strong>Fundraising Goal:</strong> 3,244,000 USD</h5>
+								</div>
+								<div class="col-12 col-lg-4">
+								  <h5 class="p-15 mb-0"><strong>Can’t participate:</strong> USA</h5>
+								  <h5 class="p-15 mb-0"><strong>Accepts:</strong> EHT, BTC, USD</h5>
+								  <h5 class="p-15 mb-0"><strong>Bonus for the First:</strong> Up to 30% bonus</h5>
+								</div>
+								<div class="col-12 col-lg-4">
+								  <h5 class="p-15 mb-0"><strong>Total Tokens:</strong> 80,000,000</h5>
+								  <h5 class="p-15 mb-0"><strong>Available for Token Sale:</strong><span class="text-success"> 67%</span></h5>
+								</div>
+							  </div>
+						  </div>
+						  <div class="box-header">
+							<h4 class="mb-0 fw-500">Review</h4>
+						  </div>
+						  <div class="box-body">
+							  <div class="row mb-30">
+								<div class="col-12 col-lg-4">
+								  <h5 class="p-15 mb-0"><strong>Team form:</strong> Singapore</h5>
+								  <h5 class="p-15 mb-0"><strong>Role of Token:</strong> Utility</h5>
+								</div>
+								<div class="col-12 col-lg-8">
+								  <h5 class="p-15 mb-0"><strong>Unsold Tokens:</strong> Will be burn</h5>
+								  <h5 class="p-15 mb-0"><strong>Registered Company:</strong> Crowd Genie Financial Services PTE. LTD.</h5>
+								</div>
+							  </div>
+						  </div>
+						  <div class="box-header">
+							<h4 class="mb-0 fw-500">View</h4>
+						  </div>
+						  <div class="box-body">
+							  <div class="popup-gallery p-15">
+								<a href="../images/gallery/thumb/4.jpg" title="Caption. Can be aligned to any side and contain any HTML.">
+									<img src="../images/gallery/thumb/4.jpg" class="w-p20" alt="" />
+								</a>
+								<a href="../images/gallery/thumb/5.jpg" title="This image fits only horizontally.">
+									<img src="../images/gallery/thumb/5.jpg" class="w-p20" alt="" />
+								</a>
+								<a href="../images/gallery/thumb/6.jpg">
+									<img src="../images/gallery/thumb/6.jpg" class="w-p20" alt="" />
+								</a>
+								<a href="../images/gallery/thumb/6.jpg">
+									<img src="../images/gallery/thumb/1.jpg" class="w-p20" alt="" />
+								</a>
+							  </div>
+						</div>
+					</div>
+				</div>
+			  </div>
+		</section>
+		<!-- /.content -->
+
+	  </div>
+  </div>
+    <!-- /.content-wrapper -->
+    <!-- Footer -->
+    {% include('includes/footer.html') %}
+
+</div>
+<!-- ./wrapper -->
+
+<!-- Page Content overlay -->
+
+
+{% include('includes/javascript_include_dashboard.html') %}
+
+</body>
+</html>

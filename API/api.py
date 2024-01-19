@@ -84,6 +84,18 @@ def get_crypto_from_crypto(symbol_from, symbol_to, quantity):
     return jsonify(data)
 
 
+@BLP_api.route('/api/buy_with_crypto', methods=['GET', 'POST'])
+@login_required
+def buy_with_crypto():
+    """
+    Buy a crypto with another crypto
+    """
+    symbol = request.args.get('symbol', '')
+    quantity = request.args.get('quantity', '')
+    response = wallet_manager().buy_with_crypto(current_user, symbol, quantity)
+    return jsonify(response)
+
+
 # ================================
 # NFT data
 # ================================

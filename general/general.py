@@ -81,7 +81,28 @@ def crypto_wallet():
                            zip=zip)
 
 
-@BLP_general.route('/mining_invoices', methods=['GET', 'POST'])
+@BLP_general.route('/mining_place', methods=['GET', 'POST'])
 @login_required
-def mining_invoices():
-    return render_template('general/mining_invoices.html', user=current_user)
+def mining_place():
+    """
+    Grid with all types of mining servers
+    """
+    return render_template('general/mining_place.html', user=current_user)
+
+
+@BLP_general.route('/mining_manage_server/<server_name>', methods=['GET', 'POST'])
+@login_required
+def mining_manage_server(server_name):
+    """
+    Details of a specific mining server type
+    """
+    return render_template('general/mining_manage_server.html', user=current_user)
+
+
+@BLP_general.route('/mining_server_invoices/<server_name>', methods=['GET', 'POST'])
+@login_required
+def mining_server_invoices(server_name):
+    """
+    Invoices of a specific mining server type
+    """
+    return render_template('general/mining_server_invoices.html', user=current_user)

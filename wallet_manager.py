@@ -12,6 +12,7 @@ class wallet_manager:
     """
     Manage the wallets of the users
     """
+
     def __init__(self):
         self.top_cryptos_symbols = top_cryptos_symbols
         self.top_cryptos_names = top_cryptos_names
@@ -282,7 +283,7 @@ class wallet_manager:
         # cumulate quantity
         for i in range(len(wallet_daily_snapshot)):
             if i > 0:
-                wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i-1]["value"]
+                wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i - 1]["value"]
 
         # fill missing dates between first and today
         if wallet_daily_snapshot[0]["date"] != datetime.utcnow().date():
@@ -291,7 +292,7 @@ class wallet_manager:
             # get today's date
             today = datetime.utcnow().date()
             # loop over dates between first and today
-            for i in range((today-first_date).days+1):
+            for i in range((today - first_date).days + 1):
                 # get date
                 date = first_date + timedelta(days=i)
                 # check if date is in wallet daily snapshot
@@ -430,7 +431,7 @@ class wallet_manager:
             return {'error': 'Can\'t sell or buy 0 crypto'}
 
         # Update wallets (avoid negative quantity with approximations)
-        wallet_crypto_to_sell.quantity = max(wallet_crypto_to_sell.quantity-quantity_to_sell, 0)
+        wallet_crypto_to_sell.quantity = max(wallet_crypto_to_sell.quantity - quantity_to_sell, 0)
 
         # Get user wallet for symbol_to_buy
         wallet_crypto_to_buy = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol_to_buy).first()
@@ -462,6 +463,31 @@ class wallet_manager:
         return {'success': 'Transaction successful'}
 
     @staticmethod
+    def buy_with_crypto(user, symbol, quantity):
+        """
+        Buy a service or a product with crypto like:
+        - Mining server
+        - NFT
+        ...
+        """
+        # get the user wallet for the crypto and check if the user has enough crypto
+        # if yes, update the wallet and return success
+        # if not, return an error
+        user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        if user_wallet.quantity >= quantity:
+            # use max to avoid negative quantity with approximations
+            user_wallet.quantity = max(user_wallet.quantity - quantity, 0)
+            db.session.commit()
+
+            # Update wallet evolution
+            w_manager = wallet_manager()
+            w_manager.update_crypto_wallet_evolution(user)
+
+            return {'success': 'Transaction successful'}
+        else:
+            return {'error': 'Not enough crypto in wallet'}
+
+    @staticmethod
     def add_transaction_to_wallet_history(wallet, transaction_type, quantity):
         """
         Add transaction to wallet history
@@ -487,7 +513,7 @@ class wallet_manager:
 
         Parameters:
             - user: User object, the user who buys crypto
-            - quantity: float, quantity of crypto bought/sold
+            - quantity: float, quantity of crypto bought
         """
         # Get latest snapshot
         latest_snapshot = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).order_by(

@@ -22,19 +22,8 @@
                class="{{ 'active_navbar' if request.path == url_for('BLP_general.nft_marketplace') else '' }}"><i
                 data-feather="box"></i>NFT</a></li>
 
-        <li><a href="#" class="{{ 'active_navbar' if request.path in [url_for('BLP_general.mining_invoices')] else '' }}"
-        ><i data-feather="server"></i>Mining</a>
-            <ul>
-                <li><a href="#"
-                ><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Marketplace</a>
-                </li>
-                <li><a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Your servers</a>
-                </li>
-                <li><a href="{{ url_for('BLP_general.mining_invoices')}}"
-                       class="{{ 'active_navbar' if request.path == url_for('BLP_general.mining_invoices') else '' }}"
-                ><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Invoices</a>
-                </li>
-            </ul>
-        </li>
+        <li><a href="{{ url_for('BLP_general.mining_place') }}"
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.mining_place') else '' }}"><i
+                data-feather="server"></i>Mining</a></li>
     </ul>
 </nav>
