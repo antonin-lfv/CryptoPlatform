@@ -27,7 +27,7 @@ top_cryptos_names = [
 mini_wallet = 1000
 bank_wallet = 10000
 
-NFT_collections = ['Cyberpunk', 'Cars', 'Cats', 'Picasso', 'Penguins', 'Cubes']
+NFT_collections = ['Cyberpunk', 'Greece', 'Cars', 'Cats', 'Picasso', 'Penguins', 'Cubes']
 
 # dict to get name from symbol
 symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))
