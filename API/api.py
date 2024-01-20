@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, session, request
+from flask import Blueprint, jsonify, session, request
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
@@ -125,6 +125,23 @@ def get_all_mining_servers():
     """
     servers = Mining_server_manager().get_all_servers()
     return jsonify(servers)
+
+
+@BLP_api.route('/api/get_user_mining_server_details/<server_id>/<user_id>', methods=['GET', 'POST'])
+@login_required
+def get_user_mining_server_details(server_id, user_id):
+    """
+    Get details of a mining server for a specific user (He can have multiple servers)
+
+    Fields:
+    - number_of_servers_bought
+    - number_of_servers_rented
+    - total_buy_amount
+    - total_rent_amount_per_week
+    - total_maintenance_cost_per_week (bought servers only)
+    """
+    server_details = Mining_server_manager().get_user_mining_server_details(server_id, user_id)
+    return jsonify(server_details)
 
 
 # ================================

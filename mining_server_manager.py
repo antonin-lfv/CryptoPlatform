@@ -1,4 +1,5 @@
-from models import MiningServer
+from models import MiningServer, UserServer
+
 
 class Mining_server_manager:
 
@@ -31,3 +32,29 @@ class Mining_server_manager:
         print(f"Length of servers_list: {len(servers_list)}")
 
         return servers_list
+
+    @staticmethod
+    def get_user_mining_server_details(server_id, user_id):
+        """
+        Get the details of a specific mining server
+        """
+        # Get the user's server details
+        user_server_details = UserServer.query.filter_by(user_id=user_id, server_id=server_id).all()
+        # Get :
+        # - Number of servers bought
+        # - Number of servers rented
+        # - Compute the total buy amount
+        # - Compute the total rent amount per week
+        # - Compute the total maintenance cost per week (bought servers only)
+        output = {'number_of_servers_bought': 0, 'number_of_servers_rented': 0, 'total_buy_amount': 0,
+                  'total_rent_amount_per_week': 0, 'total_maintenance_cost_per_week': 0}
+
+        for server in user_server_details:
+            if server.rent_start_date:
+                output['number_of_servers_rented'] += 1
+                output['total_rent_amount_per_week'] += server.server.rent_amount_per_week
+            elif server.purchase_date:
+                output['number_of_servers_bought'] += 1
+                output['total_buy_amount'] += server.server.buy_amount
+                output['total_maintenance_cost_per_week'] += server.server.maintenance_cost_per_week
+        return output

@@ -11,6 +11,11 @@ $(function () {
     // our radios, then interact with the mixer via
     // its .filter() API methods.
 
+    // check if container exists
+    if (!$('.ico-filter').length) {
+        return false;
+    }
+
     var containerEl = document.querySelector('.ico-filter');
     var radiosFilter = document.querySelector('.radios-filter');
 
@@ -18,14 +23,10 @@ $(function () {
 
     radiosFilter.addEventListener('change', function () {
         var checked = radiosFilter.querySelector(':checked');
-        console.log(checked);
 
         var selector = checked ? checked.value : 'all';
-        console.log(selector);
 
-        mixer.filter(selector).then(function (state) {
-            console.log(state.totalShow);  // Nombre d'éléments affichés après le filtrage
-        });
+        mixer.filter(selector);
     });
 
 }); // End of use strict

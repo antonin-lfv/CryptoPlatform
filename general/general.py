@@ -103,8 +103,21 @@ def mining_manage_server(server_name):
     if server is None:
         abort(404)  # ou vous pouvez renvoyer à une page d'erreur personnalisée
 
+    # Get the overall server data
+    server_data = {
+        'id': server.id,
+        'name': server.name,
+        'symbol': server.symbol,
+        'rent_amount_per_week': server.rent_amount_per_week,
+        'buy_amount': server.buy_amount,
+        'power': server.power,
+        'maintenance_cost_per_week': server.maintenance_cost_per_week,
+        'logo_path': server.logo_path,
+        'category': server.category,
+    }
+
     return render_template('general/mining_manage_server.html', user=current_user,
-                           server_name=server_name)
+                           server_data=server_data)
 
 
 @BLP_general.route('/mining_server_invoices/<server_name>', methods=['GET', 'POST'])
