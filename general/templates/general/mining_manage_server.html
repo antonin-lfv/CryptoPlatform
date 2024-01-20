@@ -25,13 +25,13 @@
 		<div class="content-header">
 			<div class="d-flex align-items-center">
 				<div class="me-auto">
-					<h3 class="page-title">ICO Details</h3>
+					<h3 class="page-title">Server details</h3>
 					<div class="d-inline-block align-items-center">
 						<nav>
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
 								<li class="breadcrumb-item" aria-current="page">Mining server types</li>
-								<li class="breadcrumb-item active" aria-current="page">Server details</li>
+								<li class="breadcrumb-item active" aria-current="page">{{ server_name }} details</li>
 							</ol>
 						</nav>
 					</div>
@@ -62,15 +62,8 @@
 								  <h2 class="text-bold text-warning mt-20">$4.200.000</h2>
 								  <h4 class="text-bold">of</h4>
 								  <h4 class="text-bold mb-40">$12.000.000</h4>
-								  <a href="{{ url_for('BLP_general.mining_server_invoices', server_name='4090Ti') }}" class="btn btn-warning mb-20">Invoices</a><br>
+								  <a href="{{ url_for('BLP_general.mining_server_invoices', server_name=server_name) }}" class="btn btn-warning mb-20">Invoices</a><br>
 								  <a href="#" class="btn btn-outline btn-warning mb-30">WHITEPAPER</a>
-								  <div class="mt-10 mb-15">
-									<button class="btn btn-social-icon btn-circle btn-facebook"><i class="fa fa-facebook"></i></button>
-									<button class="btn btn-social-icon btn-circle btn-twitter"><i class="fa fa-twitter"></i></button>
-									<button class="btn btn-social-icon btn-circle btn-linkedin"><i class="fa fa-linkedin"></i></button>
-									<button class="btn btn-social-icon btn-circle btn-vimeo"><i class="fa fa-vimeo"></i></button>
-									<button class="btn btn-social-icon btn-circle btn-instagram"><i class="fa fa-instagram"></i></button>
-								  </div>
 								</div>
 							  </div>
 							</div>

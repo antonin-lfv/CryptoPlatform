@@ -6,6 +6,7 @@ import os
 from utils import NFT_collections
 import random
 import math
+import json
 
 db = SQLAlchemy()
 
@@ -58,6 +59,27 @@ def create_app():
                     nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                     db.session.add(nft)
 
+                db.session.commit()
+
+            # ===== Init Mining server
+            from models import MiningServer
+
+            path_to_mining_server_config = 'configuration/mining_servers.json'
+            # Iterate over all the json in the document, and add the mining server to the database
+            with open(path_to_mining_server_config) as json_file:
+                data = json.load(json_file)
+                for mining_server in data:
+                    mining_server = MiningServer(
+                        name=mining_server['Name'],
+                        symbol=mining_server['Symbol'],
+                        rent_amount_per_week=mining_server['RentAmountPerWeek'],
+                        buy_amount=mining_server['BuyAmount'],
+                        power=mining_server['Power'],
+                        maintenance_cost_per_week=mining_server['MaintenanceCostPerWeek'],
+                        logo_path=mining_server['Logo'],
+                        category=mining_server['Category']
+                    )
+                    db.session.add(mining_server)
                 db.session.commit()
 
     from models import User

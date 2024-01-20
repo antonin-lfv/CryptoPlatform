@@ -130,3 +130,49 @@ class Notification(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)  # Date of the notification
     message = db.Column(db.String(1000), nullable=False)  # Message of the notification
     icon = db.Column(db.String(1000), nullable=False)  # Icon of the notification
+
+
+class MiningServer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    symbol = db.Column(db.String(10), nullable=False)
+    rent_amount_per_week = db.Column(db.Float, nullable=False)
+    buy_amount = db.Column(db.Float, nullable=False)
+    power = db.Column(db.Float, nullable=False)
+    maintenance_cost_per_week = db.Column(db.Float, nullable=False)
+    logo_path = db.Column(db.String(1000), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return f'<Server {self.name}>'
+
+
+class UserNFT(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)
+    purchase_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    purchase_price_usd = db.Column(db.Float, nullable=False)
+    purchase_price_crypto = db.Column(db.Float, nullable=False)
+    purchase_crypto_symbol = db.Column(db.String(10), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('user_nfts', lazy=True))
+    nft = db.relationship('NFT', backref=db.backref('nft_owners', lazy=True))
+
+    def __repr__(self):
+        return f'<UserNFT {self.user_id} owns {self.nft_id}>'
+
+
+class UserServer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
+    rent_start_date = db.Column(db.DateTime, nullable=True)
+    rent_end_date = db.Column(db.DateTime, nullable=True)
+    purchase_date = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship('User', backref=db.backref('user_servers', lazy=True))
+    server = db.relationship('MiningServer', backref=db.backref('server_users', lazy=True))
+
+    def __repr__(self):
+        return f'<UserServer {self.user_id} owns/rents {self.server_id}>'

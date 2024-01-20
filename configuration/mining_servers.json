@@ -1,0 +1,202 @@
+[
+    {
+        "Name": "NanoServer X1",
+        "Symbol": "LTC",
+        "RentAmountPerWeek": 100,
+        "BuyAmount": 2000,
+        "Power": 0.2,
+        "MaintenanceCostPerWeek": 10,
+        "Logo": "/images/mining_server_img/nano_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "MicroServer M2",
+        "Symbol": "ADA",
+        "RentAmountPerWeek": 200,
+        "BuyAmount": 4000,
+        "Power": 0.4,
+        "MaintenanceCostPerWeek": 20,
+        "Logo": "/images/mining_server_img/micro_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "MiniServer S3",
+        "Symbol": "XRP",
+        "RentAmountPerWeek": 300,
+        "BuyAmount": 6000,
+        "Power": 0.6,
+        "MaintenanceCostPerWeek": 30,
+        "Logo": "/images/mining_server_img/mini_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "SuperServer C4",
+        "Symbol": "DOGE",
+        "RentAmountPerWeek": 400,
+        "BuyAmount": 8000,
+        "Power": 0.8,
+        "MaintenanceCostPerWeek": 40,
+        "Logo": "/images/mining_server_img/compact_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "EfficientServer E5",
+        "Symbol": "QTUM",
+        "RentAmountPerWeek": 500,
+        "BuyAmount": 10000,
+        "Power": 1.0,
+        "MaintenanceCostPerWeek": 50,
+        "Logo": "/images/mining_server_img/efficient_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "ProServer P6",
+        "Symbol": "BAT",
+        "RentAmountPerWeek": 600,
+        "BuyAmount": 12000,
+        "Power": 1.2,
+        "MaintenanceCostPerWeek": 60,
+        "Logo": "/images/mining_server_img/pro_server.png",
+        "Category": "PulseSeries"
+    },
+    {
+        "Name": "UltraServer U7",
+        "Symbol": "NEO",
+        "RentAmountPerWeek": 700,
+        "BuyAmount": 14000,
+        "Power": 1.4,
+        "MaintenanceCostPerWeek": 70,
+        "Logo": "/images/mining_server_img/ultra_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "MegaServer M8",
+        "Symbol": "LTC",
+        "RentAmountPerWeek": 800,
+        "BuyAmount": 16000,
+        "Power": 1.6,
+        "MaintenanceCostPerWeek": 80,
+        "Logo": "/images/mining_server_img/mega_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "GigaServer G9",
+        "Symbol": "ADA",
+        "RentAmountPerWeek": 900,
+        "BuyAmount": 18000,
+        "Power": 1.8,
+        "MaintenanceCostPerWeek": 90,
+        "Logo": "/images/mining_server_img/giga_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "TeraServer T10",
+        "Symbol": "XRP",
+        "RentAmountPerWeek": 1000,
+        "BuyAmount": 20000,
+        "Power": 2.0,
+        "MaintenanceCostPerWeek": 100,
+        "Logo": "/images/mining_server_img/tera_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "PetaServer P11",
+        "Symbol": "DOGE",
+        "RentAmountPerWeek": 1100,
+        "BuyAmount": 22000,
+        "Power": 2.2,
+        "MaintenanceCostPerWeek": 110,
+        "Logo": "/images/mining_server_img/peta_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "ExaServer E12",
+        "Symbol": "QTUM",
+        "RentAmountPerWeek": 1200,
+        "BuyAmount": 24000,
+        "Power": 2.4,
+        "MaintenanceCostPerWeek": 120,
+        "Logo": "/images/mining_server_img/exa_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "ZettaServer Z13",
+        "Symbol": "BAT",
+        "RentAmountPerWeek": 1300,
+        "BuyAmount": 26000,
+        "Power": 2.6,
+        "MaintenanceCostPerWeek": 130,
+        "Logo": "/images/mining_server_img/zetta_server.png",
+        "Category": "NovaSeries"
+    },
+    {
+        "Name": "YottaServer Y14",
+        "Symbol": "NEO",
+        "RentAmountPerWeek": 1400,
+        "BuyAmount": 28000,
+        "Power": 2.8,
+        "MaintenanceCostPerWeek": 140,
+        "Logo": "/images/mining_server_img/yotta_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "BrontoServer B15",
+        "Symbol": "LTC",
+        "RentAmountPerWeek": 1500,
+        "BuyAmount": 30000,
+        "Power": 3.0,
+        "MaintenanceCostPerWeek": 150,
+        "Logo": "/images/mining_server_img/bronto_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "GeopServer G16",
+        "Symbol": "ADA",
+        "RentAmountPerWeek": 1600,
+        "BuyAmount": 32000,
+        "Power": 3.2,
+        "MaintenanceCostPerWeek": 160,
+        "Logo": "/images/mining_server_img/geop_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "TerraServer T17",
+        "Symbol": "XRP",
+        "RentAmountPerWeek": 1700,
+        "BuyAmount": 34000,
+        "Power": 3.4,
+        "MaintenanceCostPerWeek": 170,
+        "Logo": "/images/mining_server_img/terra_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "PentaServer P18",
+        "Symbol": "DOGE",
+        "RentAmountPerWeek": 1800,
+        "BuyAmount": 36000,
+        "Power": 3.6,
+        "MaintenanceCostPerWeek": 180,
+        "Logo": "/images/mining_server_img/penta_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "ExoServer E19",
+        "Symbol": "QTUM",
+        "RentAmountPerWeek": 1900,
+        "BuyAmount": 38000,
+        "Power": 3.8,
+        "MaintenanceCostPerWeek": 190,
+        "Logo": "/images/mining_server_img/exo_server.png",
+        "Category": "QuantumSeries"
+    },
+    {
+        "Name": "HyperServer H20",
+        "Symbol": "BAT",
+        "RentAmountPerWeek": 2000,
+        "BuyAmount": 40000,
+        "Power": 4.0,
+        "MaintenanceCostPerWeek": 200,
+        "Logo": "/images/mining_server_img/hyper_server.png",
+        "Category": "QuantumSeries"
+    }
+]

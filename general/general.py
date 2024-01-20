@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, jsonify, session, request
+from flask import Blueprint, render_template, abort
 from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
-import os
+from models import MiningServer
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',
@@ -96,7 +96,15 @@ def mining_manage_server(server_name):
     """
     Details of a specific mining server type
     """
-    return render_template('general/mining_manage_server.html', user=current_user)
+    # Vérifier si le serveur existe dans la base de données
+    server = MiningServer.query.filter_by(name=server_name).first()
+
+    # Si le serveur n'existe pas, renvoyer une page d'erreur ou une réponse appropriée
+    if server is None:
+        abort(404)  # ou vous pouvez renvoyer à une page d'erreur personnalisée
+
+    return render_template('general/mining_manage_server.html', user=current_user,
+                           server_name=server_name)
 
 
 @BLP_general.route('/mining_server_invoices/<server_name>', methods=['GET', 'POST'])
@@ -105,4 +113,12 @@ def mining_server_invoices(server_name):
     """
     Invoices of a specific mining server type
     """
-    return render_template('general/mining_server_invoices.html', user=current_user)
+    # Vérifier si le serveur existe dans la base de données
+    server = MiningServer.query.filter_by(name=server_name).first()
+
+    # Si le serveur n'existe pas, renvoyer une page d'erreur ou une réponse appropriée
+    if server is None:
+        abort(404)  # ou vous pouvez renvoyer à une page d'erreur personnalisée
+
+    return render_template('general/mining_server_invoices.html', user=current_user,
+                           server_name=server_name)

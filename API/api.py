@@ -4,6 +4,7 @@ from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from nft_manager import NFT_manager
+from mining_server_manager import Mining_server_manager
 
 BLP_api = Blueprint('BLP_api', __name__)
 
@@ -108,8 +109,22 @@ def get_NFT_marketplace(collection=None):
     Get all NFTs from the marketplace
     """
     NFTs = NFT_manager().get_NFTs(collection)
-    print(f"Length of NFTs: {len(NFTs)}")
     return jsonify(NFTs)
+
+
+# ================================
+# Mining servers
+# ================================
+
+
+@BLP_api.route('/api/get_all_mining_servers', methods=['GET', 'POST'])
+@login_required
+def get_all_mining_servers():
+    """
+    Get all mining servers from the database
+    """
+    servers = Mining_server_manager().get_all_servers()
+    return jsonify(servers)
 
 
 # ================================
