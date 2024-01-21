@@ -131,17 +131,8 @@
                                         <a href="${urlDetails}">
                                             <h3 class="no-margin text-bold">${server.name}</h3>
                                         </a>
-                                        <span>Power: ${server.power}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <p class="no-margin fw-600"><span class="text-warning">${server.rent_amount_per_week}</span> / ${server.buy_amount}</p>
-                                        <p class="no-margin">Rent per week / Buy amount</p>
-                                    </div>
-                                    <div class="mt-10">
-                                        <p class="no-margin fw-600"><span class="text-warning">${server.maintenance_cost_per_week}</span></p>
-                                        <p class="no-margin">Maintenance cost per week</p>
+                                        Power: <span class="text-success">${server.power}</span> ${server.symbol}/day<br>
+                                        Cost: <span class="text-warning">${server.rent_amount_per_week} + ${server.maintenance_cost_per_week}</span> ${server.symbol}/week
                                     </div>
                                 </div>
                             </div>

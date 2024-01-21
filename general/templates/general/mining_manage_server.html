@@ -113,7 +113,8 @@
                                         <h5 class="p-15 mb-0"><strong>Rent
                                             price:</strong> {{ server_data.rent_amount_per_week }} {{ server_data.symbol }}/week
                                         </h5>
-                                        <h5 class="p-15 mb-0"><strong>Server power:</strong> {{ server_data.power }}
+                                        <h5 class="p-15 mb-0"><strong>Server
+                                            power:</strong> {{ server_data.power }} {{ server_data.symbol }}/day
                                         </h5>
                                     </div>
                                     <div class="col-12 col-lg-6">
@@ -136,12 +137,18 @@
                                 <div class="row mb-30">
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0" id="server_rented"><strong>Server rented:</strong></h5>
-                                        <h5 class="p-15 mb-0" id="token_spent_to_buy"><strong>{{ server_data.symbol }} spent to buy:</strong></h5>
-                                        <h5 class="p-15 mb-0" id="maintenance_cost"><strong>{{ server_data.symbol }} spent for maintenance:</strong></h5>
+                                        <h5 class="p-15 mb-0" id="token_spent_to_buy"><strong>{{ server_data.symbol }}
+                                            spent to buy:</strong></h5>
+                                        <h5 class="p-15 mb-0" id="maintenance_cost"><strong>{{ server_data.symbol }}
+                                            spent for maintenance:</strong></h5>
+                                        <br>
+                                         <a href="{{ url_for('BLP_general.mining_server_invoices', server_name=server_data.name) }}"
+                                           class="btn btn-warning mb-20">View invoices</a>
                                     </div>
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0" id="server_bought"><strong>Server bought:</strong></h5>
-                                        <h5 class="p-15 mb-0" id="token_spent_to_rent"><strong>{{ server_data.symbol }} spent to rent:</strong></h5>
+                                        <h5 class="p-15 mb-0" id="token_spent_to_rent"><strong>{{ server_data.symbol }}
+                                            spent to rent:</strong></h5>
                                     </div>
                                 </div>
                             </div>
