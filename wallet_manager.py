@@ -1,8 +1,5 @@
 from datetime import datetime, timedelta
-import yfinance as yf
-from functools import wraps
 from utils import top_cryptos_symbols, top_cryptos_names
-from configuration.config import Config
 from models import CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot, CryptoWalletEvolution
 from app import db
 from crypto_manager import CryptoDataManager

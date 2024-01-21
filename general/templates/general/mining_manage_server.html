@@ -32,7 +32,8 @@
                                     <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a>
                                     </li>
                                     <li class="breadcrumb-item" aria-current="page"><a
-                                            href="{{ url_for('BLP_general.mining_place') }}">Mining server types</a>
+                                            href="{{ url_for('BLP_general.mining_place') }}">Mining server
+                                        marketplace</a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">{{ server_data.name }}
                                         details
@@ -57,45 +58,33 @@
                                     <small class="subtitle mt-0">Mining {{ server_data.symbol }} token</small></h4>
                             </div>
                             <div class="box-body">
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                                    Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                                    unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                    It has survived not only five centuries, but also the leap into electronic
-                                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with
-                                    the release of Letraset sheets containing Lorem Ipsum passages, and more recently
-                                    with desktop publishing software like Aldus PageMaker including versions of Lorem
-                                    Ipsum.</p>
+                                <p>Experience the ultimate cryptocurrency mining performance with our advanced mining
+                                    server {{ server_data.name }}, designed to deliver exceptional hash rates with
+                                    minimal power consumption.
+                                    Our robust and reliable server ensure 99.9% uptime, allowing for uninterrupted
+                                    mining operations. Navigating and managing your mining activities is a breeze with
+                                    our user-friendly interface, accessible from any device. Gain insightful real-time
+                                    analytics to make data-driven decisions swiftly and keep your mining operation ahead
+                                    of the curve. Whether you're scaling up or just starting out, our servers offer
+                                    scalable solutions to meet your evolving needs. Embrace the full potential of
+                                    professional mining and elevate your mining
+                                    venture to new heights with our powerful and efficient servers.</p>
 
                                 <div class="row">
-                                    <div class="col-12 col-lg-6">
+                                    <div class="col-lg-2">
+                                    </div>
+                                    <div class="col-12 col-lg-8">
                                         <div class="box text-center bg-info">
                                             <div class="box-body">
-                                                <h2 class="mt-20">Token Sale ends in</h2>
-                                                <h4 class="text-bold">12 DAYS</h4>
-                                                <h2 class="text-bold text-warning mt-20">$4.200.000</h2>
-                                                <h4 class="text-bold">of</h4>
-                                                <h4 class="text-bold mb-40">$12.000.000</h4>
+                                                <h2 class="mt-10">Current power</h2>
+                                                <h4 class="text-bold" id="total_server_number"></h4>
+                                                <h2 class="text-bold text-warning mt-20 mb-20" id="total_power"></h2>
                                                 <a href="{{ url_for('BLP_general.mining_server_invoices', server_name=server_data.name) }}"
-                                                   class="btn btn-warning mb-20">Invoices</a><br>
-                                                <a href="#" class="btn btn-outline btn-warning mb-30">WHITEPAPER</a>
+                                                   class="btn btn-warning mb-20">View invoices</a><br>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-lg-6">
-                                        <div class="box text-center bg-success">
-                                            <div class="box-header with-border">
-                                                <h2 class="box-title text-white">Market Price</h2>
-                                            </div>
-                                            <div class="box-body">
-                                                <div class="div-market-price">
-                                                    <h1 class="mb-40">$1,231.91 <small>USD</small></h1>
-                                                    <h1 class="mb-30">$0,231.22 <small>EUR</small></h1>
-                                                    <h1 class="mb-50">$1,245.61 <small>GBR</small></h1>
-                                                    <h4 class="text-white p-10">Average USD/EUR/GBR market price across
-                                                        major bitcoin exchanges.</h4>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="col-lg-2">
                                     </div>
                                 </div>
                             </div>
@@ -134,19 +123,32 @@
                                 <h4 class="mb-0 fw-500">Your configuration</h4>
                             </div>
                             <div class="box-body">
-                                <div class="row mb-30">
+                                <div class="row">
                                     <div class="col-12 col-lg-6">
-                                        <h5 class="p-15 mb-0" id="server_rented"><strong>Server rented:</strong></h5>
+                                        <h5 class="p-15 mb-0"><strong>Server rented:</strong><a id="server_rented"></a>&nbsp;&nbsp;<span
+                                                class="badge badge-lg badge-danger" onclick="" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#rent_server"
+                                        ><i
+                                                class="fa fa-minus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
+                                                class="badge badge-lg badge-info" onclick="" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#unrent_server"
+                                        ><i
+                                                class="fa fa-plus faa-horizontal animated"></i></span></h5>
                                         <h5 class="p-15 mb-0" id="token_spent_to_buy"><strong>{{ server_data.symbol }}
                                             spent to buy:</strong></h5>
                                         <h5 class="p-15 mb-0" id="maintenance_cost"><strong>{{ server_data.symbol }}
                                             spent for maintenance:</strong></h5>
-                                        <br>
-                                         <a href="{{ url_for('BLP_general.mining_server_invoices', server_name=server_data.name) }}"
-                                           class="btn btn-warning mb-20">View invoices</a>
                                     </div>
                                     <div class="col-12 col-lg-6">
-                                        <h5 class="p-15 mb-0" id="server_bought"><strong>Server bought:</strong></h5>
+                                        <h5 class="p-15 mb-0"><strong>Server bought:</strong><a id="server_bought"></a>&nbsp;&nbsp;<span
+                                                class="badge badge-lg badge-danger" onclick="" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#buy_server"
+                                        ><i
+                                                class="fa fa-minus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
+                                                class="badge badge-lg badge-info" onclick="" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#sell_server"
+                                        ><i
+                                                class="fa fa-plus faa-horizontal animated"></i></span></h5>
                                         <h5 class="p-15 mb-0" id="token_spent_to_rent"><strong>{{ server_data.symbol }}
                                             spent to rent:</strong></h5>
                                     </div>
@@ -161,6 +163,102 @@
         </div>
     </div>
     <!-- /.content-wrapper -->
+
+    <!-- Modals -->
+    <div id="rent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Rent {{ server_data.name }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Overflowing text to show scroll behavior</h4>
+                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
+                        augue laoreet rutrum faucibus dolor auctor.</p>
+                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
+                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div id="unrent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Stop {{ server_data.name }} rental</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Overflowing text to show scroll behavior</h4>
+                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
+                        augue laoreet rutrum faucibus dolor auctor.</p>
+                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
+                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div id="buy_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Buy {{ server_data.name }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Overflowing text to show scroll behavior</h4>
+                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
+                        augue laoreet rutrum faucibus dolor auctor.</p>
+                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
+                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div id="sell_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Sell {{ server_data.name }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Overflowing text to show scroll behavior</h4>
+                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
+                        augue laoreet rutrum faucibus dolor auctor.</p>
+                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
+                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
     <!-- Footer -->
     {% include('includes/footer.html') %}
 
@@ -181,9 +279,13 @@
             success: function (serverDetails) {
                 $('#server_rented').append(` ${serverDetails.number_of_servers_rented}`);
                 $('#server_bought').append(` ${serverDetails.number_of_servers_bought}`);
+                $('#total_server_number').append(` ${serverDetails.number_of_servers_rented +
+                serverDetails.number_of_servers_bought} running server(s)`);
                 $('#token_spent_to_buy').append(` ${serverDetails.total_buy_amount}`);
                 $('#token_spent_to_rent').append(` ${serverDetails.total_rent_amount_per_week}/week`);
                 $('#maintenance_cost').append(` ${serverDetails.total_maintenance_cost_per_week}/week`);
+                $('#total_power').append(` ${(serverDetails.number_of_servers_rented +
+                    serverDetails.number_of_servers_bought) * serverDetails.power} ${serverDetails.symbol}/day`);
             },
             error: function (error) {
                 console.error('Error:', error);

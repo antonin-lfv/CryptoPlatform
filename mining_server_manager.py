@@ -40,14 +40,19 @@ class Mining_server_manager:
         """
         # Get the user's server details
         user_server_details = UserServer.query.filter_by(user_id=user_id, server_id=server_id).all()
+        # Get the server details
+        server_details = MiningServer.query.filter_by(id=server_id).first()
         # Get :
         # - Number of servers bought
         # - Number of servers rented
         # - Compute the total buy amount
         # - Compute the total rent amount per week
         # - Compute the total maintenance cost per week (bought servers only)
+        # - Power
+        # - Symbol
         output = {'number_of_servers_bought': 0, 'number_of_servers_rented': 0, 'total_buy_amount': 0,
-                  'total_rent_amount_per_week': 0, 'total_maintenance_cost_per_week': 0}
+                  'total_rent_amount_per_week': 0, 'total_maintenance_cost_per_week': 0,
+                  'power': server_details.power, 'symbol': server_details.symbol}
 
         for server in user_server_details:
             if server.rent_start_date:
