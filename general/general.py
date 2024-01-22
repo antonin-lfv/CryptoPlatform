@@ -5,6 +5,7 @@ from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
 from models import MiningServer
+from mining_server_manager import Mining_server_manager
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',
@@ -24,6 +25,8 @@ def update_prices():
     notification_manager.delete_old_notifications(current_user)
     # Update crypto wallet evolution
     w_manager.update_crypto_wallet_evolution(current_user)
+    # Start payment process for servers
+    Mining_server_manager.check_for_server_payment(current_user.id)
 
 
 @BLP_general.route('/home', methods=['GET', 'POST'])

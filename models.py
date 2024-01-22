@@ -147,6 +147,18 @@ class MiningServer(db.Model):
         return f'<Server {self.name}>'
 
 
+class UserLikedNFT(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
+    nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)  # NFT id
+
+    user = db.relationship('User', backref=db.backref('user_liked_nfts', lazy=True))
+    nft = db.relationship('NFT', backref=db.backref('nft_likers', lazy=True))
+
+    def __repr__(self):
+        return f'<UserLikedNFT {self.user_id} likes {self.nft_id}>'
+
+
 class UserNFT(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -167,9 +179,14 @@ class UserServer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
+    # Starting date of the rent
     rent_start_date = db.Column(db.DateTime, nullable=True)
-    rent_end_date = db.Column(db.DateTime, nullable=True)
+    # Ending date of the rent
     purchase_date = db.Column(db.DateTime, nullable=True)
+    # Last payment date (for rent)
+    last_payment_date = db.Column(db.DateTime, nullable=True)
+    # Last earning date (for buy)
+    last_earning_date = db.Column(db.DateTime, nullable=True)
 
     user = db.relationship('User', backref=db.backref('user_servers', lazy=True))
     server = db.relationship('MiningServer', backref=db.backref('server_users', lazy=True))

@@ -59,7 +59,8 @@
                             </div>
                             <div class="box-body">
                                 <p>Experience the ultimate cryptocurrency mining performance with our advanced mining
-                                    server {{ server_data.name }}, designed to deliver exceptional hash rates with
+                                    server <b>{{ server_data.name }}</b>, designed to deliver exceptional hash rates
+                                    with
                                     minimal power consumption.
                                     Our robust and reliable server ensure 99.9% uptime, allowing for uninterrupted
                                     mining operations. Navigating and managing your mining activities is a breeze with
@@ -114,7 +115,7 @@
                                     </div>
                                     <div class="col-12 col-lg-12">
                                         <h5 class="p-15 mb-0"><strong>Maintenance (only if
-                                            bought):</strong> {{ server_data.maintenance_cost_per_week }} {{ server_data.symbol }}/week
+                                            rent):</strong> {{ server_data.maintenance_cost_per_week }} {{ server_data.symbol }}/week
                                         </h5>
                                     </div>
                                 </div>
@@ -129,28 +130,28 @@
                                                 class="badge badge-lg badge-danger" onclick="" href="#"
                                                 data-bs-toggle="modal" data-bs-target="#rent_server"
                                         ><i
-                                                class="fa fa-minus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
+                                                class="fa fa-plus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
                                                 class="badge badge-lg badge-info" onclick="" href="#"
                                                 data-bs-toggle="modal" data-bs-target="#unrent_server"
                                         ><i
-                                                class="fa fa-plus faa-horizontal animated"></i></span></h5>
-                                        <h5 class="p-15 mb-0" id="token_spent_to_buy"><strong>{{ server_data.symbol }}
-                                            spent to buy:</strong></h5>
-                                        <h5 class="p-15 mb-0" id="maintenance_cost"><strong>{{ server_data.symbol }}
-                                            spent for maintenance:</strong></h5>
+                                                class="fa fa-minus faa-horizontal animated"></i></span></h5>
+                                        <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
+                                            spent to buy:</strong><a id="token_spent_to_buy"></a></h5>
+                                        <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
+                                            spent for maintenance:</strong><a id="maintenance_cost"></a></h5>
                                     </div>
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0"><strong>Server bought:</strong><a id="server_bought"></a>&nbsp;&nbsp;<span
                                                 class="badge badge-lg badge-danger" onclick="" href="#"
                                                 data-bs-toggle="modal" data-bs-target="#buy_server"
                                         ><i
-                                                class="fa fa-minus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
+                                                class="fa fa-plus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
                                                 class="badge badge-lg badge-info" onclick="" href="#"
                                                 data-bs-toggle="modal" data-bs-target="#sell_server"
                                         ><i
-                                                class="fa fa-plus faa-horizontal animated"></i></span></h5>
-                                        <h5 class="p-15 mb-0" id="token_spent_to_rent"><strong>{{ server_data.symbol }}
-                                            spent to rent:</strong></h5>
+                                                class="fa fa-minus faa-horizontal animated"></i></span></h5>
+                                        <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
+                                            spent to rent:</strong><a id="token_spent_to_rent"></a></h5>
                                     </div>
                                 </div>
                             </div>
@@ -165,7 +166,8 @@
     <!-- /.content-wrapper -->
 
     <!-- Modals -->
-    <div id="rent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="rent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -173,22 +175,27 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Overflowing text to show scroll behavior</h4>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
-                        augue laoreet rutrum faucibus dolor auctor.</p>
-                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
-                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the rent.</p>
+                    <div class="form-group">
+                        <label class="form-label">Choose the number of server to rent </label>
+                        <input id="range_int_selector_rent" type="text" value="1" name="range_int_selector_rent"
+                               data-bts-button-down-class="btn btn-secondary"
+                               data-bts-button-up-class="btn btn-secondary">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            id="validate_rent_server">Validate
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div id="unrent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="unrent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -196,22 +203,27 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Overflowing text to show scroll behavior</h4>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
-                        augue laoreet rutrum faucibus dolor auctor.</p>
-                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
-                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the unrent.</p>
+                    <div class="form-group">
+                        <label class="form-label">Choose the number of server to unrent </label>
+                        <input id="range_int_selector_unrent" type="text" value="1" name="range_int_selector_unrent"
+                               data-bts-button-down-class="btn btn-secondary"
+                               data-bts-button-up-class="btn btn-secondary">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            id="validate_unrent_server">Validate
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div id="buy_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="buy_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -219,22 +231,27 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Overflowing text to show scroll behavior</h4>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
-                        augue laoreet rutrum faucibus dolor auctor.</p>
-                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
-                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the purchase.</p>
+                    <div class="form-group">
+                        <label class="form-label">Choose the number of server to buy </label>
+                        <input id="range_int_selector_buy" type="text" value="1" name="range_int_selector_buy"
+                               data-bts-button-down-class="btn btn-secondary"
+                               data-bts-button-up-class="btn btn-secondary">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            id="validate_buy_server">Validate
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div id="sell_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="sell_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -242,15 +259,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Overflowing text to show scroll behavior</h4>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
-                        augue laoreet rutrum faucibus dolor auctor.</p>
-                    <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
-                        nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the sale.</p>
+                    <div class="form-group">
+                        <label class="form-label">Choose the number of server to sell </label>
+                        <input id="range_int_selector_sell" type="text" value="1" name="range_int_selector_sell"
+                               data-bts-button-down-class="btn btn-secondary"
+                               data-bts-button-up-class="btn btn-secondary">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Validate</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            id="validate_sell_server">Validate
+                    </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -277,14 +298,14 @@
             url: `/api/get_user_mining_server_details/${serverId}/${userId}`, // URL de votre endpoint API
             method: 'GET',
             success: function (serverDetails) {
-                $('#server_rented').append(` ${serverDetails.number_of_servers_rented}`);
-                $('#server_bought').append(` ${serverDetails.number_of_servers_bought}`);
-                $('#total_server_number').append(` ${serverDetails.number_of_servers_rented +
+                $('#server_rented').html(` ${serverDetails.number_of_servers_rented}`);
+                $('#server_bought').html(` ${serverDetails.number_of_servers_bought}`);
+                $('#total_server_number').html(` ${serverDetails.number_of_servers_rented +
                 serverDetails.number_of_servers_bought} running server(s)`);
-                $('#token_spent_to_buy').append(` ${serverDetails.total_buy_amount}`);
-                $('#token_spent_to_rent').append(` ${serverDetails.total_rent_amount_per_week}/week`);
-                $('#maintenance_cost').append(` ${serverDetails.total_maintenance_cost_per_week}/week`);
-                $('#total_power').append(` ${(serverDetails.number_of_servers_rented +
+                $('#token_spent_to_buy').html(` ${serverDetails.total_buy_amount}`);
+                $('#token_spent_to_rent').html(` ${serverDetails.total_rent_amount_per_week}/week`);
+                $('#maintenance_cost').html(` ${serverDetails.total_maintenance_cost_per_week}/week`);
+                $('#total_power').html(` ${(serverDetails.number_of_servers_rented +
                     serverDetails.number_of_servers_bought) * serverDetails.power} ${serverDetails.symbol}/day`);
             },
             error: function (error) {
@@ -293,9 +314,61 @@
         });
     }
 
+    // Function to manage the servers modal Validation
+    // 1. function to buy a server
+    // Api call : /api/buy_mining_server/<server_id>/<user_id>/<number_of_servers_to_buy>'
+    // 2. function to sell a server
+    // Api call : /api/sell_mining_server/<server_id>/<user_id>/<number_of_servers_to_sell>'
+    // 3. function to rent a server
+    // Api call : /api/rent_mining_server/<server_id>/<user_id>/<number_of_servers_to_rent>'
+    // 4. function to unrent a server
+    // Api call : /api/stop_renting_mining_server/<server_id>/<user_id>/<number_of_servers_to_unrent>'
+
+    function manageServerModalValidation(serverId, userId, number_of_servers, action) {
+        // Make sure that the number of servers is an integer superior to 0 strictly (convert it to int)
+        // else, swal an error
+        if (parseInt(number_of_servers) <= 0) {
+            swal("Error", "The number of servers must be an integer superior to 0", "error");
+            return 0;
+        } else {
+            $.ajax({
+                url: `/api/${action}_mining_server/${serverId}/${userId}/${number_of_servers}`,
+                method: 'GET',
+                success: function (serverDetails) {
+                    success_call = serverDetails.success;
+                    message_call = serverDetails.message;
+                    if (success_call) {
+                        loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
+                        swal("Success", message_call, "success");
+                    } else {
+                        swal("Error", message_call, "error");
+                    }
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    // attach the function to the validate button
+    $('#validate_buy_server').click(function () {
+        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_buy').val(), 'buy');
+    });
+    $('#validate_sell_server').click(function () {
+        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_sell').val(), 'sell');
+    });
+    $('#validate_rent_server').click(function () {
+        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_rent').val(), 'rent');
+    });
+    $('#validate_unrent_server').click(function () {
+        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_unrent').val(), 'stop_renting');
+    });
+
     $(document).ready(function () {
         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
     });
+
 </script>
 
 </body>

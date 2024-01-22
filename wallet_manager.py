@@ -60,6 +60,29 @@ class wallet_manager:
 
         return user_balance
 
+    def get_user_specific_balance(self, user, symbol):
+        """
+        Get user balance for a specific crypto. (tokens + USD conversion)
+
+        Return:
+            {
+                "tokens": 0,
+                "USD": 0
+            }
+        """
+        user_balance = {
+            "tokens": 0,
+            "USD": 0
+        }
+        # Get user wallets
+        wallets = user.wallets
+        # Loop over wallets
+        for wallet in wallets:
+            if wallet.symbol == symbol:
+                user_balance["tokens"] += wallet.quantity
+                user_balance["USD"] += self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
+        return user_balance
+
     @staticmethod
     def get_game_wallet(user):
         """
@@ -483,6 +506,22 @@ class wallet_manager:
             return {'success': 'Transaction successful'}
         else:
             return {'error': 'Not enough crypto in wallet'}
+
+    @staticmethod
+    def receive_crypto(user, symbol, quantity):
+        """
+        Receive crypto from another user
+        """
+        # get the user wallet for the crypto and update the wallet
+        user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        user_wallet.quantity += quantity
+        db.session.commit()
+
+        # Update wallet evolution
+        w_manager = wallet_manager()
+        w_manager.update_crypto_wallet_evolution(user)
+
+        return {'success': 'Transaction successful'}
 
     @staticmethod
     def add_transaction_to_wallet_history(wallet, transaction_type, quantity):

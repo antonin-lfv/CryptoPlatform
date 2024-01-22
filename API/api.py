@@ -12,6 +12,7 @@ BLP_api = Blueprint('BLP_api', __name__)
 # ----------------
 # Crypto data
 # NFT data
+# Mining servers
 # Wallet
 # Buy crypto
 # Notifications
@@ -142,6 +143,47 @@ def get_user_mining_server_details(server_id, user_id):
     """
     server_details = Mining_server_manager().get_user_mining_server_details(server_id, user_id)
     return jsonify(server_details)
+
+
+@BLP_api.route('/api/buy_mining_server/<server_id>/<user_id>/<number_of_servers_to_buy>', methods=['GET', 'POST'])
+@login_required
+def buy_mining_server(server_id, user_id, number_of_servers_to_buy):
+    """
+    Buy a mining server
+    """
+    response = Mining_server_manager().buy_server(server_id, user_id, number_of_servers_to_buy)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/rent_mining_server/<server_id>/<user_id>/<number_of_servers_to_rent>', methods=['GET', 'POST'])
+@login_required
+def rent_mining_server(server_id, user_id, number_of_servers_to_rent):
+    """
+    Rent a mining server
+    """
+    response = Mining_server_manager().rent_server(server_id, user_id, number_of_servers_to_rent)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/sell_mining_server/<server_id>/<user_id>/<number_of_servers_to_sell>', methods=['GET', 'POST'])
+@login_required
+def sell_mining_server(server_id, user_id, number_of_servers_to_sell):
+    """
+    Sell a mining server
+    """
+    response = Mining_server_manager().sell_server(server_id, user_id, number_of_servers_to_sell)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/stop_renting_mining_server/<server_id>/<user_id>/<number_of_servers_to_stop_renting>',
+                methods=['GET', 'POST'])
+@login_required
+def stop_renting_mining_server(server_id, user_id, number_of_servers_to_stop_renting):
+    """
+    Stop renting a mining server
+    """
+    response = Mining_server_manager().stop_renting_server(server_id, user_id, number_of_servers_to_stop_renting)
+    return jsonify(response)
 
 
 # ================================

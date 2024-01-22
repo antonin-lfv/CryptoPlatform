@@ -51,7 +51,7 @@
                             </div>
                             <div class="box-body p-0">
                                 <div>
-                                    {% for symbol, name in zip(top_cryptos_symbols,top_cryptos_names) %}
+                                    {% for symbol, name in zip(top_cryptos_symbols, top_cryptos_names) %}
                                         <div class="d-flex justify-content-between bb-1 py-10 px-15 crypto-wallet"
                                              data-symbol="{{ symbol }}">
                                             <a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=symbol) }}">
