@@ -1,6 +1,7 @@
 from models import MiningServer, UserServer, User
 from wallet_manager import wallet_manager
-from datetime import datetime
+from notification_manager import Notification_manager
+from datetime import datetime, timedelta
 from app import db
 
 
@@ -9,20 +10,117 @@ class Mining_server_manager:
     def __init__(self):
         ...
 
-    @staticmethod
-    def check_for_server_payment(user_id):
+    def check_for_server_payment(self, user_id):
         """
-        Check for all servers if :
-        - the user has to pay for them (if last_payment_date is more than 7 days ago)
-        - the user has enough crypto to pay for them (if yes, pay for them, else, sell them until he has enough crypto)
-        - the user has to get paid for them (if last_earning_date is more than 1 day ago)
+        Iterate through all day, one by one, from the last payment date to today (the oldest of all servers).
+        For each day, check if the user has servers that need to be paid.
+        If yes, pay them.
+        Also, earn crypto from mining.
+        If not enough crypto, delete the server instance (so only for rent).
+        """
+        # Get the user
+        user = User.query.filter_by(id=user_id).first()
+        # Get the oldest server earning date
+        oldest_earning_date_instance = (UserServer.query.filter_by(user_id=user_id)
+                                        .order_by(UserServer.last_earning_date).first())
+        # Number of servers deleted because not enough crypto
+        number_of_servers_deleted = 0
+        # Get the current date
+        today_date = datetime.now()
 
-        Careful: this function can be call many weeks after the last time it was called, so we have to check for
-        multiple weeks. If the user didn't pay for 2 weeks, we have to sell 2 weeks of servers. If he can just afford
-        1 week, we have to sell 1 week of servers and stop renting the other week. But don't forget the earning part
-        each day.
-        """
-        # TODO
+        # If there is no server instance, return
+        if oldest_earning_date_instance is None:
+            print("[INFO]: No server instance")
+            return
+
+        # If oldest_earning_date is today, return
+        if oldest_earning_date_instance.last_earning_date.date() == today_date.date():
+            print("[INFO]: Already paid today")
+            return
+
+        oldest_earning_date = oldest_earning_date_instance.last_earning_date.date()
+
+        # Iterate through all day, one by one, from the last payment date to today
+        while oldest_earning_date <= today_date.date():
+            print(f"[INFO]: oldest_earning_date: {oldest_earning_date}, today_date: {today_date.date()}")
+            # We start by earning crypto from mining then we pay the servers
+
+            # == Bought servers earning ==
+            bought_user_server_instances = UserServer.query.filter_by(user_id=user_id,
+                                                                      last_earning_date=oldest_earning_date -
+                                                                                        timedelta(days=1),
+                                                                      rent_start_date=None
+                                                                      ).all()
+            # Receive crypto from mining
+            for server_instance in bought_user_server_instances:
+                # Get the server details
+                server_details = MiningServer.query.filter_by(id=server_instance.server_id).first()
+                # Update the last earning date
+                server_instance.last_earning_date = oldest_earning_date
+                db.session.commit()
+                # Update the user's wallet
+                wallet_manager().receive_crypto(user, server_details.symbol + '-USD',
+                                                server_details.power)
+                print(f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
+
+            # == Rented servers earning ==
+            rented_user_server_instances = UserServer.query.filter_by(user_id=user_id,
+                                                                      last_earning_date=oldest_earning_date -
+                                                                                        timedelta(days=1),
+                                                                      purchase_date=None
+                                                                      ).all()
+            # Receive crypto from mining
+            for server_instance in rented_user_server_instances:
+                # Get the server details
+                server_details = MiningServer.query.filter_by(id=server_instance.server_id).first()
+                # Update the last earning date
+                server_instance.last_earning_date = oldest_earning_date
+                db.session.commit()
+                # Update the user's wallet
+                wallet_manager().receive_crypto(user, server_details.symbol + '-USD',
+                                                server_details.power)
+                print(f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
+
+            # == Rented servers payment ==
+            # Get the user's server instances that need to be paid
+            rented_user_server_instances = UserServer.query.filter_by(user_id=user_id,
+                                                                      last_payment_date=oldest_earning_date -
+                                                                                        timedelta(days=7),
+                                                                      purchase_date=None
+                                                                      ).all()
+            # Iterate through all server instances
+            for server_instance in rented_user_server_instances:
+                # Get the server details
+                server_details = MiningServer.query.filter_by(id=server_instance.server_id).first()
+                # Get the user's wallet for the crypto symbol
+                user_wallet = wallet_manager().get_user_specific_balance(user, server_details.symbol + '-USD')
+                # Test if the user has enough crypto to pay the server
+                if (user_wallet['tokens'] >= server_details.rent_amount_per_week +
+                        server_details.maintenance_cost_per_week):
+                    # If yes, update the user's wallet
+                    wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
+                                                     server_details.rent_amount_per_week +
+                                                     server_details.maintenance_cost_per_week)
+                    # Update the last payment date
+                    server_instance.last_payment_date = oldest_earning_date
+                    db.session.commit()
+                    print(f"[INFO]: User {user_id} paid {server_details.rent_amount_per_week} {server_details.symbol} on "
+                          f"{oldest_earning_date}")
+                else:
+                    # If not enough crypto, delete the server instance (so only for rent)
+                    self.stop_renting_specific_server_instance(server_instance.id, user_id)
+                    number_of_servers_deleted += 1
+                    print(f"[INFO]: User {user_id} didn't have enough crypto to pay {server_details.rent_amount_per_week} "
+                          f"{server_details.symbol} on {oldest_earning_date}")
+
+            # Update the last payment date
+            oldest_earning_date += timedelta(days=1)
+
+        if number_of_servers_deleted > 0:
+            Notification_manager.add_notification(user_id,
+                                                  f"{number_of_servers_deleted} server(s) deleted due to not "
+                                                  f"enough crypto to afford rent",
+                                                  f"warning")
 
     @staticmethod
     def get_all_servers():
@@ -46,8 +144,6 @@ class Mining_server_manager:
                 'logo_path': server_item.logo_path,
                 'category': server_item.category
             })
-
-        print(f"Length of servers_list: {len(servers_list)}")
 
         return servers_list
 
@@ -98,14 +194,16 @@ class Mining_server_manager:
         user = User.query.filter_by(id=user_id).first()
         # Get the user's wallet for the crypto symbol
         user_wallet = wallet_manager().get_user_specific_balance(user, server_details.symbol + '-USD')
-        print(f"You want to buy {number_of_servers_to_buy} servers and you have {user_wallet['tokens']}")
         # Test if the user has enough crypto to buy the server with the quantity he wants
         if user_wallet['tokens'] >= server_details.buy_amount * number_of_servers_to_buy:
             # If yes, update the user's wallet
             wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD', server_details.buy_amount)
             # Create entry for each server bought
+            # We set last_earning_date to yesterday so the user will earn crypto the day when he buys the server
             for i in range(number_of_servers_to_buy):
-                user_server_details = UserServer(user_id=user_id, server_id=server_id, purchase_date=datetime.now())
+                user_server_details = UserServer(user_id=user_id, server_id=server_id,
+                                                 purchase_date=datetime.now(),
+                                                 last_earning_date=datetime.now() - timedelta(days=1))
                 db.session.add(user_server_details)
 
             db.session.commit()
@@ -163,13 +261,16 @@ class Mining_server_manager:
                 number_of_servers_to_rent):
             # If yes, update the user's wallet
             # The user pay immediately for the servers for the next week (add maintenance cost)
-            wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD', (server_details.rent_amount_per_week +
-                                             server_details.maintenance_cost_per_week)*number_of_servers_to_rent)
+            wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
+                                             (server_details.rent_amount_per_week +
+                                              server_details.maintenance_cost_per_week) * number_of_servers_to_rent)
             # Create entry for each server rented
             for i in range(number_of_servers_to_rent):
-                # We set last_earning_date to None because the user will earn the next day (Next the last_payment_date)
-                user_server_details = UserServer(user_id=user_id, server_id=server_id, rent_start_date=datetime.now(),
-                                                 last_payment_date=datetime.now())
+                # We set last_earning_date to yesterday so the user will earn crypto the day when he rents the server
+                user_server_details = UserServer(user_id=user_id, server_id=server_id,
+                                                 rent_start_date=datetime.now(),
+                                                 last_payment_date=datetime.now(),
+                                                 last_earning_date=datetime.now() - timedelta(days=1))
                 db.session.add(user_server_details)
 
             db.session.commit()
@@ -207,10 +308,8 @@ class Mining_server_manager:
                                     7 * number_of_days_since_last_payment)
                 # If the user didn't earn anything, we refund the full amount
                 if user_server_details[i].last_earning_date is None:
-                    print("User didn't earn anything")
                     amount_to_refund = server_details.rent_amount_per_week + server_details.maintenance_cost_per_week
                 # Update the user's wallet
-                print(f"Amount to refund: {amount_to_refund}")
                 wallet_manager().receive_crypto(user, server_details.symbol + '-USD', amount_to_refund)
                 db.session.delete(user_server_details[i])
             db.session.commit()

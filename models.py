@@ -179,13 +179,13 @@ class UserServer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
-    # Starting date of the rent
+    # Starting date of the rent (None if buy)
     rent_start_date = db.Column(db.DateTime, nullable=True)
-    # Ending date of the rent
+    # Ending date of the rent (None if buy)
     purchase_date = db.Column(db.DateTime, nullable=True)
-    # Last payment date (for rent)
+    # Last payment date (for rent, else None)
     last_payment_date = db.Column(db.DateTime, nullable=True)
-    # Last earning date (for buy)
+    # Last earning date (None if no earning yet)
     last_earning_date = db.Column(db.DateTime, nullable=True)
 
     user = db.relationship('User', backref=db.backref('user_servers', lazy=True))

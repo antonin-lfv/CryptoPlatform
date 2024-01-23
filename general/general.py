@@ -26,7 +26,8 @@ def update_prices():
     # Update crypto wallet evolution
     w_manager.update_crypto_wallet_evolution(current_user)
     # Start payment process for servers
-    Mining_server_manager.check_for_server_payment(current_user.id)
+    mining_server_manager = Mining_server_manager()
+    mining_server_manager.check_for_server_payment(current_user.id)
 
 
 @BLP_general.route('/home', methods=['GET', 'POST'])
