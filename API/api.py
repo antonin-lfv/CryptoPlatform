@@ -186,6 +186,16 @@ def stop_renting_mining_server(server_id, user_id, number_of_servers_to_stop_ren
     return jsonify(response)
 
 
+@BLP_api.route('/api/get_user_mining_servers_invoices/<server_name>', methods=['GET', 'POST'])
+@login_required
+def get_user_mining_servers_invoices(server_name):
+    """
+    Get invoices for all mining servers of the user
+    """
+    invoices = Mining_server_manager().get_user_mining_servers_invoices(current_user, server_name)
+    return jsonify(invoices)
+
+
 # ================================
 # Wallet
 # ================================

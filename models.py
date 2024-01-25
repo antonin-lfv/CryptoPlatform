@@ -180,16 +180,42 @@ class UserServer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
     # Starting date of the rent (None if buy)
-    rent_start_date = db.Column(db.DateTime, nullable=True)
+    rent_start_date = db.Column(db.Date, nullable=True)
     # Ending date of the rent (None if buy)
-    purchase_date = db.Column(db.DateTime, nullable=True)
+    purchase_date = db.Column(db.Date, nullable=True)
     # Last payment date (for rent, else None)
-    last_payment_date = db.Column(db.DateTime, nullable=True)
+    last_payment_date = db.Column(db.Date, nullable=True)
     # Last earning date (None if no earning yet)
-    last_earning_date = db.Column(db.DateTime, nullable=True)
+    last_earning_date = db.Column(db.Date, nullable=True)
 
     user = db.relationship('User', backref=db.backref('user_servers', lazy=True))
     server = db.relationship('MiningServer', backref=db.backref('server_users', lazy=True))
 
     def __repr__(self):
         return f'<UserServer {self.user_id} owns/rents {self.server_id}>'
+
+
+class ServerInvoices(db.Model):
+    """
+    Class to generate invoices for the servers
+
+    Attributes
+    - Period: Month and year of the invoice
+    - Issuer: Name of the issuer of the invoice (username)
+    - Due date: Date of payment of the invoice
+    - Amount: Amount to pay
+    - User_server_id: Id of the user server
+    - type_payment: 'rent' or 'buy'
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    period = db.Column(db.String(10), nullable=False)
+    issuer = db.Column(db.String(100), nullable=False)
+    due_date = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    type_payment = db.Column(db.String(10), nullable=False)
+    user_server_id = db.Column(db.Integer, db.ForeignKey('user_server.id'), nullable=False)
+
+    user_server = db.relationship('UserServer', backref=db.backref('server_invoices', lazy=True))
+
+    def __repr__(self):
+        return f'<ServerInvoices {self.user_server_id}>'

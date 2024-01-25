@@ -29,8 +29,12 @@
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item" aria-current="page"><a href="{{ url_for('BLP_general.mining_place') }}">Mining server marketplace</a></li>
-                                    <li class="breadcrumb-item" aria-current="page"><a href="{{ url_for('BLP_general.mining_manage_server', server_name=server_name) }}">{{ server_name }} details</a></li>
+                                    <li class="breadcrumb-item" aria-current="page"><a
+                                            href="{{ url_for('BLP_general.mining_place') }}">Mining server
+                                        marketplace</a></li>
+                                    <li class="breadcrumb-item" aria-current="page"><a
+                                            href="{{ url_for('BLP_general.mining_manage_server', server_name=server_name) }}">{{ server_name }}
+                                        details</a></li>
                                     <li class="breadcrumb-item active" aria-current="page">Invoice List</li>
                                 </ol>
                             </nav>
@@ -46,713 +50,22 @@
                         <div class="box">
                             <div class="box-header with-border">
                                 <h4 class="box-title">Invoice List for <b>{{ server_name }}</b></h4>
-                                <h6 class="box-subtitle">Export Invoice List to Copy, CSV, Excel, PDF & Print</h6>
                             </div>
                             <div class="box-body">
                                 <div class="table-responsive">
 
-                                    <table id="example" class="table table-lg invoice-archive">
+                                    <table id="invoices" class="table table-lg invoice-archive">
                                         <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Period</th>
                                             <th>Issued to</th>
-                                            <th>Status</th>
                                             <th>Issue date</th>
-                                            <th>Due date</th>
+                                            <th>Type</th>
+                                            <th>Server name</th>
                                             <th>Amount</th>
-                                            <th class="text-center">Actions</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>#0025</td>
-                                            <td>February 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Jacob</a>
-                                                    <span class="d-block text-muted">Payment method: Skrill</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold" selected>On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                April 18, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-success">Paid on Mar 16, 2018</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$36,890 <span
-                                                        class="d-block text-muted fw-normal">VAT $4,859</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0024</td>
-                                            <td>February 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Mason</a>
-                                                    <span class="d-block text-muted">Payment method: Wire transfer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid" selected>Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                April 17, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-warning">5 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$8,854 <span
-                                                        class="d-block text-muted fw-normal">VAT $4,785</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0023</td>
-                                            <td>February 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">William</a>
-                                                    <span class="d-block text-muted">Payment method: Payoneer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid" selected>Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                April 17, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-primary">27 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$12,854 <span
-                                                        class="d-block text-muted fw-normal">VAT $7,845</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0022</td>
-                                            <td>January 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Jayden</a>
-                                                    <span class="d-block text-muted">Payment method: Paypal</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel" selected>Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                January 15, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-primary">12 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$458 <span
-                                                        class="d-block text-muted fw-normal">VAT $985</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0021</td>
-                                            <td>January 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Noah</a>
-                                                    <span class="d-block text-muted">Payment method: Paypal</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue" selected>Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                January 10, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-danger">- 3 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$845 <span
-                                                        class="d-block text-muted fw-normal">VAT $98</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0020</td>
-                                            <td>January 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Ethan</a>
-                                                    <span class="d-block text-muted">Payment method: Wire transfer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid" selected>Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                January 10, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-secondary">On hold</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$985 <span
-                                                        class="d-block text-muted fw-normal">VAT $548</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0019</td>
-                                            <td>January 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Alexander</a>
-                                                    <span class="d-block text-muted">Payment method: Paypal</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold" selected>On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                December 26, 2017
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-success">Paid on Feb 25, 2018</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$958 <span
-                                                        class="d-block text-muted fw-normal">VAT $652</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0018</td>
-                                            <td>January 2018</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Aiden</a>
-                                                    <span class="d-block text-muted">Payment method: Skrill</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending" selected>Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                June 17, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-secondary">On hold</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$358 <span
-                                                        class="d-block text-muted fw-normal">VAT $652</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0017</td>
-                                            <td>December 2017</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Daniel</a>
-                                                    <span class="d-block text-muted">Payment method: Wire transfer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending" selected>Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                May 6, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-warning">2 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$687 <span
-                                                        class="d-block text-muted fw-normal">VAT $845</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0016</td>
-                                            <td>December 2017</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Anthony</a>
-                                                    <span class="d-block text-muted">Payment method: Paypal</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue" selected>Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                March 7, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-primary">15 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$985 <span
-                                                        class="d-block text-muted fw-normal">VAT $365</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0015</td>
-                                            <td>December 2017</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Matthew</a>
-                                                    <span class="d-block text-muted">Payment method: Payoneer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid" selected>Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                March 23, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-warning">6 days</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$369 <span
-                                                        class="d-block text-muted fw-normal">VAT $85</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0014</td>
-                                            <td>December 2017</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Elijah</a>
-                                                    <span class="d-block text-muted">Payment method: Paypal</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel" selected>Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                March 2, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-secondary">On hold</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$985 <span
-                                                        class="d-block text-muted fw-normal">VAT $458</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>#0013</td>
-                                            <td>November 2017</td>
-                                            <td>
-                                                <h6 class="mb-0">
-                                                    <a href="#">Liam</a>
-                                                    <span class="d-block text-muted">Payment method: Wire transfer</span>
-                                                </h6>
-                                            </td>
-                                            <td>
-                                                <select name="status" class="form-select"
-                                                        data-placeholder="Select status">
-                                                    <option value="overdue">Overdue</option>
-                                                    <option value="hold">On hold</option>
-                                                    <option value="pending" selected>Pending</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="invalid">Invalid</option>
-                                                    <option value="cancel">Canceled</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                February 25, 2018
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-success">Paid on Feb 15, 2018</span>
-                                            </td>
-                                            <td>
-                                                <h6 class="mb-0 fw-bold">$985 <span
-                                                        class="d-block text-muted fw-normal">VAT $124</span></h6>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="list-icons d-inline-flex">
-                                                    <a href="#" class="list-icons-item me-10"><i
-                                                            class="fa fa-eye-slash"></i></a>
-                                                    <div class="list-icons-item dropdown">
-                                                        <a href="#" class="list-icons-item dropdown-toggle"
-                                                           data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-download"></i> Download</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-print"></i> Print</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-pencil"></i> Edit</a>
-                                                            <a href="#" class="dropdown-item"><i
-                                                                    class="fa fa-remove"></i> Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <tbody id="invoices_tbody">
                                         </tbody>
                                     </table>
 
@@ -780,81 +93,8 @@
                                 </div>
 
                                 <div class="text-center my-2">
-                                    <div class="fs-60">2,064</div>
+                                    <div class="fs-60" id="total_invoice_number"></div>
                                     <span>Total Invoice</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box box-inverse box-primary">
-                            <div class="box-body">
-                                <div class="flexbox">
-                                    <h5>Re Generate Invoice</h5>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i
-                                                class="ion-android-more-vertical rotate-90"></i></span>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#"><i class="ion-android-list"></i>
-                                                Details</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add
-                                                new</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i>
-                                                Refresh</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-center my-2">
-                                    <div class="fs-60">1,738</div>
-                                    <span>Re Generate Invoice</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box box-inverse box-danger">
-                            <div class="box-body">
-                                <div class="flexbox">
-                                    <h5>Overdue Payment Invoice</h5>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i
-                                                class="ion-android-more-vertical rotate-90"></i></span>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#"><i class="ion-android-list"></i>
-                                                Details</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add
-                                                new</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i>
-                                                Refresh</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-center my-2">
-                                    <div class="fs-60">1100</div>
-                                    <span>Overdue Payment Invoice</span>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="box box-inverse box-warning">
-                            <div class="box-body">
-                                <div class="flexbox">
-                                    <h5>Pending Invoice</h5>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i
-                                                class="ion-android-more-vertical rotate-90"></i></span>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#"><i class="ion-android-list"></i>
-                                                Details</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add
-                                                new</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i>
-                                                Refresh</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-center my-2">
-                                    <div class="fs-60">964</div>
-                                    <span>Pending</span>
                                 </div>
                             </div>
                         </div>
@@ -874,6 +114,93 @@
 
 
 {% include('includes/javascript_include_dashboard.html') %}
+
+
+<script>
+    // Get invoices from server at the loading of the page
+    // Api call : '/api/get_user_mining_servers_invoices/<server_name>'
+    // response : list of dict with keys : period, issuer, due_date, amount, type_payment
+    function get_invoices() {
+        $.ajax({
+            url: '/api/get_user_mining_servers_invoices/{{ server_name }}',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                // Update the invoices table by adding object like this :
+                /*
+                <tbody id="invoices_tbody">
+                <tr>
+                    <td>February 2018</td>
+                    <td>
+                        <h6 class="mb-0">
+                            <a href="#">Antonin</a>
+                        </h6>
+                    </td>
+                    <td>February 8 2018</td>
+                    <td>
+                        <span class="badge badge-pill badge-success">Rent</span>
+                    </td>
+                    <td>Server name</td>
+                    <td>
+                        <h6 class="mb-0 fw-bold">$36,890</h6>
+                    </td>
+                </tr>
+                </tbody>
+                */
+                // in the tbody with id : 'invoices_tbody'
+                var invoices_tbody = $('#invoices_tbody');
+                for (var i = 0; i < data.length; i++) {
+                    var invoice = data[i];
+                    var period = invoice['period'];
+                    var issuer = invoice['issuer'];
+                    var due_date = invoice['due_date'];
+                    var amount = invoice['amount'];
+                    var type_payment = invoice['type_payment'];
+                    var server_name = invoice['server_name'];
+
+                    var tr = $('<tr></tr>');
+                    var td_period = $('<td></td>').text(period);
+                    var td_issuer = $('<td></td>').html('<h6 class="mb-0"><a href="#">' + issuer + '</a></h6>');
+                    var td_due_date = $('<td></td>').text(due_date);
+                    if (type_payment === 'rent') {
+                        var td_type_payment = $('<td></td>').html('<span class="badge badge-pill badge-info"> Rent </span>');
+                    } else {
+                        var td_type_payment = $('<td></td>').html('<span class="badge badge-pill badge-success"> Buy </span>');
+                    }
+                    var td_server_name = $('<td></td>').text(server_name);
+                    var td_amount = $('<td></td>').html('<h6 class="mb-0 fw-bold">' + amount + ' {{ server_symbol }}</h6>');
+
+                    tr.append(td_period);
+                    tr.append(td_issuer);
+                    tr.append(td_due_date);
+                    tr.append(td_type_payment);
+                    tr.append(td_server_name);
+                    tr.append(td_amount);
+
+                    invoices_tbody.append(tr);
+                }
+
+                // Refresh the datatable
+                $('#invoices').DataTable();
+
+                // Get the number of invoices
+                var nb_invoices = data.length;
+                $('#total_invoice_number').text(nb_invoices);
+
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    // Load invoices in the invoices table at the loading of the page
+    $(document).ready(function () {
+        get_invoices();
+    });
+
+</script>
 
 
 </body>

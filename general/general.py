@@ -137,5 +137,7 @@ def mining_server_invoices(server_name):
     if server is None:
         abort(404)  # ou vous pouvez renvoyer à une page d'erreur personnalisée
 
+    server_symbol = server.symbol
+
     return render_template('general/mining_server_invoices.html', user=current_user,
-                           server_name=server_name)
+                           server_name=server_name, server_symbol=server_symbol)
