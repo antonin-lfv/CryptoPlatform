@@ -123,6 +123,25 @@
         'NEO': 'NEO-USD'
     }
 
+    function convert_crypto_to_USD(crypto_amount, crypto_symbol) {
+        // Using api call : /api/get_USD_from_crypto/<symbol>/<quantity> with ajax
+        // Returns the USD value of the given quantity of the given crypto
+        var url = '/api/get_USD_from_crypto/' + crypto_symbol + '/' + crypto_amount;
+        var USD_value = 0;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            success: function (data) {
+                USD_value = data['USD_value'];
+            },
+            error: function (error) {
+                USD_value = 0;
+                console.log('Error while getting USD value of ' + crypto_amount + ' ' + crypto_symbol + ': ' + JSON.stringify(error));
+            }
+        });
+    }
+
     // ---------- Notification manager
     document.addEventListener('DOMContentLoaded', function () {
         var dropdownButton = document.querySelector('.dropdown-toggle');
@@ -184,7 +203,7 @@
                     toggle_icon_notifications();
 
                 } else {
-                    // Affichage des notifications
+                    // Affichage des notifications (Ajouter un swal qui affiche une notification en cliquant sur une notification)
                     data.forEach(function (notification) { // Utiliser forEach pour itérer sur les notifications
                         var li = document.createElement('li');
                         var a = document.createElement('a');
@@ -194,6 +213,16 @@
                         a.appendChild(document.createTextNode(notification['message']));
                         li.appendChild(a);
                         notifications_space.appendChild(li);
+
+                        a.setAttribute('href', '#')
+                        a.addEventListener('click', function () {
+                            swal({
+                                title: 'Notification',
+                                text: notification['message'],
+                                icon: 'info',
+                                confirmButtonText: 'Close'
+                            });
+                        });
                     });
 
                     // show the clear all button

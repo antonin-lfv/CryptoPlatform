@@ -62,7 +62,8 @@
                                             <th>Issue date</th>
                                             <th>Type</th>
                                             <th>Server name</th>
-                                            <th>Amount</th>
+                                            <th>Amount paid</th>
+                                            <th>Number of instances</th>
                                         </tr>
                                         </thead>
                                         <tbody id="invoices_tbody">
@@ -119,7 +120,7 @@
 <script>
     // Get invoices from server at the loading of the page
     // Api call : '/api/get_user_mining_servers_invoices/<server_name>'
-    // response : list of dict with keys : period, issuer, due_date, amount, type_payment
+    // response : list of dict with keys : period, issuer, due_date, amount, type_payment, server_name, number_of_instances
     function get_invoices() {
         $.ajax({
             url: '/api/get_user_mining_servers_invoices/{{ server_name }}',
@@ -145,6 +146,9 @@
                     <td>
                         <h6 class="mb-0 fw-bold">$36,890</h6>
                     </td>
+                    <td>
+                        <h6 class="mb-0 fw-bold">3</h6>
+                    </td>
                 </tr>
                 </tbody>
                 */
@@ -158,6 +162,7 @@
                     var amount = invoice['amount'];
                     var type_payment = invoice['type_payment'];
                     var server_name = invoice['server_name'];
+                    var number_of_instances = invoice['number_of_instances'];
 
                     var tr = $('<tr></tr>');
                     var td_period = $('<td></td>').text(period);
@@ -170,6 +175,7 @@
                     }
                     var td_server_name = $('<td></td>').text(server_name);
                     var td_amount = $('<td></td>').html('<h6 class="mb-0 fw-bold">' + amount + ' {{ server_symbol }}</h6>');
+                    var td_number_of_instances = $('<td></td>').html('<h6 class="mb-0 fw-bold">' + number_of_instances + '</h6>');
 
                     tr.append(td_period);
                     tr.append(td_issuer);
@@ -177,6 +183,7 @@
                     tr.append(td_type_payment);
                     tr.append(td_server_name);
                     tr.append(td_amount);
+                    tr.append(td_number_of_instances);
 
                     invoices_tbody.append(tr);
                 }
@@ -184,9 +191,12 @@
                 // Refresh the datatable
                 $('#invoices').DataTable();
 
-                // Get the number of invoices
-                var nb_invoices = data.length;
-                $('#total_invoice_number').text(nb_invoices);
+                // Get the number of invoices (sum of the number of invoices for each period)
+                var total_invoice_number = 0;
+                for (var i = 0; i < data.length; i++) {
+                    total_invoice_number += data[i]['number_of_instances'];
+                }
+                $('#total_invoice_number').text(total_invoice_number);
 
             },
             error: function (data) {

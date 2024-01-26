@@ -1,5 +1,6 @@
 from models import MiningServer, UserServer, User, ServerInvoices
 from wallet_manager import wallet_manager
+from crypto_manager import CryptoDataManager
 from notification_manager import Notification_manager
 from datetime import datetime, timedelta
 from app import db
@@ -25,6 +26,8 @@ class Mining_server_manager:
                                         .order_by(UserServer.last_earning_date).first())
         # Number of servers deleted because not enough crypto
         number_of_servers_deleted = 0
+        # Amount of USD earned
+        USD_amount_earned = 0
         # Get the current date
         today_date = datetime.date(datetime.now())
 
@@ -63,6 +66,8 @@ class Mining_server_manager:
                 # Update the user's wallet
                 wallet_manager().receive_crypto(user, server_details.symbol + '-USD',
                                                 server_details.power)
+                USD_amount_earned += CryptoDataManager().get_USD_from_crypto(server_details.symbol + '-USD',
+                                                                             server_details.power)
                 print(
                     f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
 
@@ -84,6 +89,8 @@ class Mining_server_manager:
                 # Update the user's wallet
                 wallet_manager().receive_crypto(user, server_details.symbol + '-USD',
                                                 server_details.power)
+                USD_amount_earned += CryptoDataManager().get_USD_from_crypto(server_details.symbol + '-USD',
+                                                                             server_details.power)
                 print(
                     f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
 
@@ -122,7 +129,9 @@ class Mining_server_manager:
                     issuer = user.username
                     due_date = oldest_earning_date + timedelta(days=7)
                     amount = to_pay
-                    self.add_invoice(period, issuer, due_date, amount, server_instance.id, 'rent')
+                    self.add_invoice(user_id, period, issuer, due_date, amount, server_instance.id, 'rent')
+                    # Update USD_amount_earned
+                    USD_amount_earned -= CryptoDataManager().get_USD_from_crypto(server_details.symbol + '-USD', to_pay)
 
                 else:
                     # If not enough crypto, delete the server instance (so only for rent)
@@ -141,71 +150,50 @@ class Mining_server_manager:
                                                   f"enough crypto to afford rent",
                                                   f"warning")
 
+        # Create notification for the amount earned
+        if USD_amount_earned > 0:
+            Notification_manager.add_notification(user_id,
+                                                  f"You earned {round(USD_amount_earned, 2)} USD from mining",
+                                                  f"shopping-cart")
+
     @staticmethod
     def get_user_mining_servers_invoices(user, server_name):
         """
         Get the invoices for a user
         """
-        # Get the user's server instances
-        user_server_instances = UserServer.query.filter_by(user_id=user.id).all()
         # Get the server type id
         server_type_id = MiningServer.query.filter_by(name=server_name).first().id
-        # Filter the list to get only the servers that are currently rented
-        user_server_instances_rent = [server for server in user_server_instances if
-                                      server.rent_start_date is not None and server.server_id == server_type_id]
-        user_server_instances_buy = [server for server in user_server_instances if server.purchase_date is not None and
-                                     server.server_id == server_type_id]
-        # Sort the list by purchase_date to get the earliest first
-        user_server_instances_rent.sort(key=lambda x: x.last_payment_date, reverse=True)
-        user_server_instances_buy.sort(key=lambda x: x.purchase_date, reverse=True)
-        # Get the invoices if there is at least one server
+        # Get the invoices for this server type
+        user_server_type_invoices = ServerInvoices.query.filter_by(server_id=server_type_id, user_id=user.id).all()
         invoices_list = []
-        if len(user_server_instances_rent) > 0:
-            for server_instance in user_server_instances_rent:
-                # Get the server details
-                server_details = MiningServer.query.filter_by(id=server_instance.server_id).first()
-                # Get the invoices
-                invoices = ServerInvoices.query.filter_by(user_server_id=server_instance.id).all()
-                # Create a dict with all invoices
-                for invoice in invoices:
-                    invoices_list.append({
-                        'period': invoice.period,
-                        'issuer': invoice.issuer,
-                        'due_date': invoice.due_date,
-                        'amount': invoice.amount,
-                        'type_payment': invoice.type_payment,
-                        'server_name': server_details.name
-                    })
+        for invoice in user_server_type_invoices:
+            elem = {
+                'period': invoice.period,
+                'issuer': invoice.issuer,
+                'due_date': invoice.due_date,
+                'amount': invoice.amount,
+                'type_payment': invoice.type_payment,
+                'server_name': server_name,
+                'number_of_instances': 1,
+            }
 
-        if len(user_server_instances_buy) > 0:
-            for server_instance in user_server_instances_buy:
-                # Get the server details
-                server_details = MiningServer.query.filter_by(id=server_instance.server_id).first()
-                # Get the invoices
-                invoices = ServerInvoices.query.filter_by(user_server_id=server_instance.id).all()
-                # Create a dict with all invoices
-                for invoice in invoices:
-                    invoices_list.append({
-                        'period': invoice.period,
-                        'issuer': invoice.issuer,
-                        'due_date': invoice.due_date,
-                        'amount': invoice.amount,
-                        'type_payment': invoice.type_payment,
-                        'server_name': server_details.name
-                    })
-
-        print(f"[INFO]: number of invoices: {len(invoices_list)}")
+            existing_invoice = find_invoice(invoices_list, elem)
+            if existing_invoice:
+                existing_invoice['amount'] += elem['amount']
+                existing_invoice['number_of_instances'] += 1
+            else:
+                invoices_list.append(elem)
 
         return invoices_list
 
     @staticmethod
-    def add_invoice(period, issuer, due_date, amount, user_server_id, type_payment):
+    def add_invoice(user_id, period, issuer, due_date, amount, server_id, type_payment):
         """
         Add an invoice to the database
         """
-        print(f"[INFO]: Adding invoice for user_server_id {user_server_id}")
+        print(f"[INFO]: Adding invoice for server_id {server_id}")
         invoice = ServerInvoices(period=period, issuer=issuer, due_date=due_date, amount=amount,
-                                 user_server_id=user_server_id, type_payment=type_payment)
+                                 server_id=server_id, type_payment=type_payment, user_id=user_id)
         db.session.add(invoice)
         db.session.commit()
 
@@ -296,7 +284,7 @@ class Mining_server_manager:
                 db.session.add(user_server_details)
                 # Add an invoice for this first payment
                 amount = server_details.buy_amount
-                self.add_invoice(period, issuer, due_date, amount, user_server_details.id, 'buy')
+                self.add_invoice(user_id, period, issuer, due_date, amount, server_id, 'buy')
 
             db.session.commit()
 
@@ -368,7 +356,7 @@ class Mining_server_manager:
                 issuer = user.username
                 due_date = datetime.now().strftime("%Y-%m-%d")
                 amount = server_details.rent_amount_per_week + server_details.maintenance_cost_per_week
-                self.add_invoice(period, issuer, due_date, amount, user_server_details.id, 'rent')
+                self.add_invoice(user_id, period, issuer, due_date, amount, server_id, 'rent')
 
             db.session.commit()
 
@@ -392,22 +380,25 @@ class Mining_server_manager:
                                                          server_id=server_id).all()
         # Filter the list to get only the servers that are currently rented
         user_server_details = [server for server in user_server_details if server.rent_start_date is not None]
-        user_server_details.sort(key=lambda x: x.rent_start_date)
+        # get user server details that did not earn anything
+        user_server_details_no_earning = [server for server in user_server_details if
+                                          server.last_earning_date is None]
+        # Sort the list by last_payment_date to get the oldest first (except if last_earning_date is None)
+        user_server_details_sort_by_last_payment = [serv_details for serv_details in user_server_details if
+                                                    serv_details.last_earning_date is not None]
+        user_server_details_sort_by_last_payment.sort(key=lambda x: x.last_payment_date)
+        # Concat, so we will delete the oldest first
+        user_server_details = user_server_details_sort_by_last_payment + user_server_details_no_earning
+
         # Test if the user has enough servers to stop renting
         if len(user_server_details) >= number_of_servers_to_stop_renting:
             # Delete entry for each server stopped renting
             for i in range(number_of_servers_to_stop_renting):
-                # The user wallet is refunded depending on the last payment date
-                # Get the number of days since the last payment
-                number_of_days_since_last_payment = (datetime.now() - user_server_details[i].last_payment_date).days
-                # Compute the amount to refund
-                amount_to_refund = ((server_details.rent_amount_per_week + server_details.maintenance_cost_per_week) /
-                                    7 * number_of_days_since_last_payment)
                 # If the user didn't earn anything, we refund the full amount
                 if user_server_details[i].last_earning_date is None:
                     amount_to_refund = server_details.rent_amount_per_week + server_details.maintenance_cost_per_week
-                # Update the user's wallet
-                wallet_manager().receive_crypto(user, server_details.symbol + '-USD', amount_to_refund)
+                    # Update the user's wallet
+                    wallet_manager().receive_crypto(user, server_details.symbol + '-USD', amount_to_refund)
                 db.session.delete(user_server_details[i])
             db.session.commit()
 
@@ -418,7 +409,8 @@ class Mining_server_manager:
     @staticmethod
     def stop_renting_specific_server_instance(server_instance_id, user_id):
         """
-        Stop renting a specific instance of a server type
+        Stop renting a specific instance of a server type.
+        Refund the user if he didn't earn anything. Else, he will not be refunded.
         """
         # Get the server instance details
         server_instance_details = UserServer.query.filter_by(id=server_instance_id).first()
@@ -426,19 +418,21 @@ class Mining_server_manager:
         server_details = MiningServer.query.filter_by(id=server_instance_details.server_id).first()
         # Get the user
         user = User.query.filter_by(id=user_id).first()
-        # Get the number of days since the last payment
-        number_of_days_since_last_payment = (datetime.now() - server_instance_details.last_payment_date).days
-        # Compute the amount to refund
-        amount_to_refund = ((server_details.rent_amount_per_week + server_details.maintenance_cost_per_week) /
-                            7 * number_of_days_since_last_payment)
         # If the user didn't earn anything, we refund the full amount
         if server_instance_details.last_earning_date is None:
             print("User didn't earn anything")
             amount_to_refund = server_details.rent_amount_per_week + server_details.maintenance_cost_per_week
-        # Update the user's wallet
-        print(f"Amount to refund: {amount_to_refund}")
-        wallet_manager().receive_crypto(user, server_details.symbol + '-USD', amount_to_refund)
+            # Update the user's wallet
+            print(f"Amount to refund: {amount_to_refund}")
+            wallet_manager().receive_crypto(user, server_details.symbol + '-USD', amount_to_refund)
         db.session.delete(server_instance_details)
         db.session.commit()
 
         return {'success': True, 'message': 'Server stopped renting successfully'}
+
+
+def find_invoice(invoices_list, elem):
+    for invoice in invoices_list:
+        if all(invoice[key] == elem[key] for key in elem if key not in ['number_of_instances', 'amount']):
+            return invoice
+    return None

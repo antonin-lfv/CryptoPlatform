@@ -94,7 +94,7 @@
                     <div class="col-lg-6">
                         <div class="box">
                             <div class="box-header">
-                                <h4 class="mb-0 fw-500">Details</h4>
+                                <h4 class="mb-0 fw-500">Details for one instance</h4>
                             </div>
                             <div class="box-body">
                                 <div class="row mb-30">
@@ -339,6 +339,7 @@
                     message_call = serverDetails.message;
                     if (success_call) {
                         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
+                        toggle_icon_notifications();
                         swal("Success", message_call, "success");
                     } else {
                         swal("Error", message_call, "error");

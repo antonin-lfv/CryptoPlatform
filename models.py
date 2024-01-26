@@ -204,18 +204,14 @@ class ServerInvoices(db.Model):
     - Issuer: Name of the issuer of the invoice (username)
     - Due date: Date of payment of the invoice
     - Amount: Amount to pay
-    - User_server_id: Id of the user server
     - type_payment: 'rent' or 'buy'
+    - server_id: id of the server type in MiningServer
     """
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     period = db.Column(db.String(10), nullable=False)
     issuer = db.Column(db.String(100), nullable=False)
     due_date = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     type_payment = db.Column(db.String(10), nullable=False)
-    user_server_id = db.Column(db.Integer, db.ForeignKey('user_server.id'), nullable=False)
-
-    user_server = db.relationship('UserServer', backref=db.backref('server_invoices', lazy=True))
-
-    def __repr__(self):
-        return f'<ServerInvoices {self.user_server_id}>'
+    server_id = db.Column(db.Integer, nullable=True)
