@@ -24,7 +24,41 @@
             <!-- Main content -->
             <section class="content">
                 <div class="row">
-
+                    <div class="col-lg-3 col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Mining overview</h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover no-margin">
+                                        <tbody>
+                                        <tr>
+                                            <td>Servers bought</td>
+                                            <td><span class="text-info">{{ mining_overview.total_servers_bought }}</span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Servers rented</td>
+                                            <td><span class="text-info">{{ mining_overview.total_servers_rented }}</span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total servers</td>
+                                            <td><span class="text-info">{{ mining_overview.total_servers }}</span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total earning per day</td>
+                                            <td><span class="text-info">${{ mining_overview.total_power }}</span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </section>

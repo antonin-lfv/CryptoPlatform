@@ -35,5 +35,9 @@ symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))
 # dict to get symbol from name
 name_to_symbol = dict(zip(top_cryptos_names, top_cryptos_symbols))
 
+# Max number of servers to be bought and rented
+max_servers_bought = 50
+max_servers_rented = 50
+
 
 # ===== Functions

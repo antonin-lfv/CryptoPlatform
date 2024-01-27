@@ -4,6 +4,9 @@ from crypto_manager import CryptoDataManager
 from notification_manager import Notification_manager
 from datetime import datetime, timedelta
 from app import db
+from functools import lru_cache
+from collections import defaultdict
+from utils import top_cryptos_symbols
 
 
 class Mining_server_manager:
@@ -147,13 +150,14 @@ class Mining_server_manager:
         if number_of_servers_deleted > 0:
             Notification_manager.add_notification(user_id,
                                                   f"{number_of_servers_deleted} server(s) deleted due to not "
-                                                  f"enough crypto to afford rent",
+                                                  f"enough crypto to afford rent on {datetime.now().strftime('%Y-%m-%d')}",
                                                   f"warning")
 
         # Create notification for the amount earned
         if USD_amount_earned > 0:
             Notification_manager.add_notification(user_id,
-                                                  f"You earned {round(USD_amount_earned, 2)} USD from mining",
+                                                  f"You earned {round(USD_amount_earned, 2)} USD from mining"
+                                                  f" on {datetime.now().strftime('%Y-%m-%d')}",
                                                   f"shopping-cart")
 
     @staticmethod
@@ -205,20 +209,54 @@ class Mining_server_manager:
         Return:
             dict
         """
+        # Get the number of server instances for each server type of the user (bought and rented)
+        # Get all user server instances with a single query
+        user_server_instances = UserServer.query.all()
+        user_server_instances_dict = defaultdict(int)
+        for server_instance in user_server_instances:
+            key_suffix = 'rent' if server_instance.rent_start_date else 'buy'
+            key = f"{server_instance.server_id}_{key_suffix}"
+            user_server_instances_dict[key] += 1
+
+        # Get all mining servers with a single query
         servers = MiningServer.query.all()
-        # Create a dict with all NFTs
+
+        # Use caching for currency conversion
+        @lru_cache(maxsize=None)
+        def cached_convert_fct(currency_pair, amount):
+            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+
+        # Création d'un dictionnaire pour stocker la conversion de 1 unité de chaque devise en USD
+        conversion_rates = {}
+
+        # Récupération des taux de conversion pour chaque devise unique
+        unique_symbols = set(server.symbol for server in servers)
+        for symbol in unique_symbols:
+            usd_suffix = '-USD'
+            # Stocker le taux de conversion pour 1 unité de la devise
+            conversion_rates[symbol] = cached_convert_fct(symbol + usd_suffix, 1)
+
         servers_list = []
         for server_item in servers:
-            servers_list.append({
+            symbol = server_item.symbol
+            usd_rate = conversion_rates[symbol]
+            dict_to_add = {
                 'name': server_item.name,
-                'symbol': server_item.symbol,
+                'symbol': symbol,
                 'rent_amount_per_week': server_item.rent_amount_per_week,
+                'rent_amount_per_week_USD': round(usd_rate * server_item.rent_amount_per_week, 1),
                 'buy_amount': server_item.buy_amount,
+                'buy_amount_USD': round(usd_rate * server_item.buy_amount, 1),
                 'power': server_item.power,
+                'power_USD': round(usd_rate * server_item.power, 1),
                 'maintenance_cost_per_week': server_item.maintenance_cost_per_week,
+                'maintenance_cost_per_week_USD': round(usd_rate * server_item.maintenance_cost_per_week, 1),
                 'logo_path': server_item.logo_path,
-                'category': server_item.category
-            })
+                'category': server_item.category,
+                'number_of_servers_rented': user_server_instances_dict.get(f"{server_item.id}_rent", 0),
+                'number_of_servers_bought': user_server_instances_dict.get(f"{server_item.id}_buy", 0),
+            }
+            servers_list.append(dict_to_add)
 
         return servers_list
 
@@ -239,18 +277,34 @@ class Mining_server_manager:
         # - Compute the total maintenance cost per week (bought servers only)
         # - Power
         # - Symbol
+
         output = {'number_of_servers_bought': 0, 'number_of_servers_rented': 0, 'total_buy_amount': 0,
                   'total_rent_amount_per_week': 0, 'total_maintenance_cost_per_week': 0,
-                  'power': server_details.power, 'symbol': server_details.symbol}
+                  'power': server_details.power, 'symbol': server_details.symbol,
+                  'total_buy_amount_USD': 0, 'total_rent_amount_per_week_USD': 0,
+                  'total_maintenance_cost_per_week_USD': 0, 'power_USD': 0}
+
+        # Use caching for currency conversion
+        @lru_cache(maxsize=None)
+        def cached_convert_fct(currency_pair, amount):
+            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+
+        output['power_USD'] = cached_convert_fct(server_details.symbol + '-USD', server_details.power)
 
         for server in user_server_details:
             if server.rent_start_date:
                 output['number_of_servers_rented'] += 1
                 output['total_rent_amount_per_week'] += server.server.rent_amount_per_week
                 output['total_maintenance_cost_per_week'] += server.server.maintenance_cost_per_week
+                output['total_rent_amount_per_week_USD'] += cached_convert_fct(server.server.symbol + '-USD',
+                                                                                 server.server.rent_amount_per_week)
+                output['total_maintenance_cost_per_week_USD'] += cached_convert_fct(server.server.symbol + '-USD',
+                                                                                        server.server.maintenance_cost_per_week)
             elif server.purchase_date:
                 output['number_of_servers_bought'] += 1
                 output['total_buy_amount'] += server.server.buy_amount
+                output['total_buy_amount_USD'] += cached_convert_fct(server.server.symbol + '-USD',
+                                                                           server.server.buy_amount)
         return output
 
     def buy_server(self, server_id, user_id, number_of_servers_to_buy):
@@ -429,6 +483,54 @@ class Mining_server_manager:
         db.session.commit()
 
         return {'success': True, 'message': 'Server stopped renting successfully'}
+
+    @staticmethod
+    def get_total_servers_bought(user_id):
+        """
+        Get the total number of servers bought by a user
+        """
+        # Get the user's server details
+        user_server_details = UserServer.query.filter_by(user_id=user_id).all()
+        # Get the user's server details that are bought
+        user_server_details = [server for server in user_server_details if server.purchase_date is not None]
+        return len(user_server_details)
+
+    @staticmethod
+    def get_total_servers_rented(user_id):
+        """
+        Get the total number of servers rented by a user
+        """
+        # Get the user's server details
+        user_server_details = UserServer.query.filter_by(user_id=user_id).all()
+        # Get the user's server details that are rented
+        user_server_details = [server for server in user_server_details if server.rent_start_date is not None]
+        return len(user_server_details)
+
+    @staticmethod
+    def get_total_power(user_id):
+        """
+        Get the total power of the user's servers
+        """
+        # Get the user's server details
+        user_server_details = UserServer.query.filter_by(user_id=user_id).all()
+
+        # caching for currency conversion
+        @lru_cache(maxsize=None)
+        def cached_convert_fct(currency_pair, amount):
+            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+
+        # Get conversion rate for all cryptos
+        conversion_rates = {}
+        for crypto in top_cryptos_symbols:
+            conversion_rates[crypto] = cached_convert_fct(crypto, 1)
+
+        # Get the total power
+        total_power = 0
+        for server in user_server_details:
+            # convert power to USD
+            power_in_usd = conversion_rates[server.server.symbol+'-USD'] * server.server.power
+            total_power += power_in_usd
+        return total_power
 
 
 def find_invoice(invoices_list, elem):

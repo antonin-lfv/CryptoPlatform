@@ -140,6 +140,8 @@
                 console.log('Error while getting USD value of ' + crypto_amount + ' ' + crypto_symbol + ': ' + JSON.stringify(error));
             }
         });
+
+        return USD_value;
     }
 
     // ---------- Notification manager

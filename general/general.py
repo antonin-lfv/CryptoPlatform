@@ -4,8 +4,10 @@ from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
+from utils import max_servers_rented, max_servers_bought
 from models import MiningServer
 from mining_server_manager import Mining_server_manager
+from functools import lru_cache
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',
@@ -33,7 +35,17 @@ def update_prices():
 @BLP_general.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('general/index.html', user=current_user)
+    # Get Mining overview
+    # Get the number of servers bought, rented and total
+    # Get the total power
+    mining_overview = {}
+    mining_server_manager = Mining_server_manager()
+    mining_overview['total_servers_bought'] = mining_server_manager.get_total_servers_bought(current_user.id)
+    mining_overview['total_servers_rented'] = mining_server_manager.get_total_servers_rented(current_user.id)
+    mining_overview['total_servers'] = mining_overview['total_servers_bought'] + mining_overview['total_servers_rented']
+    mining_overview['total_power'] = mining_server_manager.get_total_power(current_user.id)
+
+    return render_template('general/index.html', user=current_user, mining_overview=mining_overview)
 
 
 @BLP_general.route('/profile', methods=['GET', 'POST'])
@@ -91,7 +103,9 @@ def mining_place():
     """
     Grid with all types of mining servers
     """
-    return render_template('general/mining_place.html', user=current_user)
+    return render_template('general/mining_place.html', user=current_user,
+                           max_servers_bought=max_servers_bought,
+                           max_servers_rented=max_servers_rented)
 
 
 @BLP_general.route('/mining_manage_server/<server_name>', methods=['GET', 'POST'])
@@ -107,15 +121,24 @@ def mining_manage_server(server_name):
     if server is None:
         abort(404)  # ou vous pouvez renvoyer à une page d'erreur personnalisée
 
+    # Use caching for currency conversion
+    @lru_cache(maxsize=None)
+    def cached_convert_fct(currency_pair, amount):
+        return round(CryptoDataManager().get_USD_from_crypto(currency_pair + '-USD', amount), 1)
+
     # Get the overall server data
     server_data = {
         'id': server.id,
         'name': server.name,
         'symbol': server.symbol,
         'rent_amount_per_week': server.rent_amount_per_week,
+        'rent_amount_per_week_USD': cached_convert_fct(server.symbol, server.rent_amount_per_week),
         'buy_amount': server.buy_amount,
+        'buy_amount_USD': cached_convert_fct(server.symbol, server.buy_amount),
         'power': server.power,
+        'power_USD': cached_convert_fct(server.symbol, server.power),
         'maintenance_cost_per_week': server.maintenance_cost_per_week,
+        'maintenance_cost_per_week_USD': cached_convert_fct(server.symbol, server.maintenance_cost_per_week),
         'logo_path': server.logo_path,
         'category': server.category,
     }
