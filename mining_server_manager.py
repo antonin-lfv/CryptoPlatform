@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from app import db
 from functools import lru_cache
 from collections import defaultdict
-from utils import top_cryptos_symbols
+from utils import top_cryptos_symbols, max_servers_bought, max_servers_rented
 
 
 class Mining_server_manager:
@@ -316,6 +316,14 @@ class Mining_server_manager:
         """
         # Cast the number of servers to buy to int
         number_of_servers_to_buy = int(number_of_servers_to_buy)
+
+        # Get the number of bought servers for this server type
+        number_of_servers_bought = self.get_user_mining_server_details(server_id, user_id)['number_of_servers_bought']
+        # Test if the user has already bought the maximum number of servers for this server type
+        if number_of_servers_bought + number_of_servers_to_buy > max_servers_bought:
+            return {'success': False, 'message': 'You will exceed the maximum number of bought servers for this '
+                                                 'server type'}
+
         # Get the server details
         server_details = MiningServer.query.filter_by(id=server_id).first()
         # Get the user
@@ -383,6 +391,14 @@ class Mining_server_manager:
         """
         # Cast the number of servers to rent to int
         number_of_servers_to_rent = int(number_of_servers_to_rent)
+
+        # Get the number of rented servers for this server type
+        number_of_servers_rented = self.get_user_mining_server_details(server_id, user_id)['number_of_servers_rented']
+        # Test if the user has already rented the maximum number of servers for this server type
+        if number_of_servers_rented + number_of_servers_to_rent > max_servers_rented:
+            return {'success': False, 'message': 'You will exceed the maximum number of rented servers for this '
+                                                 'server type'}
+
         # Get the server details
         server_details = MiningServer.query.filter_by(id=server_id).first()
         # Get the user
