@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
+from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
 from utils import max_servers_rented, max_servers_bought
 from models import MiningServer
@@ -86,6 +87,23 @@ def one_crypto_dashboard(symbol):
 def nft_marketplace():
     return render_template('general/nft_marketplace.html',
                            user=current_user, NFT_collections=NFT_collections)
+
+
+@BLP_general.route('/nft_details/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def nft_details(nft_id):
+    # check if the nft_id exists in the database
+    # if not, return an error page
+    all_nfts = NFT_manager().get_NFTs()
+    nft_ids = [str(nft['id']) for nft in all_nfts]
+    if nft_id not in nft_ids:
+        abort(404)
+
+    # Get the NFT data
+    nft_data = NFT_manager().get_NFT(nft_id)
+
+    return render_template('general/nft_details.html',
+                           user=current_user, nft_data=nft_data)
 
 
 @BLP_general.route('/crypto_wallet', methods=['GET', 'POST'])

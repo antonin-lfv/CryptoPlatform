@@ -147,6 +147,9 @@ class Mining_server_manager:
             # Update the last payment date
             oldest_earning_date += timedelta(days=1)
 
+            # Update wallet evolution (USD value of the user's wallet trhough time)
+            wallet_manager().update_crypto_wallet_evolution(user)
+
         if number_of_servers_deleted > 0:
             Notification_manager.add_notification(user_id,
                                                   f"{number_of_servers_deleted} server(s) deleted due to not "

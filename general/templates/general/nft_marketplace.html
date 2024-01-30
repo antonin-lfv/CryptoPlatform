@@ -124,8 +124,10 @@ function active_collection(collectionElement) {
 
             // Générer le HTML pour chaque NFT et l'ajouter à la div
             NFTs.forEach(function(nft) {
-                var staticBaseURL = "{{ url_for('static', filename='PATH') }}";
-                nft.image_path = staticBaseURL.replace('PATH', nft.image_path);
+                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
+                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
+                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
+                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
                 var nftHTML = `
                 <div class="col-md-12 col-lg-3">
                     <div class="card">
@@ -142,7 +144,7 @@ function active_collection(collectionElement) {
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
-                                <li><a href="#">Buy now</a></li>
+                                <li><a href="${nft.details_path}">Buy now</a></li>
                             </ul>
                         </div>
                     </div>
@@ -161,13 +163,7 @@ $(document).ready(function() {
     // Simuler un clic sur le lien "All" pour charger tous les NFTs
     active_collection(document.getElementById('show_all_nft'));
 });
-
-
-
-
-
 </script>
-
 
 
 </body>

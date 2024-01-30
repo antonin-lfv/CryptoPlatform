@@ -545,7 +545,7 @@ class wallet_manager:
     @staticmethod
     def update_wallet_daily_snapshot(user, quantity):
         """
-        Update wallet daily snapshot
+        Update wallet daily snapshot (USD spent in the game wallet during the day)
 
         Parameters:
             - user: User object, the user who buys crypto
