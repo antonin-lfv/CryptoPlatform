@@ -27,6 +27,8 @@
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a>
                                     </li>
+                                    <li class="breadcrumb-item" aria-current="page"><a
+                                            href="{{ url_for('BLP_general.nft_marketplace') }}">NFT marketplace</a></li>
                                     <li class="breadcrumb-item active" aria-current="page">{{ nft_data['name'] }}</li>
                                 </ol>
                             </nav>
@@ -40,224 +42,41 @@
             <section class="content">
                 <div class="row">
                     <div class="col-xl-5 col-lg-5">
-
                         <!-- Profile Image -->
-                        <div class="box bg-transparent no-border">
-                            <div class="box-body box-profile">
-                                <img class="rounded img-fluid mx-auto d-block max-w-400" src="{{ url_for('static', filename=nft_data['image_path']) }}"
-                                     alt="User profile picture">
-
-                                <h3 class="profile-username text-center mb-0">#{{ nft_data['id'] }}</h3>
-
-                                <h4 class="text-center mt-0"><i class="fa fa-photo me-10"></i>{{ nft_data['collection'] }} collection
-                                </h4>
-
-                                <div class="row social-states">
-                                    <div class="col-6 text-end"><a href="#" class="link text-white"><i
-                                            class="ion ion-ios-people-outline"></i> 254</a></div>
-                                    <div class="col-6 text-start"><a href="#" class="link text-white"><i
-                                            class="ion ion-images"></i> 54</a></div>
-                                </div>
-
-                                <div class="row">
-                                    <h3 class="title w-p100 mt-10 mb-0 p-20">Last Transactions</h3>
-                                    <div class="col-12">
-                                        <div class="media-list media-list-hover w-p100 mt-0">
-                                            <h5 class="media media-single py-10 px-0 w-p100 justify-content-between">
-									  <span>
-									  <i class="fa fa-circle text-danger pe-10 fs-12"></i>Deal number 1548
-									  <span class="subtitle ps-20 mt-10">by<span
-                                              class="text-danger">Johen Doe</span></span>
-									  </span>
-                                                <span class="text-end pull-right"><span
-                                                        class="badge badge-sm badge-danger mb-10">sell</span><br>0.12458921 BTC</span>
-                                            </h5>
-                                            <h5 class="media media-single py-10 px-0 w-p100 justify-content-between">
-									  <span>
-									  <i class="fa fa-circle text-success pe-10 fs-12"></i>Deal number 1548
-									  <span class="subtitle ps-20 mt-10">by<span
-                                              class="text-success">Johen Doe</span></span>
-									  </span>
-                                                <span class="text-end pull-right"><span
-                                                        class="badge badge-sm badge-success mb-10">sell</span><br>0.12458921 BTC</span>
-                                            </h5>
-                                            <h5 class="media media-single py-10 px-0 w-p100 justify-content-between">
-									  <span>
-									  <i class="fa fa-circle text-success pe-10 fs-12"></i>Deal number 1548
-									  <span class="subtitle ps-20 mt-10">by<span
-                                              class="text-success">Johen Doe</span></span>
-									  </span>
-                                                <span class="text-end pull-right"><span
-                                                        class="badge badge-sm badge-success mb-10">sell</span><br>0.12458921 BTC</span>
-                                            </h5>
-                                            <h5 class="media media-single py-10 px-0 w-p100 justify-content-between">
-									  <span>
-									  <i class="fa fa-circle text-danger pe-10 fs-12"></i>Deal number 1548
-									  <span class="subtitle ps-20 mt-10">by<span
-                                              class="text-danger">Johen Doe</span></span>
-									  </span>
-                                                <span class="text-end pull-right"><span
-                                                        class="badge badge-sm badge-danger mb-10">sell</span><br>0.12458921 BTC</span>
-                                            </h5>
-                                            <h5 class="media media-single py-10 px-0 w-p100 justify-content-between">
-									  <span>
-									  <i class="fa fa-circle text-success pe-10 fs-12"></i>Deal number 1548
-									  <span class="subtitle ps-20 mt-10">by<span
-                                              class="text-success">Johen Doe</span></span>
-									  </span>
-                                                <span class="text-end pull-right"><span
-                                                        class="badge badge-sm badge-success mb-10">sell</span><br>0.12458921 BTC</span>
-                                            </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.box-body -->
-                        </div>
-                        <!-- /.box -->
+                        <img class="rounded img-fluid mx-auto d-block"
+                             src="{{ url_for('static', filename=nft_data['image_path']) }}"
+                             alt="User profile picture">
                     </div>
                     <!-- /.col -->
                     <div class="col-xl-7 col-lg-7">
-                        <div class="box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Personal details</h3>
-                            </div>
-                            <!-- /.box-header -->
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">First Name</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="Johon">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Last Name</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="Doe">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Email Adress</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="email" placeholder="johone@dummy.com">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Phone Number</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="tel" placeholder="123 456 7890">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"></label>
-                                            <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-warning">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.col -->
+                        <div class="col-12">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">NFT details</h4>
                                 </div>
-                                <!-- /.row -->
-                            </div>
-                            <!-- /.box-body -->
-                        </div>
-                        <!-- /.box -->
-                        <div class="box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Personal address</h3>
-                            </div>
-                            <!-- /.box-header -->
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Street</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text"
-                                                       placeholder="A-458, Lorem Ipsum, city">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">City</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="Your City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">State</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="Your State">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Post Code</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="number" placeholder="123456">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"></label>
-                                            <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-warning">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.col -->
+                                <div class="box-body">
+                                    <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}">Collection {{ nft_data['collection'] }}</a><br>
+                                    <br>
+                                    <h3 class="box-title">{{ nft_data['name'].split(' ')[1] }}</h3><br>
+                                    <small>Not owned</small>
                                 </div>
-                                <!-- /.row -->
-                            </div>
-                            <!-- /.box-body -->
-                        </div>
-                        <!-- /.box -->
-                        <div class="box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Social media</h3>
-                            </div>
-                            <!-- /.box-header -->
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Facebook</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="facebook id">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Instagram</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="instagram id">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Twitter</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="twitter id">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Linkedin</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" type="text" placeholder="linkedin id">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"></label>
-                                            <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-warning">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.col -->
+                                <div class="box-body">
+                                    <ul class="list-inline mb-0 me-2">
+                                        <li class="list-inline-item">
+                                            <a href="#"><i class="fa fa-heart-o"></i> 0 favorites</a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <!-- /.row -->
                             </div>
-                            <!-- /.box-body -->
-                        </div>
-                        <!-- /.box -->
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">Buy or bid</h4>
+                                </div>
+                                <div class="box-body">
 
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!-- /.col -->
                 </div>

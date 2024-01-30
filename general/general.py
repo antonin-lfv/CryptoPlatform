@@ -83,8 +83,16 @@ def one_crypto_dashboard(symbol):
 
 
 @BLP_general.route('/nft_marketplace', methods=['GET', 'POST'])
+@BLP_general.route('/nft_marketplace/<collection>', methods=['GET', 'POST'])
 @login_required
-def nft_marketplace():
+def nft_marketplace(collection=None):
+    if collection is not None:
+        # Check if the collection exists
+        if collection not in NFT_collections:
+            abort(404)
+        return render_template('general/nft_marketplace.html',
+                               user=current_user, NFT_collections=NFT_collections,
+                               collection=collection)
     return render_template('general/nft_marketplace.html',
                            user=current_user, NFT_collections=NFT_collections)
 

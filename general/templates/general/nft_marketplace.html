@@ -131,9 +131,9 @@ function active_collection(collectionElement) {
                 var nftHTML = `
                 <div class="col-md-12 col-lg-3">
                     <div class="card">
-                        <img class="card-img-top" src="${nft.image_path}" alt="Card image cap">
+                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
                         <div class="card-body">
-                            <h4 class="card-title">${nft.name}</h4>
+                            <h4 class="card-title"><a href="${nft.details_path}">${nft.name}</a></h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
                             <p class="card-subtitle">${nft.price} ETH</p>
                         </div>
@@ -161,7 +161,12 @@ function active_collection(collectionElement) {
 // Charger les NFTs quand la page est chargée entièrement
 $(document).ready(function() {
     // Simuler un clic sur le lien "All" pour charger tous les NFTs
-    active_collection(document.getElementById('show_all_nft'));
+    var collection = "show_all_nft"
+    // test if flask variable is defined
+    {% if collection is defined %}
+        collection = "{{ collection }}"
+    {% endif %}
+    active_collection(document.getElementById(collection));
 });
 </script>
 
