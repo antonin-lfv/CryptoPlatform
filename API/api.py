@@ -109,8 +109,28 @@ def get_NFT_marketplace(collection=None):
     """
     Get all NFTs from the marketplace
     """
-    NFTs = NFT_manager().get_NFTs(collection)
+    NFTs = NFT_manager().get_NFTs(current_user.id, collection=collection)
     return jsonify(NFTs)
+
+
+@BLP_api.route('/api/get_liked_NFTs', methods=['GET', 'POST'])
+@login_required
+def get_liked_NFTs():
+    """
+    Get all NFTs liked by the user
+    """
+    liked_NFTs = NFT_manager().get_liked_NFTs(current_user.id)
+    return jsonify(liked_NFTs)
+
+
+@BLP_api.route('/api/like_NFT/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def like_NFT(nft_id):
+    """
+    Like an NFT
+    """
+    response = NFT_manager().like_NFT(current_user.id, nft_id)
+    return jsonify(response)
 
 
 # ================================

@@ -74,7 +74,8 @@
                             </div>
                             <div class="box-body no-padding mailbox-nav">
                                 <ul class="nav nav-pills flex-column">
-                                    <li class="nav-item"><a class="nav-link" href="#"><i
+                                    <li class="nav-item"><a class="nav-link" href="#" onclick="active_liked()"
+                                    id="liked_section"><i
                                             class="fa fa-heart-o text-danger"></i> Liked</a>
                                     </li>
                                 </ul>
@@ -140,7 +141,7 @@ function active_collection(collectionElement) {
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
                                 <li class="list-inline-item">
-                                    <a href="#"><i class="fa fa-heart-o"></i></a>
+                                    <a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
@@ -151,6 +152,84 @@ function active_collection(collectionElement) {
                 </div>`;
                 marketplaceDiv.append(nftHTML);  // Append the new HTML
             });
+            // deactivate liked section
+            $('#liked_section').removeClass('active');
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+function active_liked() {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: '/api/get_liked_NFTs',
+        method: 'GET',
+        success: function(NFTs) {
+
+            var marketplaceDiv = $('#markeplace_NFT_div');
+            marketplaceDiv.empty();  // Nettoyer le contenu existant
+
+            // Générer le HTML pour chaque NFT et l'ajouter à la div
+            NFTs.forEach(function(nft) {
+                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
+                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
+                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
+                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
+                var nftHTML = `
+                <div class="col-md-12 col-lg-3">
+                    <div class="card">
+                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
+                        <div class="card-body">
+                            <h4 class="card-title
+                            "><a href="${nft.details_path}">${nft.name}</a></h4>
+                            <h6 class="card-text">${nft.collection} collection</h6>
+                            <p class="card-subtitle">${nft.price} ETH</p>
+                        </div>
+                        <div class="card-footer justify-content-between d-flex">
+                            <ul class="list-inline mb-0 me-2">
+                                <li class="list-inline-item">
+                                    <a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart"></i></a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline mb-0">
+                                <li><a href="${nft.details_path}">Buy now</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+                marketplaceDiv.append(nftHTML);  // Append the new HTML
+            });
+
+            // deactivate all collections
+            $('#collection_picker .nav-link').removeClass('active');
+            // activate liked section
+            $('#liked_section').addClass('active');
+
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+function like_nft(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/like_NFT/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            // change the heart icon, if class is fa fa-heart-o, change to fa fa-heart
+            // if class is fa fa-heart, change to fa fa-heart-o
+            var heartIcon = $(`a[onclick="like_nft(${nft_id})"] i`);
+            if (heartIcon.hasClass('fa-heart-o')) {
+                heartIcon.removeClass('fa-heart-o');
+                heartIcon.addClass('fa-heart');
+            } else {
+                heartIcon.removeClass('fa-heart');
+                heartIcon.addClass('fa-heart-o');
+            }
         },
         error: function(error) {
             console.error('Error:', error);

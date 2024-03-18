@@ -308,6 +308,15 @@ class Mining_server_manager:
                 output['total_buy_amount'] += server.server.buy_amount
                 output['total_buy_amount_USD'] += cached_convert_fct(server.server.symbol + '-USD',
                                                                            server.server.buy_amount)
+
+        # round the values
+        output['total_buy_amount'] = round(output['total_buy_amount'], 3)
+        output['total_rent_amount_per_week'] = round(output['total_rent_amount_per_week'], 3)
+        output['total_maintenance_cost_per_week'] = round(output['total_maintenance_cost_per_week'], 3)
+        output['total_buy_amount_USD'] = round(output['total_buy_amount_USD'], 3)
+        output['total_rent_amount_per_week_USD'] = round(output['total_rent_amount_per_week_USD'], 3)
+        output['total_maintenance_cost_per_week_USD'] = round(output['total_maintenance_cost_per_week_USD'], 3)
+
         return output
 
     def buy_server(self, server_id, user_id, number_of_servers_to_buy):

@@ -102,13 +102,13 @@ def nft_marketplace(collection=None):
 def nft_details(nft_id):
     # check if the nft_id exists in the database
     # if not, return an error page
-    all_nfts = NFT_manager().get_NFTs()
+    all_nfts = NFT_manager().get_NFTs(current_user.id)
     nft_ids = [str(nft['id']) for nft in all_nfts]
     if nft_id not in nft_ids:
         abort(404)
 
     # Get the NFT data
-    nft_data = NFT_manager().get_NFT(nft_id)
+    nft_data = NFT_manager().get_NFT(nft_id, current_user.id)
 
     return render_template('general/nft_details.html',
                            user=current_user, nft_data=nft_data)
@@ -158,13 +158,13 @@ def mining_manage_server(server_name):
         'name': server.name,
         'symbol': server.symbol,
         'rent_amount_per_week': server.rent_amount_per_week,
-        'rent_amount_per_week_USD': cached_convert_fct(server.symbol, server.rent_amount_per_week),
+        'rent_amount_per_week_USD': round(cached_convert_fct(server.symbol, server.rent_amount_per_week), 3),
         'buy_amount': server.buy_amount,
-        'buy_amount_USD': cached_convert_fct(server.symbol, server.buy_amount),
+        'buy_amount_USD': round(cached_convert_fct(server.symbol, server.buy_amount), 3),
         'power': server.power,
         'power_USD': cached_convert_fct(server.symbol, server.power),
         'maintenance_cost_per_week': server.maintenance_cost_per_week,
-        'maintenance_cost_per_week_USD': cached_convert_fct(server.symbol, server.maintenance_cost_per_week),
+        'maintenance_cost_per_week_USD': round(cached_convert_fct(server.symbol, server.maintenance_cost_per_week), 3),
         'logo_path': server.logo_path,
         'category': server.category,
     }

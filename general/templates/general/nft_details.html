@@ -63,7 +63,7 @@
                                 <div class="box-body">
                                     <ul class="list-inline mb-0 me-2">
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-heart-o"></i> 0 favorites</a>
+                                            <a href="#" onclick="like_nft({{ nft_data['id'] }})"><i class="fa fa-heart{{ nft_data['liked'] }}"></i>&nbsp;<a id="number_likes">{{ nft_data['number_of_likes'] }} </a> favorites</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -93,5 +93,42 @@
 
 
 {% include('includes/javascript_include_dashboard.html') %}
+
+<script>
+    function like_nft(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/like_NFT/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            // change the heart icon, if class is fa fa-heart-o, change to fa fa-heart
+            // if class is fa fa-heart, change to fa fa-heart-o
+            var heartIcon = $(`a[onclick="like_nft(${nft_id})"] i`);
+            var numberOfLikes = parseInt($('#number_likes').text());
+
+            if (heartIcon.hasClass('fa-heart-o')) {
+                heartIcon.removeClass('fa-heart-o');
+                heartIcon.addClass('fa-heart');
+                // compute the number of likes with the new number of likes
+                numberOfLikes += 1;
+                // update the number of likes
+                $('#number_likes').text(numberOfLikes);
+
+            } else {
+                heartIcon.removeClass('fa-heart');
+                heartIcon.addClass('fa-heart-o');
+                // decrement the number of likes
+
+                numberOfLikes -= 1;
+                // update the number of likes
+                $('#number_likes').text(numberOfLikes);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+</script>
 </body>
 </html>
