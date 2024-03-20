@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     username = db.Column(db.String(1000))
+    profile_img_path = db.Column(db.String(1000), default="images/avatar/avatar-1.png")
     wallets = db.relationship('CryptoWallet', backref='user', lazy=True)
     game_wallet = db.relationship('GameWallet', backref='user', lazy=True)
 

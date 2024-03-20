@@ -58,7 +58,8 @@
                                     <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}">Collection {{ nft_data['collection'] }}</a><br>
                                     <br>
                                     <h3 class="box-title">{{ nft_data['name'].split(' ')[1] }}</h3><br>
-                                    <H4 id="owned_status"></H4>
+                                    <H4 id="owned_status"></H4>&nbsp;<h5 id="set_as_profile_picture"></h5>
+
                                 </div>
                                 <div class="box-body">
                                     <ul class="list-inline mb-0 me-2">
@@ -212,6 +213,9 @@ function sell_NFT(nft_id) {
         method: 'GET',
         success: function(response) {
             owned_status(nft_id);
+            var baseUrl = "{{ url_for('static', filename='') }}"; // Récupère la base de l'URL des fichiers statiques
+            var newImagePath = baseUrl + response['image_path'] + '?v=' + new Date().getTime();
+            $('#profile_picture_top_navbar').attr('src', newImagePath);
             swal(response['status'], response['message'], response['status']);
         },
         error: function(error) {
@@ -238,12 +242,37 @@ function owned_status(nft_id) {
         method: 'GET',
         success: function(response) {
             $('#owned_status').text(response['message']);
+            // if field "owned" is true, add a button "Set as profile picture"
+            if (response['owned'] === true) {
+                $('#set_as_profile_picture').html('<a href="#" onclick="set_as_profile_picture({{ nft_data['id'] }})">'+response["set_profile_text"]+'</a>');
+            }
+            else {
+                $('#set_as_profile_picture').html('');
+            }
         },
         error: function(error) {
             console.error('Error:', error);
         }
     });
 }
+
+function set_as_profile_picture(nft_id) {
+    $.ajax({
+        url: `/api/set_as_profile_picture/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            // Supposons que response['image_path'] contienne le nouveau chemin de l'image
+            var baseUrl = "{{ url_for('static', filename='') }}"; // Récupère la base de l'URL des fichiers statiques
+            var newImagePath = baseUrl + response['image_path'] + '?v=' + new Date().getTime();
+            $('#profile_picture_top_navbar').attr('src', newImagePath);
+
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 
 // Get the owned status of the NFT
 owned_status({{ nft_data['id'] }});

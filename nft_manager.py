@@ -3,6 +3,7 @@ from app import db
 from wallet_manager import wallet_manager
 from crypto_manager import CryptoDataManager
 from datetime import datetime
+from utils import user_profile_default_image_path
 
 
 class NFT_manager:
@@ -232,10 +233,14 @@ class NFT_manager:
             nft.owner_id = None
             # Delete the NFT from the user
             UserNFT.query.filter_by(user_id=user_id, nft_id=nft_id).delete()
+            # Reset the profile picture if the NFT was the profile picture
+            if user.profile_img_path == nft.image_path:
+                user.profile_img_path = user_profile_default_image_path
             # Sell the NFT with ETH
             wallet_manager().receive_crypto(user, 'ETH-USD', nft.price)
             db.session.commit()
-            return {"status": "success", "message": "The NFT is now for sale"}
+            return {"status": "success", "message": "The NFT is now for sale",
+                    "image_path": user_profile_default_image_path}
 
     @staticmethod
     def owned_status(user_id, nft_id):
@@ -244,12 +249,43 @@ class NFT_manager:
         """
         # Get the NFT
         nft = NFT.query.filter_by(id=nft_id).first()
+        # Get the user
+        user = User.query.filter_by(id=user_id).first()
+        nft_used_for_profile_picture = user.profile_img_path == nft.image_path
         # Check if the NFT is owned by the user
         if nft.owner_id == user_id:
-            return {"message": "You own this NFT"}
+            return {"message": "You own this NFT", "owned": True,
+                    "set_profile_text": "Reset profile picture" if nft_used_for_profile_picture
+                    else "Set as profile picture"}
         if nft.owner_id is None:
-            return {"message": "Not owned"}
+            return {"message": "Not owned", "owned": False, "set_profile_text": None}
         else:
             # Get the name of the owner
             owner = User.query.filter_by(id=nft.owner_id).first()
-            return {"message": f"NFT owned by {owner.username}"}
+            return {"message": f"NFT owned by {owner.username}", "owned": False, "set_profile_text": None}
+
+    @staticmethod
+    def set_as_profile_picture(user_id, nft_id):
+        """
+        Set a NFT as profile picture
+        """
+        # Get the NFT
+        nft = NFT.query.filter_by(id=nft_id).first()
+        # Get the user
+        user = User.query.filter_by(id=user_id).first()
+        # Check if the NFT is owned by the user
+        if nft.owner_id != user_id:
+            return {"status": "error", "message": "You don't own this NFT"}
+        else:
+            # if the NFT is the profile picture, reset the profile picture
+            if user.profile_img_path == nft.image_path:
+                user.profile_img_path = user_profile_default_image_path
+                db.session.commit()
+                return {"status": "success", "message": "The NFT is not your profile picture anymore",
+                        "image_path": user_profile_default_image_path}
+            else:
+                # Set the NFT as profile picture
+                user.profile_img_path = nft.image_path
+                db.session.commit()
+                return {"status": "success",
+                        "message": "The NFT is now your profile picture", "image_path": nft.image_path}

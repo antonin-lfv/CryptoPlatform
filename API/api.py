@@ -173,6 +173,16 @@ def owned_status(nft_id):
     return jsonify(response)
 
 
+@BLP_api.route('/api/set_as_profile_picture/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def set_as_profile_picture(nft_id):
+    """
+    Set an NFT as profile picture
+    """
+    response = NFT_manager().set_as_profile_picture(current_user.id, nft_id)
+    return jsonify(response)
+
+
 # ================================
 # Mining servers
 # ================================

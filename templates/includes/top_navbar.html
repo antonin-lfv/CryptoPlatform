@@ -90,8 +90,8 @@
                                     <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ user.username }}</p>
                                     <small class="fs-10 mb-0 text-uppercase text-mute">User</small>
                                 </div>
-                                <img src="{{ url_for('static', filename='images/avatar/avatar-1.png') }}"
-                                     class="avatar rounded-10 bg-primary-light h-40 w-40" alt=""/>
+                                <img src="{{ url_for('static', filename=user.profile_img_path) }}"
+                                     class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" id="profile_picture_top_navbar"/>
                             </div>
                         </a>
                         <ul class="dropdown-menu animated flipInX">
