@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from utils import top_cryptos_symbols, top_cryptos_names
-from models import CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot, CryptoWalletEvolution
+from models import (CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot,
+                    CryptoWalletEvolution, UserNFT, NFT)
 from app import db
 from crypto_manager import CryptoDataManager
 
@@ -57,6 +58,17 @@ class wallet_manager:
             user_balance["crypto_balance"] = round(user_balance["crypto_balance"], 2)
             user_balance["crypto_balance_by_symbol"][wallet.symbol]["balance"] = (
                 round(user_balance["crypto_balance_by_symbol"][wallet.symbol]["balance"], 2))
+
+        # Get web3 balance
+        nfts = UserNFT.query.filter_by(user_id=user.id).all()
+        for nft in nfts:
+            nft_id = nft.nft_id
+            NFT_item = NFT.query.filter_by(id=nft_id).first()
+            USD_price = CryptoDataManager().get_USD_from_crypto('ETH-USD', NFT_item.price)
+            user_balance["web3_balance"] += USD_price
+
+        # Round balance to 2 decimals
+        user_balance["web3_balance"] = round(user_balance["web3_balance"], 2)
 
         return user_balance
 

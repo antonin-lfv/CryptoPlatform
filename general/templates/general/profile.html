@@ -224,6 +224,7 @@
             success: function (data) {
                 // Get the response data
                 var user_balance = data;
+                alert(user_balance["crypto_balance"] + " " + user_balance["web3_balance"]);
 
                 // Update the balance in the div with id="crypto_balance"
                 $("#crypto_balance").html(user_balance["crypto_balance"].toLocaleString() + " USD");
