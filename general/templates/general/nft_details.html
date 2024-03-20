@@ -58,28 +58,37 @@
                                     <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}">Collection {{ nft_data['collection'] }}</a><br>
                                     <br>
                                     <h3 class="box-title">{{ nft_data['name'].split(' ')[1] }}</h3><br>
-                                    <small>Not owned</small>
+                                    <H4 id="owned_status"></H4>
                                 </div>
                                 <div class="box-body">
                                     <ul class="list-inline mb-0 me-2">
                                         <li class="list-inline-item">
-                                            <a href="#" onclick="like_nft({{ nft_data['id'] }})"><i class="fa fa-heart{{ nft_data['liked'] }}"></i>&nbsp;<a id="number_likes">{{ nft_data['number_of_likes'] }} </a> favorites</a>
+                                            <a href="#" onclick="like_nft({{ nft_data['id'] }})"><i class="fa fa-heart{{ nft_data['liked'] }}"></i>&nbsp;<a id="number_likes">{{ nft_data['number_of_likes'] }} </a> favorite{% if nft_data['number_of_likes']>1 %}s{% endif %}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="box">
                                 <div class="box-header with-border">
-                                    <h4 class="box-title">Buy or bid</h4>
+                                    <h4 class="box-title">Buy</h4>
                                 </div>
                                 <div class="box-body">
+                                    <h6>Current price</h6>
+                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
+                                    <br>
+                                    <div class="clearfix" style="display: flex;">
+                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-right: 2px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#buy_NFT">Buy now</button>
 
+                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-left: 2px;" class="waves-effect waves-light btn btn-secondary mb-5" data-bs-toggle="modal" data-bs-target="#sell_NFT">Sell Now</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- /.col -->
                 </div>
+                <!-- /.row -->
+
             </section>
             <!-- /.content -->
 
@@ -91,6 +100,56 @@
 
 </div>
 
+<div id="buy_NFT" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Buy {{ nft_data['name'] }} NFT</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>You are going to pay {{ nft_data['price'] }} ETH </h5>
+                <h6>You have {{ eth_amount['tokens'] }} ETH in your wallet</h6>
+                <p>You will immediately receive your NFT after the sale.</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        id="validate_buy_NFT">Buy now
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div id="sell_NFT" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Buy {{ nft_data['name'] }} NFT</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>You are going to sell this NFT for {{ nft_data['price'] }} ETH </h5>
+                <p>You will immediately receive your ETH after the sale.</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        id="validate_sell_NFT">Sell now
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 {% include('includes/javascript_include_dashboard.html') %}
 
@@ -129,6 +188,66 @@
         }
     });
 }
+
+// Buy NFT by calling /api/buy_NFT/<nft_id>
+function buy_NFT(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/buy_NFT/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            owned_status(nft_id);
+            swal(response['status'], response['message'], response['status']);
+        },
+        error: function(error) {
+            console.error('Error:', error['message']);
+        }
+    });
+}
+
+function sell_NFT(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/sell_NFT/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            owned_status(nft_id);
+            swal(response['status'], response['message'], response['status']);
+        },
+        error: function(error) {
+            console.error('Error:', error['message']);
+        }
+    });
+}
+
+// Validate buy NFT
+$('#validate_buy_NFT').click(function() {
+    buy_NFT({{ nft_data['id'] }});
+});
+
+// Validate sell NFT
+$('#validate_sell_NFT').click(function() {
+    sell_NFT({{ nft_data['id'] }});
+});
+
+
+function owned_status(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/owned_status/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            $('#owned_status').text(response['message']);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+// Get the owned status of the NFT
+owned_status({{ nft_data['id'] }});
+
 </script>
 </body>
 </html>

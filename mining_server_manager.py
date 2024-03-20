@@ -36,19 +36,19 @@ class Mining_server_manager:
 
         # If there is no server instance, return
         if oldest_earning_date_instance is None:
-            print("[INFO]: No server instance")
+            # print("[INFO]: No server instance")
             return
 
         # If oldest_earning_date is today, return
         if oldest_earning_date_instance.last_earning_date == today_date:
-            print("[INFO]: Already paid today")
+            # print("[INFO]: Already paid today")
             return
 
         oldest_earning_date = oldest_earning_date_instance.last_earning_date
 
         # Iterate through all day, one by one, from the last payment date to today
         while oldest_earning_date <= today_date:
-            print(f"[INFO]: oldest_earning_date: {oldest_earning_date}, today_date: {today_date}")
+            # print(f"[INFO]: oldest_earning_date: {oldest_earning_date}, today_date: {today_date}")
             # We start by earning crypto from mining then we pay the servers
 
             # == Bought servers earning ==
@@ -57,7 +57,7 @@ class Mining_server_manager:
                                                                                         timedelta(days=1),
                                                                       rent_start_date=None
                                                                       ).all()
-            print(f"[INFO]: number of bought_user_server_instances: {len(bought_user_server_instances)}")
+            # print(f"[INFO]: number of bought_user_server_instances: {len(bought_user_server_instances)}")
 
             # Receive crypto from mining
             for server_instance in bought_user_server_instances:
@@ -71,8 +71,8 @@ class Mining_server_manager:
                                                 server_details.power)
                 USD_amount_earned += CryptoDataManager().get_USD_from_crypto(server_details.symbol + '-USD',
                                                                              server_details.power)
-                print(
-                    f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
+                # print(f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol}
+                # on {oldest_earning_date}")
 
             # == Rented servers earning ==
             rented_user_server_instances = UserServer.query.filter_by(user_id=user_id,
@@ -80,7 +80,7 @@ class Mining_server_manager:
                                                                                         timedelta(days=1),
                                                                       purchase_date=None
                                                                       ).all()
-            print(f"[INFO]: number of rented_user_server_instances: {len(rented_user_server_instances)}")
+            # print(f"[INFO]: number of rented_user_server_instances: {len(rented_user_server_instances)}")
 
             # Receive crypto from mining
             for server_instance in rented_user_server_instances:
@@ -94,8 +94,8 @@ class Mining_server_manager:
                                                 server_details.power)
                 USD_amount_earned += CryptoDataManager().get_USD_from_crypto(server_details.symbol + '-USD',
                                                                              server_details.power)
-                print(
-                    f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol} on {oldest_earning_date}")
+                # print(f"[INFO]: User {user_id} earned {server_details.power} {server_details.symbol}
+                # on {oldest_earning_date}")
 
             # == Rented servers payment ==
             # Get the user's server instances that need to be paid
@@ -105,7 +105,7 @@ class Mining_server_manager:
                                                                       purchase_date=None
                                                                       ).all()
 
-            print(f"[INFO]: number of rented_user_server_instances: {len(rented_user_server_instances)}")
+            # print(f"[INFO]: number of rented_user_server_instances: {len(rented_user_server_instances)}")
 
             # Iterate through all server instances
             for server_instance in rented_user_server_instances:
@@ -122,12 +122,12 @@ class Mining_server_manager:
                     # Update the last payment date
                     server_instance.last_payment_date = oldest_earning_date
                     db.session.commit()
-                    print(
-                        f"[INFO]: User {user_id} paid {server_details.rent_amount_per_week} {server_details.symbol} on "
-                        f"{oldest_earning_date}")
+                    # print(
+                    # f"[INFO]: User {user_id} paid {server_details.rent_amount_per_week} {server_details.symbol} on "
+                    #     f"{oldest_earning_date}")
                     # Add an invoice
                     # Period is Month + Year
-                    print(f"[INFO]: Adding invoice for user_server_id {server_instance.id}")
+                    # print(f"[INFO]: Adding invoice for user_server_id {server_instance.id}")
                     period = oldest_earning_date.strftime("%B %Y")
                     issuer = user.username
                     due_date = oldest_earning_date + timedelta(days=7)
@@ -140,9 +140,9 @@ class Mining_server_manager:
                     # If not enough crypto, delete the server instance (so only for rent)
                     self.stop_renting_specific_server_instance(server_instance.id, user_id)
                     number_of_servers_deleted += 1
-                    print(
-                        f"[INFO]: User {user_id} didn't have enough crypto to pay {server_details.rent_amount_per_week} "
-                        f"{server_details.symbol} on {oldest_earning_date}")
+                    # print(
+                    # f"[INFO]: User {user_id} didn't have enough crypto to pay {server_details.rent_amount_per_week} "
+                    #    f"{server_details.symbol} on {oldest_earning_date}")
 
             # Update the last payment date
             oldest_earning_date += timedelta(days=1)

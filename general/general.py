@@ -6,7 +6,7 @@ from notification_manager import Notification_manager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
 from utils import max_servers_rented, max_servers_bought
-from models import MiningServer
+from models import MiningServer, User
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
 
@@ -110,8 +110,16 @@ def nft_details(nft_id):
     # Get the NFT data
     nft_data = NFT_manager().get_NFT(nft_id, current_user.id)
 
+    # Get the amount of ETH in the wallet of the user
+    w_manager = wallet_manager()
+    user = User.query.filter_by(id=current_user.id).first()
+    # eth_amount is a dict with tokens and USD fields
+    eth_amount = w_manager.get_user_specific_balance(user, 'ETH-USD')
+    eth_amount['tokens'] = round(eth_amount['tokens'], 3)
+    eth_amount['USD'] = round(eth_amount['USD'], 2)
+
     return render_template('general/nft_details.html',
-                           user=current_user, nft_data=nft_data)
+                           user=current_user, nft_data=nft_data, eth_amount=eth_amount)
 
 
 @BLP_general.route('/crypto_wallet', methods=['GET', 'POST'])

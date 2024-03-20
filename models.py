@@ -101,9 +101,9 @@ class NFT(db.Model):
     collection = db.Column(db.String(100), nullable=False)  # Collection of the NFT
     price = db.Column(db.Float, nullable=False)  # Price of the NFT at this moment
     image_path = db.Column(db.String(1000), nullable=False)  # Path to the image of the NFT
-    is_for_sale = db.Column(db.Boolean, default=False)  # Is the NFT for sale?
-    is_for_sale_since = db.Column(db.DateTime, default=datetime.utcnow)  # Since when is the NFT for sale?
-    is_for_sale_until = db.Column(db.DateTime, default=datetime.utcnow)  # Until when is the NFT for sale?
+    is_for_sale = db.Column(db.Boolean, default=True)  # Is the NFT for sale?
+    is_for_sale_since = db.Column(db.DateTime, default=None)  # Since when is the NFT for sale?
+    is_for_sale_until = db.Column(db.DateTime, default=None)  # Until when is the NFT for sale?
     # owner id is optional because the NFT can be for sale without having an owner
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
 

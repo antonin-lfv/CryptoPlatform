@@ -123,6 +123,16 @@ def get_liked_NFTs():
     return jsonify(liked_NFTs)
 
 
+@BLP_api.route('/api/get_owned_NFTs', methods=['GET', 'POST'])
+@login_required
+def get_owned_NFTs():
+    """
+    Get all NFTs owned by the user
+    """
+    owned_NFTs = NFT_manager().get_owned_NFTs(current_user.id)
+    return jsonify(owned_NFTs)
+
+
 @BLP_api.route('/api/like_NFT/<nft_id>', methods=['GET', 'POST'])
 @login_required
 def like_NFT(nft_id):
@@ -130,6 +140,36 @@ def like_NFT(nft_id):
     Like an NFT
     """
     response = NFT_manager().like_NFT(current_user.id, nft_id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/buy_NFT/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def buy_NFT(nft_id):
+    """
+    Buy an NFT
+    """
+    response = NFT_manager().buy_NFT(current_user.id, nft_id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/sell_NFT/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def sell_NFT(nft_id):
+    """
+    Sell an NFT
+    """
+    response = NFT_manager().sell_NFT(current_user.id, nft_id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/owned_status/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def owned_status(nft_id):
+    """
+    Get the owned status of an NFT
+    """
+    response = NFT_manager().owned_status(current_user.id, nft_id)
     return jsonify(response)
 
 
