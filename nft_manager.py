@@ -191,11 +191,10 @@ class NFT_manager:
         nft = NFT.query.filter_by(id=nft_id).first()
         nft_price = nft.price
         # Check if the user has enough ETH to buy the NFT
-        if eth_amount['tokens'] < nft_price:
-            return {"status": "error", "message": "Not enough ETH in the wallet"}
-        else:
-            # Check if the NFT is for sale
-            if nft.is_for_sale:
+        if nft.is_for_sale:
+            if eth_amount['tokens'] < nft_price:
+                return {"status": "error", "message": "Not enough ETH in the wallet"}
+            else:
                 # Transfer the NFT to the user
                 user_nft = UserNFT(user_id=user_id, nft_id=nft_id,
                                    purchase_price_usd=CryptoDataManager().get_USD_from_crypto('ETH-USD', nft_price),
@@ -210,8 +209,8 @@ class NFT_manager:
                 # Buy the NFT with ETH
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
                 return {"status": "success", "message": "You bought the NFT successfully"}
-            else:
-                return {"status": "error", "message": "The NFT is not for sale"}
+        else:
+            return {"status": "error", "message": "The NFT is not for sale"}
 
     @staticmethod
     def sell_NFT(user_id, nft_id):
@@ -224,7 +223,8 @@ class NFT_manager:
         user = User.query.filter_by(id=user_id).first()
         # Check if the NFT is owned by the user
         if nft.owner_id != user_id:
-            return {"status": "error", "message": "You don't own this NFT"}
+            return {"status": "error", "message": "You don't own this NFT",
+                    "image_path": user_profile_default_image_path}
         else:
             # Update the NFT object
             nft.is_for_sale = True

@@ -194,7 +194,7 @@ def get_all_mining_servers():
     """
     Get all mining servers from the database
     """
-    servers = Mining_server_manager().get_all_servers()
+    servers = Mining_server_manager().get_all_servers(current_user.id)
     return jsonify(servers)
 
 

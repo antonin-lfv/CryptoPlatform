@@ -185,8 +185,10 @@
                         <label class="form-label">Choose the number of server to rent </label>
                         <input id="range_int_selector_rent" type="text" value="1" name="range_int_selector_rent"
                                data-bts-button-down-class="btn btn-secondary"
-                               data-bts-button-up-class="btn btn-secondary">
+                               data-bts-button-up-class="btn btn-secondary" onchange="update_amount_rent_modal()">
                     </div>
+                    <p>You have <a id="rent_crypto_amount"></a> {{ server_data.symbol }} in your wallet</p>
+                    <p>You will pay <a id="amount_rent_modal"></a> {{ server_data.symbol }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -241,8 +243,10 @@
                         <label class="form-label">Choose the number of server to buy </label>
                         <input id="range_int_selector_buy" type="text" value="1" name="range_int_selector_buy"
                                data-bts-button-down-class="btn btn-secondary"
-                               data-bts-button-up-class="btn btn-secondary">
+                               data-bts-button-up-class="btn btn-secondary" onchange="update_amount_pay_modal()">
                     </div>
+                    <p>You have <a id="buy_crypto_amount"></a> {{ server_data.symbol }} in your wallet</p>
+                    <p>You will pay <a id="amount_pay_modal"></a> {{ server_data.symbol }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -310,9 +314,11 @@
                 $('#token_spent_to_buy').html(` ${serverDetails.total_buy_amount} ${serverDetails.symbol} <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_buy_amount_USD})</small>`);
                 $('#token_spent_to_rent').html(` ${serverDetails.total_rent_amount_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_rent_amount_per_week_USD})</small>`);
                 $('#maintenance_cost').html(` ${serverDetails.total_maintenance_cost_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_maintenance_cost_per_week_USD})</small>`);
+
                 $('#total_power').html(` ${(serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${(serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power_USD})</small>`);
+                    serverDetails.number_of_servers_bought) * serverDetails.power.toFixed(3)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${((serverDetails.number_of_servers_rented +
+                    serverDetails.number_of_servers_bought) * serverDetails.power_USD).toFixed(3)})</small>`);
+
             },
             error: function (error) {
                 console.error('Error:', error);
@@ -374,7 +380,83 @@
 
     $(document).ready(function () {
         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
+        update_amount_pay_modal();
+        update_amount_rent_modal();
     });
+
+    function get_user_balance(symbol) {
+        return new Promise((resolve, reject) => {
+            var url = "/api/get_user_balance";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    var amount = data['crypto_balance_by_symbol'][symbol + '-USD']['quantity'];
+                    // 3 decimal places
+                    amount = parseFloat(amount).toFixed(3);
+                    resolve(amount); // Résout la promesse avec le montant
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                    reject(error); // Rejette la promesse en cas d'erreur
+                }
+            });
+        });
+    }
+
+function update_user_balance_display(symbol) {
+    get_user_balance(symbol).then(balance => {
+        $('#buy_crypto_amount').text(balance);
+        $('#rent_crypto_amount').text(balance);
+    }).catch(error => console.error('Failed to fetch user balance:', error));
+}
+
+function update_amount_pay_modal() {
+    var buyAmount = Number('{{ server_data.buy_amount }}');
+    var numServersToBuy = Number($('#range_int_selector_buy').val());
+    var totalCostToBuy = numServersToBuy * buyAmount;
+    var symbol = '{{ server_data.symbol }}';
+
+    $('#amount_pay_modal').text(totalCostToBuy);
+
+    get_user_balance(symbol).then(userBalance => {
+        var balanceNumeric = Number(userBalance);
+        $('#buy_crypto_amount').text(balanceNumeric); // Met à jour le solde de l'utilisateur
+
+        if (totalCostToBuy <= balanceNumeric) {
+            $('#amount_pay_modal').css('color', 'green');
+        } else {
+            $('#amount_pay_modal').css('color', 'red');
+        }
+    }).catch(error => console.error('Error:', error));
+}
+
+function update_amount_rent_modal() {
+    var rentAmountPerWeek = Number('{{ server_data.rent_amount_per_week }}');
+    var maintenanceCostPerWeek = Number('{{ server_data.maintenance_cost_per_week }}');
+    var numServersToRent = Number($('#range_int_selector_rent').val());
+    var symbol = '{{ server_data.symbol }}';
+
+    var totalCostToRent = (numServersToRent * rentAmountPerWeek) + (numServersToRent * maintenanceCostPerWeek);
+
+    $('#amount_rent_modal').text(totalCostToRent);
+
+    get_user_balance(symbol).then(userBalance => {
+        var balanceNumeric = Number(userBalance);
+        $('#rent_crypto_amount').text(balanceNumeric); // Met à jour le solde de l'utilisateur
+
+        if (totalCostToRent <= balanceNumeric) {
+            $('#amount_rent_modal').css('color', 'green');
+        } else {
+            $('#amount_rent_modal').css('color', 'red');
+        }
+    }).catch(error => console.error('Error:', error));
+}
+
+// display the user balance
+update_user_balance_display('{{ server_data.symbol }}');
+
+
 
 </script>
 

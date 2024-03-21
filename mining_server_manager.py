@@ -205,16 +205,16 @@ class Mining_server_manager:
         db.session.commit()
 
     @staticmethod
-    def get_all_servers():
+    def get_all_servers(user_id):
         """
-        Get all mining servers from the database
+        Get all mining servers of the user
 
         Return:
             dict
         """
         # Get the number of server instances for each server type of the user (bought and rented)
         # Get all user server instances with a single query
-        user_server_instances = UserServer.query.all()
+        user_server_instances = UserServer.query.filter_by(user_id=user_id).all()
         user_server_instances_dict = defaultdict(int)
         for server_instance in user_server_instances:
             key_suffix = 'rent' if server_instance.rent_start_date else 'buy'

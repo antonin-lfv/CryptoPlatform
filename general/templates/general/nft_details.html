@@ -84,6 +84,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">Bid</h4>
+                                </div>
+                                <div class="box-body">
+                                    <h6>Current price</h6>
+                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
+                                    <br>
+                                    <div class="clearfix" style="display: flex;">
+                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-right: 2px;" class="waves-effect waves-light btn btn-primary mb-5">Place a bid</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -217,6 +230,7 @@ function sell_NFT(nft_id) {
             var newImagePath = baseUrl + response['image_path'] + '?v=' + new Date().getTime();
             $('#profile_picture_top_navbar').attr('src', newImagePath);
             swal(response['status'], response['message'], response['status']);
+
         },
         error: function(error) {
             console.error('Error:', error['message']);
