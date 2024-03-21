@@ -315,9 +315,10 @@
                 $('#token_spent_to_rent').html(` ${serverDetails.total_rent_amount_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_rent_amount_per_week_USD})</small>`);
                 $('#maintenance_cost').html(` ${serverDetails.total_maintenance_cost_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_maintenance_cost_per_week_USD})</small>`);
 
-                $('#total_power').html(` ${(serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power.toFixed(3)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${((serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power_USD).toFixed(3)})</small>`);
+                $('#total_power').html(` ${((serverDetails.number_of_servers_rented +
+                    serverDetails.number_of_servers_bought) * serverDetails.power).toFixed(1)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${((serverDetails.number_of_servers_rented +
+                    serverDetails.number_of_servers_bought) * serverDetails.power_USD).toFixed(1)})</small>`);
+
 
             },
             error: function (error) {
