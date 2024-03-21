@@ -138,18 +138,19 @@ function active_collection(collectionElement) {
                     <div class="card">
                         <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
                         <div class="card-body">
-                            <h4 class="card-title"><a href="${nft.details_path}">${nft.name}</a></h4>
+                            <h4 class="card-title"><a href="${nft.details_path}">${nft.name}</a>&nbsp;${nft.owned ? '(Owned)' : ''}</h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
                             <p class="card-subtitle">${nft.price} ETH</p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
                                 <li class="list-inline-item">
-                                    <a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
+                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
-                                <li><a href="${nft.details_path}">Buy now</a></li>
+                                <li><a href="${nft.details_path}">${nft.owned ? 'Sell now' : 'Buy now'}</a></li>
+
                             </ul>
                         </div>
                     </div>
@@ -189,18 +190,19 @@ function active_liked() {
                         <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
                         <div class="card-body">
                             <h4 class="card-title
-                            "><a href="${nft.details_path}">${nft.name}</a></h4>
+                            "><a href="${nft.details_path}">${nft.name}</a>&nbsp;${nft.owned ? '(Owned)' : ''}</h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
                             <p class="card-subtitle">${nft.price} ETH</p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
                                 <li class="list-inline-item">
-                                    <a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart"></i></a>
+                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart"></i></a>
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
-                                <li><a href="${nft.details_path}">Buy now</a></li>
+                                <li><a href="${nft.details_path}">${nft.owned ? 'Sell now' : 'Buy now'}</a></li>
+
                             </ul>
                         </div>
                     </div>
@@ -251,7 +253,7 @@ function active_owned() {
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
                                 <li class="list-inline-item">
-                                    <a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
+                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
@@ -285,12 +287,20 @@ function like_nft(nft_id) {
             // change the heart icon, if class is fa fa-heart-o, change to fa fa-heart
             // if class is fa fa-heart, change to fa fa-heart-o
             var heartIcon = $(`a[onclick="like_nft(${nft_id})"] i`);
+            var number_of_likes = $(`a[id="number_of_likes_for_${nft_id}"]`);
             if (heartIcon.hasClass('fa-heart-o')) {
                 heartIcon.removeClass('fa-heart-o');
                 heartIcon.addClass('fa-heart');
+                // increment the number of likes (keep it as integer)
+                var new_number_of_likes = parseInt(number_of_likes.text()) + 1;
+
+                number_of_likes.text(new_number_of_likes);
+
             } else {
                 heartIcon.removeClass('fa-heart');
                 heartIcon.addClass('fa-heart-o');
+                // decrement the number of likes
+                number_of_likes.text(parseInt(number_of_likes.text()) - 1);
             }
         },
         error: function(error) {

@@ -51,6 +51,7 @@ class NFT_manager:
                 'is_for_sale_since': NFTs.is_for_sale_since,
                 'is_for_sale_until': NFTs.is_for_sale_until,
                 'owner_id': NFTs.owner_id,
+                'owned': NFTs.owner_id == user_id,
                 'liked': '' if is_user_liked else '-o',
                 'number_of_likes': len(liked) if liked else 0
             }
@@ -71,6 +72,14 @@ class NFT_manager:
         NFTs = NFT.query.all()
         # Get all the NFTs liked by the user
         nft_ids = UserLikedNFT.query.filter_by(user_id=user_id).all()
+        # Get the number of likes for each NFT
+        nft_likes = UserLikedNFT.query.all()
+        number_of_likes = {}
+        for nft_id in nft_likes:
+            if nft_id.nft_id in number_of_likes:
+                number_of_likes[nft_id.nft_id] += 1
+            else:
+                number_of_likes[nft_id.nft_id] = 1
         # Create a dict with all NFTs
         NFTs_list = []
         for nft_item in NFTs:
@@ -84,7 +93,9 @@ class NFT_manager:
                 'is_for_sale_since': nft_item.is_for_sale_since,
                 'is_for_sale_until': nft_item.is_for_sale_until,
                 'owner_id': nft_item.owner_id,
-                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o'
+                'owned': nft_item.owner_id == user_id,
+                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
+                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0
             })
 
         return NFTs_list
@@ -101,6 +112,14 @@ class NFT_manager:
         NFTs = NFT.query.filter_by(collection=collection).all()
         # Get all the NFTs liked by the user
         nft_ids = UserLikedNFT.query.filter_by(user_id=user_id).all()
+        # Get the number of likes for each NFT
+        nft_likes = UserLikedNFT.query.all()
+        number_of_likes = {}
+        for nft_id in nft_likes:
+            if nft_id.nft_id in number_of_likes:
+                number_of_likes[nft_id.nft_id] += 1
+            else:
+                number_of_likes[nft_id.nft_id] = 1
         # Create a dict with all NFTs
         NFTs_list = []
         for nft_item in NFTs:
@@ -114,7 +133,9 @@ class NFT_manager:
                 'is_for_sale_since': nft_item.is_for_sale_since,
                 'is_for_sale_until': nft_item.is_for_sale_until,
                 'owner_id': nft_item.owner_id,
-                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o'
+                'owned': nft_item.owner_id == user_id,
+                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
+                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0
             })
 
         return NFTs_list
@@ -210,7 +231,7 @@ class NFT_manager:
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
                 return {"status": "success", "message": "You bought the NFT successfully"}
         else:
-            return {"status": "error", "message": "The NFT is not for sale"}
+            return {"status": "error", "message": "The NFT is not for sale", "refresh": True}
 
     @staticmethod
     def sell_NFT(user_id, nft_id):
