@@ -1,7 +1,8 @@
-from models import NFT, UserLikedNFT, User, UserNFT
+from models import NFT, UserLikedNFT, User, UserNFT, NFTBid
 from app import db
 from wallet_manager import wallet_manager
 from crypto_manager import CryptoDataManager
+from notification_manager import Notification_manager
 from datetime import datetime
 from utils import user_profile_default_image_path
 
@@ -310,3 +311,149 @@ class NFT_manager:
                 db.session.commit()
                 return {"status": "success",
                         "message": "The NFT is now your profile picture", "image_path": nft.image_path}
+
+    def place_bid(self, user_id, nft_id, amount):
+        """
+        Place a bid on a NFT owned by another user
+        """
+        # Get the NFT
+        nft = NFT.query.filter_by(id=nft_id).first()
+        # Get the user
+        user = User.query.filter_by(id=user_id).first()
+        # Get all the bids on the NFT
+        nft_bids = self.get_bids(nft_id)
+        # Get the minimum bid
+        bids = [bid['bid_price_crypto'] for bid in nft_bids]
+        if bids:
+            min_bid = min(bids)
+        else:
+            min_bid = nft.price
+        # Check if the NFT is owned by another user
+        if nft.owner_id is None:
+            return {"status": "error", "message": "The NFT is not for sale, just buy it"}
+        # Check if the user is not the owner of the NFT
+        if nft.owner_id == user_id:
+            return {"status": "error", "message": "You can't bid on your own NFT"}
+        # Check if the user already placed a bid with a higher amount or same amount
+        for bid in nft_bids:
+            if bid['user_id'] == user_id and bid['bid_price_crypto'] >= amount:
+                return {"status": "error", "message": "You already placed a bid with a higher amount or same amount"}
+
+        # Check if the user has enough ETH to place the bid
+        wallet = wallet_manager()
+        eth_amount = wallet.get_user_specific_balance(user, 'ETH-USD')
+        if eth_amount['tokens'] < amount:
+            return {"status": "error", "message": "Not enough ETH in the wallet"}
+
+        # Check if the bid is higher than the minimum bid
+        if nft_bids:
+            if amount <= min_bid:
+                return {"status": "error", "message": "The bid is too low"}
+
+        # Take the amount of the bid from the user
+        wallet.buy_with_crypto(user, 'ETH-USD', amount)
+        # Add the bid to the database and delete the previous minimum bids to only keep 5 bids
+        new_bid = NFTBid(user_id=user_id, nft_id=nft_id, bid_date=datetime.utcnow(),
+                         bid_price_crypto=amount, bid_crypto_symbol='ETH')
+        db.session.add(new_bid)
+
+        # Delete the previous minimum bids if there are more than 5 bids
+        if len(nft_bids) > 4:
+            for bid in nft_bids:
+                if bid['bid_price_crypto'] == min_bid:
+                    bid_to_delete = NFTBid.query.filter_by(id=bid['id']).first()
+                    db.session.delete(bid_to_delete)
+                    # Give back the amount of the bid to the user
+                    wallet.receive_crypto(user, 'ETH-USD', min_bid)
+                    break
+
+        # send a notification to the owner of the NFT
+        Notification_manager().add_notification(nft.owner_id,
+                                                f"New bid on your NFT {nft.name}",
+                                                "shopping-cart")
+
+        db.session.commit()
+
+        return {"status": "success", "message": "Bid placed successfully"}
+
+    @staticmethod
+    def get_bids(nft_id):
+        """
+        Get all the bids on a NFT
+        """
+        # Get all the bids on the NFT
+        nft_bids = NFTBid.query.filter_by(nft_id=nft_id).all()
+        # Create a list with all the bids
+        bids_list = []
+        for bid in nft_bids[::-1]:
+            user = User.query.filter_by(id=bid.user_id).first()
+            bids_list.append({
+                'id': bid.id,
+                'user_id': user.id,
+                'username': user.username,
+                'bid_price_crypto': bid.bid_price_crypto,
+                'bid_date': bid.bid_date,
+                'bid_crypto_symbol': 'ETH'
+            })
+
+        return bids_list
+
+    @staticmethod
+    def delete_bid(bid_id):
+        """
+        Delete a bid on a NFT of a user
+        """
+        # Get the Bid
+        bid = NFTBid.query.filter_by(id=bid_id).first()
+        if not bid:
+            return {"status": "error", "message": "The bid doesn't exist"}
+        # Return the amount of the bid to the user
+        wallet = wallet_manager()
+        wallet.receive_crypto(User.query.filter_by(id=bid.user_id).first(), 'ETH-USD', bid.bid_price_crypto)
+        # Delete the bid from the database
+        db.session.delete(bid)
+        db.session.commit()
+
+        return {"status": "success", "message": "Bid deleted successfully"}
+
+    @staticmethod
+    def accept_bid(bid_id, current_user_id):
+        """
+        Accept a bid on a NFT for the user
+        """
+        # Get the bid
+        bid = NFTBid.query.filter_by(id=bid_id).first()
+        # Get the NFT
+        nft = NFT.query.filter_by(id=bid.nft_id).first()
+        # Get the user who will sell the NFT
+        seller = User.query.filter_by(id=nft.owner_id).first()
+
+        # Check if the user is the owner of the NFT
+        if nft.owner_id != current_user_id:
+            return {"status": "error", "message": "You are not the owner of the NFT"}
+        # Check if the bid is still valid
+        if nft.owner_id is None:
+            return {"status": "error", "message": "The NFT is not for sale"}
+
+        # Transfer the NFT to the user
+        user_nft = UserNFT(user_id=bid.user_id, nft_id=bid.nft_id,
+                           purchase_price_usd=CryptoDataManager().get_USD_from_crypto('ETH-USD', bid.bid_price_crypto),
+                           purchase_price_crypto=bid.bid_price_crypto, purchase_crypto_symbol='ETH')
+        db.session.add(user_nft)
+
+        # Update the NFT object
+        nft.is_for_sale = False
+        nft.owner_id = bid.user_id
+        nft.is_for_sale_since = None
+        nft.is_for_sale_until = None
+        db.session.commit()
+
+        # Transfer the amount of the bid to the seller
+        wallet = wallet_manager()
+        wallet.receive_crypto(seller, 'ETH-USD', bid.bid_price_crypto)
+
+        # Delete all the bids on the NFT
+        NFTBid.query.filter_by(nft_id=bid.nft_id).delete()
+        db.session.commit()
+
+        return {"status": "success", "message": "Bid accepted successfully"}

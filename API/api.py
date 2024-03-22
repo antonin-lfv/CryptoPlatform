@@ -8,6 +8,7 @@ from mining_server_manager import Mining_server_manager
 
 BLP_api = Blueprint('BLP_api', __name__)
 
+
 # Index
 # ----------------
 # Crypto data
@@ -183,6 +184,31 @@ def set_as_profile_picture(nft_id):
     return jsonify(response)
 
 
+@BLP_api.route('/api/get_bids/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def get_bids(nft_id):
+    """
+    Get all bids for an NFT
+    """
+    bids = NFT_manager().get_bids(nft_id)
+    return jsonify(bids)
+
+
+@BLP_api.route('/api/place_bid/<nft_id>', methods=['POST'])
+@login_required
+def place_bid(nft_id):
+    """
+    Place a bid on an NFT
+    """
+    data = request.json
+    bid_amount = data.get('bid_amount')
+    if bid_amount is None:
+        return jsonify({"status": "error", "message": "No bid amount provided"})
+    bid_amount = float(bid_amount)
+    response = NFT_manager().place_bid(current_user.id, nft_id, bid_amount)
+    return jsonify(response)
+
+
 # ================================
 # Mining servers
 # ================================
@@ -252,7 +278,7 @@ def sell_mining_server(server_id, user_id, number_of_servers_to_sell):
 
 
 @BLP_api.route('/api/stop_renting_mining_server/<server_id>/<user_id>/<number_of_servers_to_stop_renting>',
-                methods=['GET', 'POST'])
+               methods=['GET', 'POST'])
 @login_required
 def stop_renting_mining_server(server_id, user_id, number_of_servers_to_stop_renting):
     """

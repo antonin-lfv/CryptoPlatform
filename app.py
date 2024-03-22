@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from configuration.config import Config as app_config
 import os
 from utils import NFT_collections
@@ -102,3 +103,5 @@ def create_app():
 
 
 app = create_app()
+
+migrate = Migrate(app, db)

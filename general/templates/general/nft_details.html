@@ -60,6 +60,10 @@
                                     <h3 class="box-title">{{ nft_data['name'].split(' ')[1] }}</h3><br>
                                     <H4 id="owned_status"></H4>&nbsp;<h5 id="set_as_profile_picture"></h5>
 
+                                    <h6>Current price</h6>
+                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
+
+
                                 </div>
                                 <div class="box-body">
                                     <ul class="list-inline mb-0 me-2">
@@ -79,11 +83,9 @@
                                     <h4 class="box-title">Buy</h4>
                                 </div>
                                 <div class="box-body">
-                                    <h6>Current price</h6>
-                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
-                                    <br>
+
                                     <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-right: 2px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#buy_NFT">Buy now</button>
+                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#buy_NFT">Buy now</button>
                                     </div>
                                 </div>
                             </div>
@@ -92,11 +94,9 @@
                                     <h4 class="box-title">Sell</h4>
                                 </div>
                                 <div class="box-body">
-                                    <h6>Current price</h6>
-                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
-                                    <br>
+
                                     <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-left: 2px;" class="waves-effect waves-light btn btn-secondary mb-5" data-bs-toggle="modal" data-bs-target="#sell_NFT">Sell Now</button>
+                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-secondary mb-5" data-bs-toggle="modal" data-bs-target="#sell_NFT">Sell Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -105,11 +105,13 @@
                                     <h4 class="box-title">Bid</h4>
                                 </div>
                                 <div class="box-body">
-                                    <h6>Current price</h6>
-                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
-                                    <br>
+                                    <div class="table-responsive">
+                                        <div id="bids_table">
+
+                                        </div>
+                                    </div>
                                     <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 50%; box-sizing: border-box; margin-right: 2px;" class="waves-effect waves-light btn btn-primary mb-5">Place a bid</button>
+                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#place_bid_modal" id="place_bid">Place a bid</button>
                                     </div>
                                 </div>
                             </div>
@@ -181,10 +183,36 @@
     <!-- /.modal-dialog -->
 </div>
 
+<div id="place_bid_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Place a bid for {{ nft_data['name'] }} NFT</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>You are going to place a bid in ETH. </h5>
+                <input type="text" id="bid_amount" value="0" class=" form-control" data-bts-button-down-class="btn btn-secondary" data-bts-button-up-class="btn btn-secondary">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        id="validate_place_bid">Place the bid
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
-    function like_nft(nft_id) {
+function like_nft(nft_id) {
     // Requête AJAX à l'API Flask
     $.ajax({
         url: `/api/like_NFT/${nft_id}`,
@@ -279,6 +307,75 @@ $('#validate_sell_NFT').click(function() {
     sell_NFT({{ nft_data['id'] }});
 });
 
+// Get bids for this nft using /api/get_bids/<nft_id>
+function get_bids(nft_id) {
+    $.ajax({
+        url: `/api/get_bids/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            if (response.length === 0) {
+                $('#bids_table').html('<p>No bid yet</p>');
+                return;
+            }
+            // Display the bids in a table
+            var table = '<table class="table table-hover">';
+            table += '<tr>';
+            table += '<th>User</th>';
+            table += '<th>Bid</th>';
+            table += '<th>Date</th>';
+            table += '<th></th>';
+            table += '<th></th>';
+            table += '</tr>';
+            for (var i = 0; i < response.length; i++) {
+                var bid = response[i];
+                table += '<tr>';
+                table += `<td><a href="javascript:void(0)">User #${bid['username']}</a></td>`;
+                table += `<td>${bid['bid_price_crypto']} ${bid['bid_crypto_symbol']}</td>`;
+                table += `<td><span class="text-muted"><i class="fa fa-clock-o"></i> ${bid['bid_date']}</span> </td>`;
+                // Add button to accept the bid (if the user is the owner of the NFT)
+                table += `<td><button type="button" class="waves-effect waves-light btn btn-success btn-xs" onclick="accept_bid(${bid['id']})">Accept</button></td>`;
+                // Add button to reject the bid (if the user is the owner of the NFT)
+                table += `<td><button type="button" class="waves-effect waves-light btn btn-danger btn-xs" onclick="reject_bid(${bid['id']})">Reject</button></td>`;
+                table += '</tr>';
+            }
+            table += '</table>';
+            $('#bids_table').html(table);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+
+
+$('#validate_place_bid').click(function() {
+        var bidAmount = $('#bid_amount').val();
+        var nftId = '{{ nft_data['id'] }}';
+
+        if ($.isNumeric(bidAmount) && bidAmount > 0) {
+            bidAmount = parseFloat(bidAmount).toFixed(2);
+
+            $.ajax({
+                url: `/api/place_bid/${nftId}`,
+                type: 'POST',
+                contentType: 'application/json', // Indiquer que l'on envoie du JSON
+                data: JSON.stringify({bid_amount: bidAmount}), // Convertir l'objet en chaîne JSON
+                success: function(response) {
+                    swal(response['status'], response['message'], response['status']);
+                    get_bids(nftId);
+                },
+                error: function(response) {
+                    swal(response['status'], response['message'], response['status']);
+                }
+            });
+        } else {
+            console.error('Invalid bid amount');
+        }
+    });
+
+
+
 
 function owned_status(nft_id) {
     // Requête AJAX à l'API Flask
@@ -342,6 +439,8 @@ $(document).ready(function() {
     owned_status({{ nft_data['id'] }});
     // Display the buy, sell or bid box depending on the status of the NFT
     update_buy_sell_bid_box({{ nft_data['id'] }});
+    // Get the bids for this NFT
+    get_bids({{ nft_data['id'] }});
 });
 
 </script>

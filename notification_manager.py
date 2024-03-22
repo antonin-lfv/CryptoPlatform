@@ -28,6 +28,11 @@ class Notification_manager:
     def add_notification(user_id, message, icon):
         """
         Add a notification to the database
+        Icon options:
+            - users
+            - user
+            - warning
+            - shopping-cart
         """
         new_notification = Notification(
             user_id=user_id,

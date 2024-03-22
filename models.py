@@ -216,3 +216,21 @@ class ServerInvoices(db.Model):
     amount = db.Column(db.Float, nullable=False)
     type_payment = db.Column(db.String(10), nullable=False)
     server_id = db.Column(db.Integer, nullable=True)
+
+
+class NFTBid(db.Model):
+    """
+    Table to record the bids on NFTs
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)
+    bid_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    bid_price_crypto = db.Column(db.Float, nullable=False)
+    bid_crypto_symbol = db.Column(db.String(10), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('user_bids', lazy=True))
+    nft = db.relationship('NFT', backref=db.backref('nft_bids', lazy=True))
+
+    def __repr__(self):
+        return f'<UserBid {self.user_id} bids {self.nft_id}>'
