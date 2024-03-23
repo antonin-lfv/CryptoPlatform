@@ -78,6 +78,10 @@
                                     id="liked_section"><i
                                             class="fa fa-heart-o text-danger"></i> Liked</a>
                                     </li>
+                                    <li class="nav-item"><a class="nav-link" href="#" onclick="active_bids()"
+                                    id="bids_section"><i
+                                            class="fa fa-money text-danger"></i> My bids</a>
+                                    </li>
                                     <li class="nav-item"><a class="nav-link" href="#" onclick="active_owned()"
                                     id="owned_section"><i
                                             class="fa fa-bank text-danger"></i> Owned</a>
@@ -149,7 +153,7 @@ function active_collection(collectionElement) {
                                 </li>
                             </ul>
                             <ul class="list-inline mb-0">
-                                <li><a href="${nft.details_path}">${nft.owned ? 'Sell now' : 'Buy now'}</a></li>
+                                <li><a href="${nft.details_path}">${nft.owned ? 'Sell now' : nft.is_for_sale ? 'Buy now' : 'Bid now'}</a></li>
 
                             </ul>
                         </div>
@@ -161,6 +165,8 @@ function active_collection(collectionElement) {
             $('#liked_section').removeClass('active');
             // deactivate owned section
             $('#owned_section').removeClass('active');
+            // deactivate bids section
+            $('#bids_section').removeClass('active');
         },
         error: function(error) {
             console.error('Error:', error);
@@ -216,7 +222,64 @@ function active_liked() {
             $('#liked_section').addClass('active');
             // deactivate owned section
             $('#owned_section').removeClass('active');
+            // deactivated bids section
+            $('#bids_section').removeClass('active');
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
 
+function active_bids() {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: '/api/get_bids_NFTs',
+        method: 'GET',
+        success: function(NFTs) {
+
+            var marketplaceDiv = $('#markeplace_NFT_div');
+            marketplaceDiv.empty();  // Nettoyer le contenu existant
+
+            // Générer le HTML pour chaque NFT et l'ajouter à la div
+            NFTs.forEach(function(nft) {
+                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
+                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
+                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
+                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
+                var nftHTML = `
+                <div class="col-md-12 col-lg-3">
+                    <div class="card">
+                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
+                        <div class="card-body">
+                            <h4 class="card-title
+                            "><a href="${nft.details_path}">${nft.name}</a></h4>
+                            <h6 class="card-text">${nft.collection} collection</h6>
+                            <p class="card-subtitle">${nft.price} ETH</p>
+                        </div>
+                        <div class="card-footer justify-content-between d-flex">
+                            <ul class="list-inline mb-0 me-2">
+                                <li class="list-inline-item">
+                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline mb-0">
+                                <li><a href="${nft.details_path}">View bid</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+                marketplaceDiv.append(nftHTML);  // Append the new HTML
+            });
+
+            // deactivate all collections
+            $('#collection_picker .nav-link').removeClass('active');
+            // activate bids section
+            $('#bids_section').addClass('active');
+            // deactivate liked section
+            $('#liked_section').removeClass('active');
+            // deactivated owned section
+            $('#owned_section').removeClass('active');
         },
         error: function(error) {
             console.error('Error:', error);
@@ -271,6 +334,8 @@ function active_owned() {
             $('#owned_section').addClass('active');
             // deactivate liked section
             $('#liked_section').removeClass('active');
+            // deactivated bids section
+            $('#bids_section').removeClass('active');
         },
         error: function(error) {
             console.error('Error:', error);

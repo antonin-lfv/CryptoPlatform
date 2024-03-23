@@ -134,6 +134,26 @@ def get_owned_NFTs():
     return jsonify(owned_NFTs)
 
 
+@BLP_api.route('/api/get_bids_NFTs', methods=['GET', 'POST'])
+@login_required
+def get_bids_NFTs():
+    """
+    Get all NFTs on which the user has placed a bid
+    """
+    bids_NFTs = NFT_manager().get_bids_NFTs(current_user.id)
+    return jsonify(bids_NFTs)
+
+
+@BLP_api.route('/api/get_user_NFTs/<user_id>', methods=['GET', 'POST'])
+@login_required
+def get_user_NFTs(user_id):
+    """
+    Get all NFTs of a specific user
+    """
+    NFTs = NFT_manager().get_user_NFTs(user_id, current_user.id)
+    return jsonify(NFTs)
+
+
 @BLP_api.route('/api/like_NFT/<nft_id>', methods=['GET', 'POST'])
 @login_required
 def like_NFT(nft_id):
@@ -154,16 +174,6 @@ def buy_NFT(nft_id):
     return jsonify(response)
 
 
-@BLP_api.route('/api/sell_NFT/<nft_id>', methods=['GET', 'POST'])
-@login_required
-def sell_NFT(nft_id):
-    """
-    Sell an NFT
-    """
-    response = NFT_manager().sell_NFT(current_user.id, nft_id)
-    return jsonify(response)
-
-
 @BLP_api.route('/api/owned_status/<nft_id>', methods=['GET', 'POST'])
 @login_required
 def owned_status(nft_id):
@@ -171,6 +181,16 @@ def owned_status(nft_id):
     Get the owned status of an NFT
     """
     response = NFT_manager().owned_status(current_user.id, nft_id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/get_NFT_details/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def get_NFT_details(nft_id):
+    """
+    Get details of an NFT
+    """
+    response = NFT_manager().get_NFT(nft_id, current_user.id)
     return jsonify(response)
 
 
@@ -206,6 +226,26 @@ def place_bid(nft_id):
         return jsonify({"status": "error", "message": "No bid amount provided"})
     bid_amount = float(bid_amount)
     response = NFT_manager().place_bid(current_user.id, nft_id, bid_amount)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/accept_bid/<bid_id>', methods=['GET', 'POST'])
+@login_required
+def accept_bid(bid_id):
+    """
+    Accept a bid on an NFT
+    """
+    response = NFT_manager().accept_bid(bid_id, current_user.id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/delete_bid/<bid_id>', methods=['GET', 'POST'])
+@login_required
+def delete_bid(bid_id):
+    """
+    Delete a bid on an NFT
+    """
+    response = NFT_manager().delete_bid(bid_id, current_user.id)
     return jsonify(response)
 
 

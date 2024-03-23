@@ -61,7 +61,7 @@
                                     <H4 id="owned_status"></H4>&nbsp;<h5 id="set_as_profile_picture"></h5>
 
                                     <h6>Current price</h6>
-                                    <h4><b><a id="NFT_price">{{ nft_data['price'] }}</a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD">{{ nft_data['price_usd'] }}</a>)</small></h4>
+                                    <h4><b><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small></h4>
 
 
                                 </div>
@@ -75,7 +75,9 @@
                             </div>
                             <div id="nft_data"
                                  data-owned="{{ nft_data['owned'] }}"
-                                 data-is_for_sale="{{ nft_data['is_for_sale'] }}">
+                                 data-is_for_sale="{{ nft_data['is_for_sale'] }}"
+                                    data-owner_id="{{ nft_data['owner_id'] }}"
+                                 >
                             </div>
 
                             <div class="box" id="buy_box" style="display:none;">
@@ -89,32 +91,23 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="box" id="sell_box" style="display:none;">
-                                <div class="box-header with-border">
-                                    <h4 class="box-title">Sell</h4>
-                                </div>
-                                <div class="box-body">
-
-                                    <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-secondary mb-5" data-bs-toggle="modal" data-bs-target="#sell_NFT">Sell Now</button>
+                                <div class="box" id="bid_section">
+                                    <div class="box-header with-border">
+                                        <h4 class="box-title">Bid</h4>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="box">
-                                <div class="box-header with-border">
-                                    <h4 class="box-title">Bid</h4>
-                                </div>
-                                <div class="box-body">
-                                    <div class="table-responsive">
-                                        <div id="bids_table">
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <div id="bids_table">
 
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#place_bid_modal" id="place_bid">Place a bid</button>
+
+                                        <div class="clearfix" style="display: flex;" id="button_place_bid">
+                                            <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#place_bid_modal" id="place_bid">Place a bid</button>
+                                        </div>
+
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -158,30 +151,6 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div id="sell_NFT" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Buy {{ nft_data['name'] }} NFT</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>You are going to sell this NFT for {{ nft_data['price'] }} ETH </h5>
-                <p>You will immediately receive your ETH after the sale.</p>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                        id="validate_sell_NFT">Sell now
-                </button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
 
 <div id="place_bid_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -255,11 +224,16 @@ function buy_NFT(nft_id) {
         method: 'GET',
         success: function(response) {
             owned_status(nft_id);
-            // change data-owned to true
-            $('#nft_data').data('owned', 'True');
-            // change data-is_for_sale to false
-            $('#nft_data').data('is_for_sale', 'False');
-            update_buy_sell_bid_box({{ nft_data['id'] }});
+            if (response['status'] !== 'error') {
+                // change data-owned to true
+                $('#nft_data').data('owned', 'True');
+                // change data-is_for_sale to false
+                $('#nft_data').data('is_for_sale', 'False');
+                // change data-owner_id to the current user id
+                $('#nft_data').data('owner_id', {{ current_user.id }});
+            }
+            get_bids(nft_id);
+            update_buy_bid_box({{ nft_data['id'] }});
             swal(response['status'], response['message'], response['status']);
             if (response['refresh']){
                 location.reload();
@@ -271,40 +245,10 @@ function buy_NFT(nft_id) {
     });
 }
 
-function sell_NFT(nft_id) {
-    // Requête AJAX à l'API Flask
-    $.ajax({
-        url: `/api/sell_NFT/${nft_id}`,
-        method: 'GET',
-        success: function(response) {
-            owned_status(nft_id);
-            // update the image path
-            var baseUrl = "{{ url_for('static', filename='') }}"; // Récupère la base de l'URL des fichiers statiques
-            var newImagePath = baseUrl + response['image_path'] + '?v=' + new Date().getTime();
-            $('#profile_picture_top_navbar').attr('src', newImagePath);
-            // change data-owned to false
-            $('#nft_data').data('owned', 'False');
-            // change data-is_for_sale to true
-            $('#nft_data').data('is_for_sale', 'True');
-            // update the buy, sell box
-            update_buy_sell_bid_box({{ nft_data['id'] }});
-            swal(response['status'], response['message'], response['status']);
-
-        },
-        error: function(error) {
-            console.error('Error:', error['message']);
-        }
-    });
-}
 
 // Validate buy NFT
 $('#validate_buy_NFT').click(function() {
     buy_NFT({{ nft_data['id'] }});
-});
-
-// Validate sell NFT
-$('#validate_sell_NFT').click(function() {
-    sell_NFT({{ nft_data['id'] }});
 });
 
 // Get bids for this nft using /api/get_bids/<nft_id>
@@ -313,8 +257,19 @@ function get_bids(nft_id) {
         url: `/api/get_bids/${nft_id}`,
         method: 'GET',
         success: function(response) {
+            var nftData = $('#nft_data');
+            var owner_id = nftData.data('owner_id');
+            // to int
+            owner_id = parseInt(owner_id);
             if (response.length === 0) {
-                $('#bids_table').html('<p>No bid yet</p>');
+                // if the user is not the owner of the NFT, display Be the first to place a bid !
+                // else display No bids yet
+                if (owner_id !== {{ current_user.id }}) {
+                    $('#bids_table').html('<p style="text-align: center;">Be the first to place a bid !</p>');
+                } else {
+                    $('#bids_table').html('<p style="text-align: center;">No bid yet</p>');
+                }
+
                 return;
             }
             // Display the bids in a table
@@ -333,9 +288,22 @@ function get_bids(nft_id) {
                 table += `<td>${bid['bid_price_crypto']} ${bid['bid_crypto_symbol']}</td>`;
                 table += `<td><span class="text-muted"><i class="fa fa-clock-o"></i> ${bid['bid_date']}</span> </td>`;
                 // Add button to accept the bid (if the user is the owner of the NFT)
-                table += `<td><button type="button" class="waves-effect waves-light btn btn-success btn-xs" onclick="accept_bid(${bid['id']})">Accept</button></td>`;
-                // Add button to reject the bid (if the user is the owner of the NFT)
-                table += `<td><button type="button" class="waves-effect waves-light btn btn-danger btn-xs" onclick="reject_bid(${bid['id']})">Reject</button></td>`;
+                if ({{ nft_data['owner_id'] }} === {{ current_user.id }}) {
+                    table += `<td><button type="button" class="waves-effect waves-light btn btn-success btn-xs" onclick="accept_bid(${bid['id']})">Accept</button></td>`;
+                } else {
+                    table += '<td></td>';
+                }
+                // Add button to reject the bid (if the user is the owner (reject) of the NFT or the bidder (delete)
+
+                // convert current_user.id to int
+                var current_user_id = parseInt("{{ current_user.id }}");
+                if (owner_id === current_user_id) {
+                    table += `<td><button type="button" class="waves-effect waves-light btn btn-danger btn-xs" onclick="delete_bid(${bid['id']})">Reject</button></td>`;
+                } else if (current_user_id === bid['user_id']) {
+                    table += `<td><button type="button" class="waves-effect waves-light btn btn-danger btn-xs" onclick="delete_bid(${bid['id']})">Delete</button></td>`;
+                } else {
+                    table += '<td></td>';
+                }
                 table += '</tr>';
             }
             table += '</table>';
@@ -347,6 +315,39 @@ function get_bids(nft_id) {
     });
 }
 
+// Accept a bid
+function accept_bid(bid_id) {
+    $.ajax({
+        url: `/api/accept_bid/${bid_id}`,
+        method: 'GET',
+        success: function(response) {
+            owned_status({{ nft_data['id'] }});
+            get_bids({{ nft_data['id'] }});
+            update_price();
+            swal(response['status'], response['message'], response['status']);
+        },
+        error: function(response) {
+            console.error('Error:', response);
+        }
+    });
+}
+
+
+// Delete a bid
+function delete_bid(bid_id) {
+    $.ajax({
+        url: `/api/delete_bid/${bid_id}`,
+        method: 'GET',
+        success: function(response) {
+            get_bids({{ nft_data['id'] }});
+            owned_status({{ nft_data['id'] }});
+            swal(response['status'], response['message'], response['status']);
+        },
+        error: function(response) {
+            console.error('Error:', response);
+        }
+    });
+}
 
 
 $('#validate_place_bid').click(function() {
@@ -370,7 +371,10 @@ $('#validate_place_bid').click(function() {
                 }
             });
         } else {
-            console.error('Invalid bid amount');
+            swal(
+                'Error',
+                'Please enter a valid amount',
+                'error')
         }
     });
 
@@ -383,7 +387,7 @@ function owned_status(nft_id) {
         url: `/api/owned_status/${nft_id}`,
         method: 'GET',
         success: function(response) {
-            $('#owned_status').text(response['message']);
+            $('#owned_status').html(response['message']);
             // if field "owned" is true, add a button "Set as profile picture"
             if (response['owned'] === true) {
                 $('#set_as_profile_picture').html('<a href="#" onclick="set_as_profile_picture({{ nft_data['id'] }})">'+response["set_profile_text"]+'</a>');
@@ -416,31 +420,54 @@ function set_as_profile_picture(nft_id) {
 }
 
 
-// Display the buy, sell or bid box depending on the status of the NFT
-// if the user owned the NFT, display the sell box
-// if the user doesn't own the NFT, but the NFT is for sale, display the buy box
+// Display the buy, bid box depending on the status of the NFT
+// if nobody own the NFT, display the buy box and not the bid box
+// if the NFT is owned:
+// - if the user is the owner, display bid box but not the button
+// - if the user is not the owner, display the buy box with the button
 
-function update_buy_sell_bid_box() {
+
+function update_buy_bid_box() {
     var nftData = $('#nft_data');
     var owned = nftData.data('owned') === 'True';
     var isForSale = nftData.data('is_for_sale') === 'True';
     if (owned) {
-        $('#sell_box').show();
         $('#buy_box').hide();
+        $('#bid_section').show();
+        if (nftData.data('owner_id') === {{ current_user.id }}) {
+            $('#button_place_bid').hide();
+        }
+
     } else if (isForSale) {
         $('#buy_box').show();
-        $('#sell_box').hide();
-
+        $('#bid_section').hide();
     }
+}
+
+
+function update_price() {
+    $.ajax({
+        url: `/api/get_NFT_details/{{ nft_data['id'] }}`,
+        method: 'GET',
+        success: function(response) {
+            $('#NFT_price').text(response['price']);
+            $('#NFT_price_USD').text(response['price_usd']);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
 }
 
 $(document).ready(function() {
     // Get the owned status of the NFT
     owned_status({{ nft_data['id'] }});
     // Display the buy, sell or bid box depending on the status of the NFT
-    update_buy_sell_bid_box({{ nft_data['id'] }});
+    update_buy_bid_box({{ nft_data['id'] }});
     // Get the bids for this NFT
     get_bids({{ nft_data['id'] }});
+    // Update the price of the NFT
+    update_price();
 });
 
 </script>

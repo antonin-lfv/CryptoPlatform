@@ -55,6 +55,15 @@ def profile():
     return render_template('general/profile.html', user=current_user)
 
 
+@BLP_general.route('/public_profile/<user_id>', methods=['GET', 'POST'])
+@login_required
+def public_profile(user_id):
+    user_profile = User.query.filter_by(id=user_id).first()
+    current_user_obj = User.query.filter_by(id=current_user.id).first()
+    return render_template('general/public_profile.html', user_profile=user_profile,
+                           user=current_user_obj)
+
+
 @BLP_general.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():

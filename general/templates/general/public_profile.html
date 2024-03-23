@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include('includes/head_content.html') %}
+
+    <title>Profile</title>
+
+</head>
+<body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
+
+<div class="wrapper">
+    <div id="loader"></div>
+
+    <!-- Top navbar -->
+    {% include('includes/top_navbar.html') %}
+
+    <!-- Navbar -->
+    {% include('includes/navbar.html') %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <div class="container-full">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="d-flex align-items-center">
+                    <div class="me-auto">
+                        <h4 class="page-title">{{ user_profile.username }} Profile</h4>
+                        <div class="d-inline-block align-items-center">
+                            <nav>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ user_profile.username }} Profile</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+
+                        <!-- Profile Image -->
+                        <div class="box bg-transparent no-border">
+                            <div class="box-body box-profile">
+                                <img class="rounded img-fluid mx-auto d-block max-w-150"
+                                     src="{{ url_for('static', filename=user_profile.profile_img_path) }}"
+                                     alt="User profile picture">
+
+                                <h3 class="profile-username text-center mb-0">{{ user_profile.username }}</h3>
+
+                                <h4 class="text-center mt-0"><i class="fa fa-envelope-o me-10"></i>{{ user_profile.email }}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NFTs -->
+
+            <section class="content mt-50">
+                <div class="row">
+                    <!-- NFT grid -->
+                    <div class="col-12">
+                        <div class="row" id="user_NFT_div">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Footer -->
+    {% include('includes/footer.html') %}
+
+</div>
+<!-- ./wrapper -->
+
+
+<!-- Page Content overlay -->
+
+
+{% include('includes/javascript_include_dashboard.html') %}
+
+<script>
+function show_NFTs() {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: '/api/get_user_NFTs/{{ user_profile.id }}',
+        method: 'GET',
+        success: function(NFTs) {
+
+            var marketplaceDiv = $('#user_NFT_div');
+            marketplaceDiv.empty();  // Nettoyer le contenu existant
+
+            // Générer le HTML pour chaque NFT et l'ajouter à la div
+            NFTs.forEach(function(nft) {
+                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
+                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
+                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
+                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
+                var nftHTML = `
+                <div class="col-md-12 col-lg-3">
+                    <div class="card">
+                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
+                        <div class="card-body">
+                            <h4 class="card-title
+                            "><a href="${nft.details_path}">${nft.name}</a></h4>
+                            <h6 class="card-text">${nft.collection} collection</h6>
+                            <p class="card-subtitle">${nft.price} ETH</p>
+                        </div>
+                        <div class="card-footer justify-content-between d-flex">
+                            <ul class="list-inline mb-0 me-2">
+                                <li class="list-inline-item">
+                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline mb-0">
+                                <li><a href="${nft.details_path}">Show in marketplace</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+                marketplaceDiv.append(nftHTML);  // Append the new HTML
+            });
+
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+function like_nft(nft_id) {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: `/api/like_NFT/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            // change the heart icon, if class is fa fa-heart-o, change to fa fa-heart
+            // if class is fa fa-heart, change to fa fa-heart-o
+            var heartIcon = $(`a[onclick="like_nft(${nft_id})"] i`);
+            var number_of_likes = $(`a[id="number_of_likes_for_${nft_id}"]`);
+            if (heartIcon.hasClass('fa-heart-o')) {
+                heartIcon.removeClass('fa-heart-o');
+                heartIcon.addClass('fa-heart');
+                // increment the number of likes (keep it as integer)
+                var new_number_of_likes = parseInt(number_of_likes.text()) + 1;
+
+                number_of_likes.text(new_number_of_likes);
+
+            } else {
+                heartIcon.removeClass('fa-heart');
+                heartIcon.addClass('fa-heart-o');
+                // decrement the number of likes
+                number_of_likes.text(parseInt(number_of_likes.text()) - 1);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+
+$(document).ready(function() {
+    show_NFTs();
+});
+
+</script>
+
+</body>
+</html>

@@ -1,4 +1,5 @@
 from models import NFT, UserLikedNFT, User, UserNFT, NFTBid
+from flask import url_for
 from app import db
 from wallet_manager import wallet_manager
 from crypto_manager import CryptoDataManager
@@ -49,8 +50,6 @@ class NFT_manager:
                 'price_usd': round(CryptoDataManager().get_USD_from_crypto('ETH-USD', NFTs.price), 3),
                 'image_path': NFTs.image_path,
                 'is_for_sale': NFTs.is_for_sale,
-                'is_for_sale_since': NFTs.is_for_sale_since,
-                'is_for_sale_until': NFTs.is_for_sale_until,
                 'owner_id': NFTs.owner_id,
                 'owned': NFTs.owner_id == user_id,
                 'liked': '' if is_user_liked else '-o',
@@ -91,8 +90,6 @@ class NFT_manager:
                 'price': nft_item.price,
                 'image_path': nft_item.image_path,
                 'is_for_sale': nft_item.is_for_sale,
-                'is_for_sale_since': nft_item.is_for_sale_since,
-                'is_for_sale_until': nft_item.is_for_sale_until,
                 'owner_id': nft_item.owner_id,
                 'owned': nft_item.owner_id == user_id,
                 'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
@@ -100,6 +97,27 @@ class NFT_manager:
             })
 
         return NFTs_list
+
+    def get_user_NFTs(self, user_id, current_user_id):
+        """
+        Get all NFTs from the user
+
+        Return:
+            dict
+        """
+        # Get all the NFTs owned by the user
+        nft_ids = UserNFT.query.filter_by(user_id=user_id).all()
+        # Create a list with all the nft_id owned by the user
+        nft_ids_list = [nft_id.nft_id for nft_id in nft_ids]
+        # Get all the NFTs owned by the user
+        nft_owned_list = []
+        for nft_id in nft_ids_list:
+            nft_owned_list.append(self.get_NFT(nft_id, current_user_id))
+
+        # Sort by collection
+        nft_owned_list = sorted(nft_owned_list, key=lambda x: x['collection'])
+
+        return nft_owned_list
 
     @staticmethod
     def get_collection_NFT(user_id, collection):
@@ -131,8 +149,6 @@ class NFT_manager:
                 'price': nft_item.price,
                 'image_path': nft_item.image_path,
                 'is_for_sale': nft_item.is_for_sale,
-                'is_for_sale_since': nft_item.is_for_sale_since,
-                'is_for_sale_until': nft_item.is_for_sale_until,
                 'owner_id': nft_item.owner_id,
                 'owned': nft_item.owner_id == user_id,
                 'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
@@ -159,6 +175,26 @@ class NFT_manager:
             nft_liked_list.append(self.get_NFT(nft_id, user_id))
 
         return nft_liked_list
+
+    def get_bids_NFTs(self, user_id):
+        """
+        Get all NFTs where the user placed a bid
+
+        Return:
+            dict
+        """
+        # Get all the bids of the user
+        nft_bids = NFTBid.query.filter_by(user_id=user_id).all()
+        # Create a list with all the nft_id where the user placed a bid
+        nft_ids_list = [nft_bid.nft_id for nft_bid in nft_bids]
+        # Only keep the unique nft_id
+        nft_ids_list = list(set(nft_ids_list))
+        # Get all the NFTs where the user placed a bid
+        nft_bids_list = []
+        for nft_id in nft_ids_list:
+            nft_bids_list.append(self.get_NFT(nft_id, user_id))
+
+        return nft_bids_list
 
     @staticmethod
     def like_NFT(user_id, nft_id):
@@ -225,44 +261,14 @@ class NFT_manager:
                 # Update the NFT object
                 nft.is_for_sale = False
                 nft.owner_id = user_id
-                nft.is_for_sale_since = None
-                nft.is_for_sale_until = None
                 db.session.commit()
                 # Buy the NFT with ETH
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
+                # Update crypto history
+                wallet.update_crypto_wallet_evolution(user)
                 return {"status": "success", "message": "You bought the NFT successfully"}
         else:
             return {"status": "error", "message": "The NFT is not for sale", "refresh": True}
-
-    @staticmethod
-    def sell_NFT(user_id, nft_id):
-        """
-        Sell a NFT
-        """
-        # Get the NFT
-        nft = NFT.query.filter_by(id=nft_id).first()
-        # Get the user
-        user = User.query.filter_by(id=user_id).first()
-        # Check if the NFT is owned by the user
-        if nft.owner_id != user_id:
-            return {"status": "error", "message": "You don't own this NFT",
-                    "image_path": user_profile_default_image_path}
-        else:
-            # Update the NFT object
-            nft.is_for_sale = True
-            nft.is_for_sale_since = datetime.utcnow()
-            nft.is_for_sale_until = None
-            nft.owner_id = None
-            # Delete the NFT from the user
-            UserNFT.query.filter_by(user_id=user_id, nft_id=nft_id).delete()
-            # Reset the profile picture if the NFT was the profile picture
-            if user.profile_img_path == nft.image_path:
-                user.profile_img_path = user_profile_default_image_path
-            # Sell the NFT with ETH
-            wallet_manager().receive_crypto(user, 'ETH-USD', nft.price)
-            db.session.commit()
-            return {"status": "success", "message": "The NFT is now for sale",
-                    "image_path": user_profile_default_image_path}
 
     @staticmethod
     def owned_status(user_id, nft_id):
@@ -284,7 +290,10 @@ class NFT_manager:
         else:
             # Get the name of the owner
             owner = User.query.filter_by(id=nft.owner_id).first()
-            return {"message": f"NFT owned by {owner.username}", "owned": False, "set_profile_text": None}
+            url = url_for('BLP_general.public_profile', user_id=str(owner.id))
+            return {"message": f"NFT owned by <a href='{url}'>@{owner.username}</a>",
+                    "owned": False,
+                    "set_profile_text": None}
 
     @staticmethod
     def set_as_profile_picture(user_id, nft_id):
@@ -368,11 +377,15 @@ class NFT_manager:
                     break
 
         # send a notification to the owner of the NFT
+        url = url_for('BLP_general.nft_details', nft_id=nft_id)
         Notification_manager().add_notification(nft.owner_id,
-                                                f"New bid on your NFT {nft.name}",
+                                                f"New bid on your NFT <a href='{url}'><b>{nft.name}</b></a>",
                                                 "shopping-cart")
 
         db.session.commit()
+
+        # Update crypto history
+        wallet_manager().update_crypto_wallet_evolution(user)
 
         return {"status": "success", "message": "Bid placed successfully"}
 
@@ -399,7 +412,7 @@ class NFT_manager:
         return bids_list
 
     @staticmethod
-    def delete_bid(bid_id):
+    def delete_bid(bid_id, current_user_id):
         """
         Delete a bid on a NFT of a user
         """
@@ -407,12 +420,21 @@ class NFT_manager:
         bid = NFTBid.query.filter_by(id=bid_id).first()
         if not bid:
             return {"status": "error", "message": "The bid doesn't exist"}
+        # Get the NFT
+        nft = NFT.query.filter_by(id=bid.nft_id).first()
+        # If the user is not the owner of the bid or the owner of the NFT, return an error
+        if bid.user_id != current_user_id and nft.owner_id != current_user_id:
+            return {"status": "error", "message": "You are not the owner of the bid or the NFT"}
         # Return the amount of the bid to the user
         wallet = wallet_manager()
         wallet.receive_crypto(User.query.filter_by(id=bid.user_id).first(), 'ETH-USD', bid.bid_price_crypto)
         # Delete the bid from the database
         db.session.delete(bid)
         db.session.commit()
+
+        # Update crypto history
+        user = User.query.filter_by(id=current_user_id).first()
+        wallet_manager().update_crypto_wallet_evolution(user)
 
         return {"status": "success", "message": "Bid deleted successfully"}
 
@@ -441,11 +463,13 @@ class NFT_manager:
                            purchase_price_crypto=bid.bid_price_crypto, purchase_crypto_symbol='ETH')
         db.session.add(user_nft)
 
+        # Delete the NFT from the seller
+        UserNFT.query.filter_by(user_id=nft.owner_id, nft_id=bid.nft_id).delete()
+
         # Update the NFT object
         nft.is_for_sale = False
         nft.owner_id = bid.user_id
-        nft.is_for_sale_since = None
-        nft.is_for_sale_until = None
+        nft.price = bid.bid_price_crypto
         db.session.commit()
 
         # Transfer the amount of the bid to the seller
@@ -455,5 +479,13 @@ class NFT_manager:
         # Delete all the bids on the NFT
         NFTBid.query.filter_by(nft_id=bid.nft_id).delete()
         db.session.commit()
+
+        # send a notification to the buyer
+        url = url_for('BLP_general.nft_details', nft_id=nft.id)
+        Notification_manager().add_notification(bid.user_id,
+                                                f"Your bid on the NFT <a href='{url}'><b>{nft.name}</b></a> has been accepted",
+                                                "shopping-cart")
+
+        wallet_manager().update_crypto_wallet_evolution(seller)
 
         return {"status": "success", "message": "Bid accepted successfully"}

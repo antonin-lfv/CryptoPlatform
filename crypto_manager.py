@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
-from models import CryptoPrice, User, CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot
+from models import CryptoPrice, NFT
 from app import db
 
 
@@ -50,6 +50,21 @@ class CryptoDataManager:
 
                         db.session.commit()
                         # print(f"Les données pour {symbol} ont été mises à jour.")
+
+                        # Update the price of all NFTS by applying the same pourcentage change than ETH between
+                        # the last two days
+                        # Get the price of ETH for the last two days
+                        eth_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).limit(2).all()
+                        # Get the pourcentage change
+                        eth_price_change = (eth_data[1].price - eth_data[0].price) / eth_data[0].price
+                        print(f"ETH price change: {eth_price_change}")
+                        # Get all NFTs
+                        nfts = NFT.query.all()
+                        for nft in nfts:
+                            print(f"Updating price for NFT {nft.id} with symbol {nft.symbol} and price {nft.price}.")
+                            nft.price = nft.price * (1 + eth_price_change)
+                            print(f"New price for NFT {nft.id} with symbol {nft.symbol} is {nft.price}.")
+                        db.session.commit()
 
                     except KeyError as e:
                         print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")

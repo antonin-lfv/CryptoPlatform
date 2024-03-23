@@ -233,6 +233,31 @@ class wallet_manager:
         db.session.commit()
 
     @staticmethod
+    def update_wallet_daily_snapshot(user, quantity):
+        """
+        Update wallet daily snapshot (USD spent in the game wallet during the day)
+
+        Parameters:
+            - user: User object, the user who buys crypto
+            - quantity: float, quantity of crypto bought
+        """
+        # Get latest snapshot
+        latest_snapshot = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
+            CryptoWalletDailySnapshot.date.desc()).first()
+        # If latest snapshot is not today, add new snapshot
+        if not latest_snapshot or latest_snapshot.date != datetime.utcnow().date():
+            new_snapshot = CryptoWalletDailySnapshot()
+            new_snapshot.user_id = user.id
+            new_snapshot.date = datetime.utcnow().date()
+            new_snapshot.quantity = quantity
+            db.session.add(new_snapshot)
+            db.session.commit()
+        else:
+            # Update latest snapshot by adding the quantity of the transaction
+            latest_snapshot.quantity += quantity
+            db.session.commit()
+
+    @staticmethod
     def get_wallet_crypto_transactions_history(user):
         """
         Get wallet history of user (transactions)
@@ -553,28 +578,3 @@ class wallet_manager:
         transaction.date = datetime.utcnow()
         db.session.add(transaction)
         db.session.commit()
-
-    @staticmethod
-    def update_wallet_daily_snapshot(user, quantity):
-        """
-        Update wallet daily snapshot (USD spent in the game wallet during the day)
-
-        Parameters:
-            - user: User object, the user who buys crypto
-            - quantity: float, quantity of crypto bought
-        """
-        # Get latest snapshot
-        latest_snapshot = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
-            CryptoWalletDailySnapshot.date.desc()).first()
-        # If latest snapshot is not today, add new snapshot
-        if not latest_snapshot or latest_snapshot.date != datetime.utcnow().date():
-            new_snapshot = CryptoWalletDailySnapshot()
-            new_snapshot.user_id = user.id
-            new_snapshot.date = datetime.utcnow().date()
-            new_snapshot.quantity = quantity
-            db.session.add(new_snapshot)
-            db.session.commit()
-        else:
-            # Update latest snapshot by adding the quantity of the transaction
-            latest_snapshot.quantity += quantity
-            db.session.commit()
