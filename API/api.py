@@ -32,7 +32,6 @@ def change_username():
     Change the username of a user
     """
     new_username = request.form.get('new_username', '')
-    print(f"NEW: {new_username}")
     response = UserManager().change_username(current_user.id, new_username)
 
     return jsonify(response)

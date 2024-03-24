@@ -70,6 +70,10 @@ class wallet_manager:
         # Round balance to 2 decimals
         user_balance["web3_balance"] = round(user_balance["web3_balance"], 2)
 
+        # Separate the balance with comma between thousands
+        user_balance["crypto_balance_format"] = "{:,}".format(user_balance["crypto_balance"])
+        user_balance["web3_balance_format"] = "{:,}".format(user_balance["web3_balance"])
+
         return user_balance
 
     def get_user_specific_balance(self, user, symbol):

@@ -44,15 +44,25 @@ def check_for_maintenance():
 @BLP_general.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    # Get Mining overview
-    # Get the number of servers bought, rented and total
-    # Get the total power
+    # ===== Mining overview =====
+    # Get the number of servers bought, rented and total and the total power
     mining_overview = {}
     mining_server_manager = Mining_server_manager()
     mining_overview['total_servers_bought'] = mining_server_manager.get_total_servers_bought(current_user.id)
     mining_overview['total_servers_rented'] = mining_server_manager.get_total_servers_rented(current_user.id)
     mining_overview['total_servers'] = mining_overview['total_servers_bought'] + mining_overview['total_servers_rented']
-    mining_overview['total_power'] = mining_server_manager.get_total_power(current_user.id)
+    mining_overview['total_power'] = round(mining_server_manager.get_total_power(current_user.id), 2)
+    # Format total power with comma between thousands
+    mining_overview['total_power'] = "{:,}".format(mining_overview['total_power'])
+
+    # ===== Crypto wallet overview =====
+    # Get the total amount of USD in the wallet (crypto and web3)
+
+    # ===== NFT overview =====
+    # Number of NFTs owned, number of bids
+
+    # ===== Classement =====
+    # Get the ranking of the user in the platform
 
     return render_template('general/index.html', user=current_user, mining_overview=mining_overview)
 
@@ -61,6 +71,12 @@ def home():
 @login_required
 def profile():
     return render_template('general/profile.html', user=current_user)
+
+
+@BLP_general.route('/leaderboard', methods=['GET', 'POST'])
+@login_required
+def leaderboard():
+    return render_template('general/leaderboard.html', user=current_user)
 
 
 @BLP_general.route('/public_profile/<user_id>', methods=['GET', 'POST'])

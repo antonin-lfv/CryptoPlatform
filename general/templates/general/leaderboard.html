@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include('includes/head_content.html') %}
+    <title>Leaderboard</title>
+
+</head>
+<body class="layout-top-nav dark-skin theme-primary fixed">
+
+<div class="wrapper">
+	<div id="loader"></div>
+
+    <!-- Top navbar -->
+    {% include('includes/top_navbar.html') %}
+
+    <!-- Navbar -->
+    {% include('includes/navbar.html') %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	  <div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h3 class="page-title">Leaderboard</h3>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item active" aria-current="page">Leaderboard</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+	  </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+    <!-- Footer -->
+    {% include('includes/footer.html') %}
+
+</div>
+<!-- ./wrapper -->
+
+{% include('includes/javascript_include_dashboard.html') %}
+
+
+</body>
+</html>
