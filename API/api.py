@@ -162,6 +162,16 @@ def get_NFT_marketplace(collection=None):
     return jsonify(NFTs)
 
 
+@BLP_api.route('/api/get_NFT_collections_preview/<collection>/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def get_NFT_collections_preview(collection, nft_id):
+    """
+    Get all NFT collections preview
+    """
+    collections = NFT_manager().get_NFTS_preview(collection, nft_id)
+    return jsonify(collections)
+
+
 @BLP_api.route('/api/get_liked_NFTs', methods=['GET', 'POST'])
 @login_required
 def get_liked_NFTs():
@@ -294,6 +304,16 @@ def delete_bid(bid_id):
     Delete a bid on an NFT
     """
     response = NFT_manager().delete_bid(bid_id, current_user.id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/increment_views/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def increment_views(nft_id):
+    """
+    Increment the views of an NFT
+    """
+    response = NFT_manager().increment_views(nft_id)
     return jsonify(response)
 
 

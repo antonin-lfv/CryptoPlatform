@@ -76,7 +76,44 @@ def profile():
 @BLP_general.route('/leaderboard', methods=['GET', 'POST'])
 @login_required
 def leaderboard():
-    return render_template('general/leaderboard.html', user=current_user)
+    # Data
+    data = []
+    # Get all user
+    users = User.query.all()
+    for user in users:
+        user_dict = {'username': user.username, 'id': user.id}
+        # Get the balance of the user
+        w_manager = wallet_manager()
+        balance = w_manager.get_user_balance(user)
+        user_dict['crypto_balance'] = balance['crypto_balance']
+        user_dict['web3_balance'] = balance['web3_balance']
+        user_dict['total_balance'] = balance['crypto_balance'] + balance['web3_balance']
+        # Convert all balances to BTC
+        user_dict['crypto_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['crypto_balance']), 2)
+        user_dict['web3_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['web3_balance']), 2)
+        user_dict['total_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['total_balance']), 2)
+        # Format the balances with comma between thousands
+        user_dict['crypto_balance_format'] = "{:,}".format(user_dict['crypto_balance'])
+        user_dict['web3_balance_format'] = "{:,}".format(user_dict['web3_balance'])
+        user_dict['total_balance_format'] = "{:,}".format(user_dict['total_balance'])
+        # Get the number of NFTs owned
+        nft_manager = NFT_manager()
+        user_dict['number_of_NFTs'] = nft_manager.get_number_of_NFTs_user(user.id)
+        # Get the number of servers bought and rented
+        mining_server_manager = Mining_server_manager()
+        total_servers_bought = mining_server_manager.get_total_servers_bought(user.id)
+        total_servers_rented = mining_server_manager.get_total_servers_rented(user.id)
+        user_dict['total_servers'] = total_servers_bought + total_servers_rented
+
+        data.append(user_dict)
+
+    # Sort the data by total balance
+    data = sorted(data, key=lambda x: x['total_balance'], reverse=True)
+    # Add the rank
+    for i, user_dict in enumerate(data):
+        user_dict['rank'] = i + 1
+
+    return render_template('general/leaderboard.html', user=current_user, data=data)
 
 
 @BLP_general.route('/public_profile/<user_id>', methods=['GET', 'POST'])

@@ -51,24 +51,24 @@
                     <div class="col-xl-7 col-lg-7">
                         <div class="col-12">
                             <div class="box">
-                                <div class="box-header with-border">
-                                    <h4 class="box-title">NFT details</h4>
-                                </div>
                                 <div class="box-body">
                                     <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}">Collection {{ nft_data['collection'] }}</a><br>
                                     <br>
-                                    <h3 class="box-title">{{ nft_data['name'].split(' ')[1] }}</h3><br>
-                                    <H4 id="owned_status"></H4>&nbsp;<h5 id="set_as_profile_picture"></h5>
+                                    <h2 class="box-title"><b>{{ nft_data['name'] }}</b></h2>
+                                    <H5 id="owned_status"></H5>&nbsp;
+                                    <h5 id="set_as_profile_picture"></h5>
 
                                     <h6>Current price</h6>
-                                    <h4><b><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a></b>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small></h4>
+                                    <h3><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small></h3>
 
 
                                 </div>
                                 <div class="box-body">
                                     <ul class="list-inline mb-0 me-2">
                                         <li class="list-inline-item">
-                                            <a href="#" onclick="like_nft({{ nft_data['id'] }})"><i class="fa fa-heart{{ nft_data['liked'] }}"></i>&nbsp;<a id="number_likes">{{ nft_data['number_of_likes'] }} </a> favorite{% if nft_data['number_of_likes']>1 %}s{% endif %}</a>
+                                            <a href="#" onclick="like_nft({{ nft_data['id'] }})"><i class="fa fa-heart{{ nft_data['liked'] }}"></i>&nbsp;&nbsp;<a id="number_likes">{{ nft_data['number_of_likes'] }} </a> favorite{% if nft_data['number_of_likes']>1 %}s{% endif %}</a>
+
+                                            <a style="margin-left: 40px"><i class="fa fa-eye"></i>&nbsp;&nbsp;<a id="number_of_views"></a> Views</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -108,6 +108,19 @@
 
                                     </div>
                                 </div>
+                                <div class="col-12">
+                            <div class="box">
+                              <div class="box-header with-border">
+                                <h4 class="box-title"><i class="fa fa-bookmark"></i> &nbsp; More from this collection</h4>
+                              </div>
+                              <div class="box-body row" id="NFT_collection_div">
+
+                              </div>
+                              <div class="box-footer text-center">
+                                <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}" class="btn btn-default btn-sm">View collection</a>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -181,6 +194,44 @@
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
+function show_collection_preview() {
+    // Requête AJAX à l'API Flask
+    $.ajax({
+        url: '/api/get_NFT_collections_preview/{{ nft_data["collection"] }}/{{ nft_data["id"] }}',
+        method: 'GET',
+        success: function(NFTs) {
+
+            var NFT_collection_div = $('#NFT_collection_div');
+            NFT_collection_div.empty();  // Nettoyer le contenu existant
+
+            // Générer le HTML pour chaque NFT et l'ajouter à la div
+            NFTs.forEach(function(nft) {
+                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
+                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
+                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
+                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
+                var nftHTML = `
+                <div class="col-3">
+                    <div class="card">
+                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap"></a>
+                        <div class="card-body">
+                            <h4 class="card-title
+                            "><a href="${nft.details_path}">${nft.name}</a></h4>
+                            <h6 class="card-text">${nft.collection} collection</h6>
+                            <p class="card-subtitle">${nft.price} ETH</p>
+                        </div>
+                    </div>
+                </div>`;
+                NFT_collection_div.append(nftHTML);  // Append the new HTML
+            });
+
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 function like_nft(nft_id) {
     // Requête AJAX à l'API Flask
     $.ajax({
@@ -209,12 +260,14 @@ function like_nft(nft_id) {
                 // update the number of likes
                 $('#number_likes').text(numberOfLikes);
             }
+
         },
         error: function(error) {
             console.error('Error:', error);
         }
     });
 }
+
 
 // Buy NFT by calling /api/buy_NFT/<nft_id>
 function buy_NFT(nft_id) {
@@ -379,6 +432,20 @@ $('#validate_place_bid').click(function() {
     });
 
 
+// Views count
+function increment_views(nft_id) {
+    $.ajax({
+        url: `/api/increment_views/${nft_id}`,
+        method: 'GET',
+        success: function(response) {
+            $('#number_of_views').text(response['number_of_views']);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 
 
 function owned_status(nft_id) {
@@ -451,7 +518,7 @@ function update_price() {
         method: 'GET',
         success: function(response) {
             $('#NFT_price').text(response['price']);
-            $('#NFT_price_USD').text(response['price_usd']);
+            $('#NFT_price_USD').text(response['price_usd_format']);
         },
         error: function(error) {
             console.error('Error:', error);
@@ -468,6 +535,10 @@ $(document).ready(function() {
     get_bids({{ nft_data['id'] }});
     // Update the price of the NFT
     update_price();
+    // Increment the views count
+    increment_views({{ nft_data['id'] }});
+    // Show the collection preview
+    show_collection_preview();
 });
 
 </script>

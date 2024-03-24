@@ -68,6 +68,16 @@ class NFT_manager:
             return self.get_collection_NFT(user_id, collection=collection)
 
     @staticmethod
+    def get_number_of_NFTs_user(user_id):
+        """
+        Get the number of NFTs owned by a user
+
+        Return:
+            int
+        """
+        return len(UserNFT.query.filter_by(user_id=user_id).all())
+
+    @staticmethod
     def get_NFT(nft_id, user_id):
         """
         Get a NFT from the marketplace
@@ -82,18 +92,21 @@ class NFT_manager:
         is_user_liked = user_id in [l.user_id for l in liked]
         if NFTs:
             # Create a dict with all NFTs
+            price_usd = round(CryptoDataManager().get_USD_from_crypto('ETH-USD', NFTs.price), 2)
             nft_data = {
                 'id': NFTs.id,
                 'name': NFTs.name,
                 'collection': NFTs.collection,
                 'price': NFTs.price,
-                'price_usd': round(CryptoDataManager().get_USD_from_crypto('ETH-USD', NFTs.price), 3),
+                'price_usd': price_usd,
+                'price_usd_format': "{:,}".format(price_usd),
                 'image_path': NFTs.image_path,
                 'is_for_sale': NFTs.is_for_sale,
                 'owner_id': NFTs.owner_id,
                 'owned': NFTs.owner_id == user_id,
                 'liked': '' if is_user_liked else '-o',
-                'number_of_likes': len(liked) if liked else 0
+                'number_of_likes': len(liked) if liked else 0,
+                'views_number': NFTs.views_number
             }
 
             return nft_data
@@ -133,7 +146,8 @@ class NFT_manager:
                 'owner_id': nft_item.owner_id,
                 'owned': nft_item.owner_id == user_id,
                 'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
-                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0
+                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0,
+                'views_number': nft_item.views_number
             })
 
         return NFTs_list
@@ -192,8 +206,52 @@ class NFT_manager:
                 'owner_id': nft_item.owner_id,
                 'owned': nft_item.owner_id == user_id,
                 'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
-                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0
+                'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0,
+                'views_number': nft_item.views_number
             })
+
+        return NFTs_list
+
+    @staticmethod
+    def get_NFTS_preview(collection, nft_id):
+        """
+        Get all NFTs from the marketplace
+
+        Return:
+            dict
+        """
+        # Get all NFTs of the collection
+        NFTs = NFT.query.filter_by(collection=collection).all()
+        # Get all the NFTs liked by the user
+        nft_ids = UserLikedNFT.query.filter_by(nft_id=nft_id).all()
+        # Get the number of likes for each NFT
+        nft_likes = UserLikedNFT.query.all()
+        number_of_likes = {}
+        for nft_id_ in nft_likes:
+            if nft_id_.nft_id in number_of_likes:
+                number_of_likes[nft_id_.nft_id] += 1
+            else:
+                number_of_likes[nft_id_.nft_id] = 1
+        # Create a dict with all NFTs
+        NFTs_list = []
+        for nft_item in NFTs:
+            if nft_item.id != int(nft_id):
+                NFTs_list.append({
+                    'id': nft_item.id,
+                    'name': nft_item.name,
+                    'collection': nft_item.collection,
+                    'price': nft_item.price,
+                    'image_path': nft_item.image_path,
+                    'is_for_sale': nft_item.is_for_sale,
+                    'owner_id': nft_item.owner_id,
+                    'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
+                    'number_of_likes': number_of_likes[nft_item.id] if nft_item.id in number_of_likes else 0,
+                    'views_number': nft_item.views_number
+                })
+
+        # Pick 4 random NFTs
+        random.shuffle(NFTs_list)
+        NFTs_list = NFTs_list[:4]
 
         return NFTs_list
 
@@ -331,9 +389,21 @@ class NFT_manager:
             # Get the name of the owner
             owner = User.query.filter_by(id=nft.owner_id).first()
             url = url_for('BLP_general.public_profile', user_id=str(owner.id))
-            return {"message": f"NFT owned by <a href='{url}'>@{owner.username}</a>",
+            return {"message": f"Owned by <a href='{url}'>@{owner.username}</a>",
                     "owned": False,
                     "set_profile_text": None}
+
+    @staticmethod
+    def increment_views(nft_id):
+        """
+        Increment the number of views of a NFT
+        """
+        # Get the NFT
+        nft = NFT.query.filter_by(id=nft_id).first()
+        # Increment the number of views
+        nft.views_number += 1
+        db.session.commit()
+        return {"status": "success", "number_of_views": nft.views_number}
 
     @staticmethod
     def set_as_profile_picture(user_id, nft_id):
