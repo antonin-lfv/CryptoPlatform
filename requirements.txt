@@ -10,4 +10,5 @@ SQLAlchemy
 yfinance
 flask_sqlalchemy
 flask_login
+flask-migrate
 gunicorn
