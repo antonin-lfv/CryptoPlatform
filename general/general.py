@@ -5,7 +5,7 @@ from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
-from utils import max_servers_rented, max_servers_bought
+from utils import max_servers_rented, max_servers_bought, MAINTENANCE_MODE
 from models import MiningServer, User
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
@@ -31,6 +31,14 @@ def update_prices():
     # Start payment process for servers
     mining_server_manager = Mining_server_manager()
     mining_server_manager.check_for_server_payment(current_user.id)
+
+
+@BLP_general.before_request
+@login_required
+def check_for_maintenance():
+    if MAINTENANCE_MODE and current_user.role != 'ADMIN':
+        # call maintenance page
+        return render_template('general/error_maintenance.html', user=current_user)
 
 
 @BLP_general.route('/home', methods=['GET', 'POST'])

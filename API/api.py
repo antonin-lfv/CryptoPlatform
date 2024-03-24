@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
+from user_manager import UserManager
 from nft_manager import NFT_manager
 from mining_server_manager import Mining_server_manager
 
@@ -11,6 +12,7 @@ BLP_api = Blueprint('BLP_api', __name__)
 
 # Index
 # ----------------
+# User
 # Crypto data
 # NFT data
 # Mining servers
@@ -18,6 +20,42 @@ BLP_api = Blueprint('BLP_api', __name__)
 # Buy crypto
 # Notifications
 # General functions
+
+
+# ================================
+# User
+# ================================
+@BLP_api.route('/api/change_username', methods=['GET', 'POST'])
+@login_required
+def change_username():
+    """
+    Change the username of a user
+    """
+    new_username = request.form.get('new_username', '')
+    print(f"NEW: {new_username}")
+    response = UserManager().change_username(current_user.id, new_username)
+
+    return jsonify(response)
+
+
+@BLP_api.route('/api/is_user_notification_active', methods=['GET', 'POST'])
+@login_required
+def is_user_notification_active():
+    """
+    Check if the notifications are active for a user
+    """
+    response = UserManager().is_user_notification_active(current_user.id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/switch_notifications_active', methods=['GET', 'POST'])
+@login_required
+def switch_notifications_active():
+    """
+    Switch the notifications active status of a user
+    """
+    response = UserManager().switch_notifications_active(current_user.id)
+    return jsonify(response)
 
 
 # ================================
@@ -102,6 +140,17 @@ def buy_with_crypto():
 # ================================
 # NFT data
 # ================================
+
+@BLP_api.route('/api/refresh_NFT_base/<user_id>', methods=['GET', 'POST'])
+@login_required
+def refresh_NFT_base(user_id):
+    """
+    ADMIN ONLY
+    Refresh the NFT base
+    """
+    refresh = NFT_manager().refresh_NFT_base(user_id)
+    return jsonify(refresh)
+
 
 @BLP_api.route('/api/get_NFT_marketplace', methods=['GET', 'POST'])
 @BLP_api.route('/api/get_NFT_marketplace/<collection>', methods=['GET', 'POST'])

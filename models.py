@@ -10,8 +10,10 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
-    username = db.Column(db.String(1000))
+    username = db.Column(db.String(25))
+    role = db.Column(db.String(100), default='USER')
     profile_img_path = db.Column(db.String(1000), default="images/avatar/avatar-1.png")
+    notifications_active = db.Column(db.Boolean, default=True)
     wallets = db.relationship('CryptoWallet', backref='user', lazy=True)
     game_wallet = db.relationship('GameWallet', backref='user', lazy=True)
 
@@ -100,7 +102,7 @@ class NFT(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)  # Name of the NFT
     collection = db.Column(db.String(100), nullable=False)  # Collection of the NFT
-    price = db.Column(db.Float, nullable=False)  # Price of the NFT at this moment
+    price = db.Column(db.Float, nullable=False)  # Price of the NFT at this moment in ETH
     image_path = db.Column(db.String(1000), nullable=False)  # Path to the image of the NFT
     is_for_sale = db.Column(db.Boolean, default=True)  # Is the NFT for sale?
     # owner id is optional because the NFT can be for sale without having an owner

@@ -28,8 +28,13 @@ mini_wallet = 1000
 bank_wallet = 10000
 
 NFT_collections = ['Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Cats', 'Penguins', 'Cubes']
+min_prix_NFT = 3
+max_prix_NFT = 100
+core_url_NFT = '/images/nft-item/'
 
 user_profile_default_image_path = "images/avatar/avatar-1.png"
+
+MAINTENANCE_MODE = False
 
 # dict to get name from symbol
 symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))

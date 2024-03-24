@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from app import db
-from models import Notification
+from models import Notification, User
 
 
 class Notification_manager:
@@ -34,6 +34,11 @@ class Notification_manager:
             - warning
             - shopping-cart
         """
+        # Check if the user turn off the notifications
+        user = User.query.filter_by(id=user_id).first()
+        if user.notifications_active is False:
+            return
+
         new_notification = Notification(
             user_id=user_id,
             message=message,

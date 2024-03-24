@@ -6,6 +6,10 @@ from crypto_manager import CryptoDataManager
 from notification_manager import Notification_manager
 from datetime import datetime
 from utils import user_profile_default_image_path
+import os
+from utils import NFT_collections, core_url_NFT, min_prix_NFT, max_prix_NFT
+import random
+import math
 
 
 class NFT_manager:
@@ -14,6 +18,42 @@ class NFT_manager:
         All NFT are in ETH
         """
         ...
+
+    @staticmethod
+    def refresh_NFT_base(user_id):
+        """
+        ADMIN FUNCTION
+        Refresh the NFT base of the app
+        :param user_id: to verify if the user is an admin
+        """
+        # Vérification de l'utilisateur admin
+        user = User.query.filter_by(id=user_id).first()
+        if user is None or user.role != 'ADMIN':
+            return {"status": "error", "message": "You are not an admin"}
+
+        # Configuration initiale
+        existing_nfts = {nft.image_path: nft for nft in NFT.query.all()}  # Un dictionnaire pour une recherche rapide
+
+        # Parcourir chaque collection
+        n_NFT_refreshed = 0
+        for collection in NFT_collections:
+            collection_path = core_url_NFT + collection.lower() + '/'
+            abs_path = os.path.join('assets', collection_path.strip('/'))  # Assurez-vous que le chemin est correct
+            if not os.path.exists(abs_path):
+                continue  # Si le chemin n'existe pas, passer à la collection suivante
+            # Parcourir les fichiers dans le dossier de la collection
+            for filename in os.listdir(abs_path):
+                file_path = os.path.join(collection_path, filename)
+                if file_path not in existing_nfts:
+                    # Si l'image n'est pas déjà dans la base, l'ajouter
+                    name = f"{collection} #{filename.split('_')[-1].split('.')[0]}"
+                    price = round(min_prix_NFT + (max_prix_NFT - min_prix_NFT) * (1 - math.exp(-5 * random.random())), 3)
+                    nft = NFT(name=name, collection=collection, image_path=file_path, price=price, owner_id=None)
+                    db.session.add(nft)
+                    n_NFT_refreshed += 1
+
+        db.session.commit()
+        return {"status": "success", "message": f"NFT base refreshed successfully - {n_NFT_refreshed} NFTs added"}
 
     def get_NFTs(self, user_id, collection=None):
         """

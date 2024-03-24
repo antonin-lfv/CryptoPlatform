@@ -87,8 +87,8 @@
                            data-bs-toggle="dropdown" title="User">
                             <div class="d-flex pt-1">
                                 <div class="text-end me-10">
-                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary">{{ user.username }}</p>
-                                    <small class="fs-10 mb-0 text-uppercase text-mute">User</small>
+                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary" id="username_topnav">{{ user.username }}</p>
+                                    <small class="fs-10 mb-0 text-uppercase text-mute">{{ user.role }}</small>
                                 </div>
                                 <img src="{{ url_for('static', filename=user.profile_img_path) }}"
                                      class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" id="profile_picture_top_navbar"/>
@@ -103,6 +103,11 @@
                                         class="ti-wallet text-muted me-2"></i> My Crypto Wallet</a>
                                 <a class="dropdown-item" href="{{ url_for('BLP_general.settings') }}"><i
                                         class="ti-settings text-muted me-2"></i> Settings</a>
+                                {% if user.role == 'ADMIN' %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" onclick="refresh_NFT_base()" href="#"><i
+                                        class="ti-dashboard text-muted me-2"></i> Refresh NFT base</a>
+                                {% endif %}
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('BLP_auth.logout') }}"><i
                                         class="ti-lock text-muted me-2"></i> Logout</a>
@@ -115,3 +120,37 @@
         </nav>
     </div>
 </header>
+
+<script>
+    function refresh_NFT_base() {
+        $.ajax({
+            url: "api/refresh_NFT_base/{{ user.id }}",
+            type: 'POST',
+            success: function (response) {
+                if (response.status === 'success') {
+                    swal({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        button: 'Ok'
+                    });
+                } else {
+                    swal({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        button: 'Ok'
+                    });
+                }
+            },
+            error: function (response) {
+                swal({
+                    title: 'Error',
+                    text: 'An error occurred while refreshing the NFT base',
+                    icon: 'error',
+                    button: 'Ok'
+                });
+            }
+        });
+    }
+</script>

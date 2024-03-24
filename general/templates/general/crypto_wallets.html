@@ -283,7 +283,8 @@
                     x: {
                         type: 'timeseries', // Changement pour un axe temporel
                         tick: {
-                            format: '%Y-%m-%d' // Format des dates
+                            format: function (d) { return ""; }, // Suppression des dates pour rendre plus lisible
+                            show: false
                         }
                     },
                     y: {
@@ -292,6 +293,16 @@
                         }
                     }
                 },
+                tooltip: {
+                format: {
+                    title: function (d) { return d.toISOString().slice(0,10); }, // Formatte la date pour l'affichage
+                    value: function (value, ratio, id, index) {
+                        // Vous pouvez personnaliser davantage l'affichage des valeurs ici si nécessaire
+                        return "$" + value;
+                        }
+                    }
+                }
+                ,
                 grid: { y: { show: true } }
             });
         },

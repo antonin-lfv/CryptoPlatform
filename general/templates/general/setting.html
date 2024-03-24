@@ -41,83 +41,49 @@
 		<section class="content">
 			<div class="row">				
 				<div class="col-12">
-					<h4 class="text-dark">Security Settings</h4>
+					<h4 class="text-dark">General Settings</h4>
 					<hr>
 					<div class="box">
 						<div class="box-body">
 							<div class="d-md-flex justify-content-between align-items-center">
 								<div>
-									<h5 class="text-primary fw-500">Activity Logs</h5>
-									<p class="mb-0">You can save your all activity logs including unusual activity detected.</p>
+									<h5 class="text-primary fw-500">Notification</h5>
+									<p class="mb-0">You can disable all notifications.</p>
 								</div>
-								<button type="button" class="btn btn-sm btn-toggle btn-primary active" data-bs-toggle="button" aria-pressed="true">
+								<button type="button" class="btn btn-sm btn-toggle btn-primary active" data-bs-toggle="button" aria-pressed="true" id="notifications_active">
 									<span class="handle"></span>
 							    </button>
 							</div>
 						</div>
 					</div>
-					<div class="box">
-						<div class="box-body">
-							<div class="d-md-flex justify-content-between align-items-center">
-								<div>
-									<h5 class="text-primary fw-500">Change Password</h5>
-									<p class="mb-0">Set a unique password to protect your account.</p>
-								</div>
-								<a href="#" class="btn btn-info">Change Password</a>
-							</div>
-						</div>
+                    <div class="box">
+					<div class="box-header with-border">
+					  <h3 class="box-title">Personal details</h3>
 					</div>
-					<div class="box">
-						<div class="box-body">
-							<div class="d-md-flex justify-content-between align-items-center">
-								<div>
-									<h5 class="text-primary fw-500">2 Step Verification</h5>
-									<p class="mb-0 me-25">Secure your account with 2 Step security. When it is activated you will need to enter not only your password, but also a special code using app. You can receive this code by in mobile app.</p>
-								</div>
-								<a href="#" class="btn btn-danger">Enabled</a>
-							</div>
-						</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+					  <div class="row">
+						<div class="col-12">
+                            <div class="form-group row">
+                              <label class="col-sm-2 col-form-label">New username</label>
+                              <div class="col-sm-10">
+                                <input class="form-control" id="newUsername" type="text" placeholder="Enter new username">
+                              </div>
+                            </div>
+                            <div class="form-group row">
+                              <label class="col-sm-2 col-form-label"></label>
+                              <div class="col-sm-10">
+                                <button type="button" class="btn btn-success" id="changeUsernameBtn">Change</button>
+                              </div>
+                            </div>
+                        </div>
+
+						<!-- /.col -->
+					  </div>
+					  <!-- /.row -->
 					</div>
-				</div>			
-				<div class="col-12">
-					<h4 class="text-dark">Activity Log</h4>
-					<hr>
-					<div class="box">
-						<div class="box-body p-0">
-							<div class="table-responsive">
-							  <table class="table mb-0">
-								  <thead>
-									<tr>
-									  <th scope="col">Browser</th>
-									  <th scope="col">IP Address</th>
-									  <th scope="col">Date/Time</th>
-									  <th scope="col">Action</th>
-									</tr>
-								  </thead>
-								  <tbody>
-									<tr>
-									  <th scope="row">Chrome on Window</th>
-									  <td>192.168.111.111</td>
-									  <td>1/04/2020 : 10:10am</td>
-									  <td><a href="#" class="text-danger"><i class="fa fa-trash"></i></a></td>
-									</tr>
-									<tr>
-									  <th scope="row">Mozila on Window</th>
-									  <td>192.168.154.111</td>
-									  <td>1/03/2020 : 10:10am</td>
-									  <td><a href="#" class="text-danger"><i class="fa fa-trash"></i></a></td>
-									</tr>
-									<tr>
-									  <th scope="row">Safari on Mac</th>
-									  <td>192.168.895.111</td>
-									  <td>1/05/2020 : 10:10am</td>
-									  <td><a href="#" class="text-danger"><i class="fa fa-trash"></i></a></td>
-									</tr>
-								  </tbody>
-								</table>
-							</div>
-						</div>
-					</div>
+					<!-- /.box-body -->
+				  </div>
 				</div>
 			</div>
 		</section>
@@ -138,7 +104,73 @@
 	
 	
 {% include('includes/javascript_include_dashboard.html') %}
-	
+
+<script>
+$(document).ready(function(){
+    // Étape 1: Vérifier l'état initial des notifications
+    $.ajax({
+        url: '/api/is_user_notification_active',
+        type: 'GET',
+        success: function(response) {
+            // Ici, 'response' doit être un objet JSON indiquant si les notifications sont actives
+            // Exemple de réponse attendue: { "active": true } ou { "active": false }
+            if(response.active) {
+                $("#notifications_active").addClass('active').attr("aria-pressed", "true");
+            } else {
+                $("#notifications_active").removeClass('active').attr("aria-pressed", "false");
+            }
+        },
+        error: function(error) {
+            console.log("Erreur lors de la vérification de l'état des notifications:", error);
+        }
+    });
+
+    // Étape 2: Bascule de l'état des notifications lors du clic sur le bouton
+    $("#notifications_active").click(function(){
+        $.ajax({
+            url: '/api/switch_notifications_active',
+            type: 'POST', // Assurez-vous que votre backend accepte la méthode POST pour cette route
+            success: function(response) {
+                // Mettre à jour l'état du bouton basé sur la nouvelle valeur
+                var newState = response.active; // Supposition: 'response' inclut un champ 'active' indiquant le nouvel état
+                if(newState) {
+                    $("#notifications_active").addClass('active').attr("aria-pressed", "true");
+                } else {
+                    $("#notifications_active").removeClass('active').attr("aria-pressed", "false");
+                }
+            },
+            error: function(error) {
+                console.log("Erreur lors du changement de l'état des notifications:", error);
+            }
+        });
+    });
+
+    $("#changeUsernameBtn").click(function(){
+        var newUsername = $("#newUsername").val();
+        if(newUsername) { // Vérifiez que le champ n'est pas vide
+            $.ajax({
+                url: '/api/change_username', // Remplacez <user_id> par l'ID réel de l'utilisateur
+                type: 'POST',
+                data: {new_username: newUsername}, // Envoyez le nouveau nom d'utilisateur comme donnée de la requête
+                success: function(response) {
+                    // change username in the navbar, id="username_topnav"
+                    $("#username_topnav").text(newUsername);
+                    // Vous pouvez ajouter ici une logique pour informer l'utilisateur du succès
+                    swal("Success", response['message'], "success");
+                },
+                error: function(error) {
+                    // Gérez les erreurs éventuelles
+                    swal("Error", "An error occurred while changing the username.", "error")
+                }
+            });
+        } else {
+            swal("Error", "Please enter a new username.", "error")
+        }
+    });
+
+});
+</script>
+
 
 </body>
 </html>
