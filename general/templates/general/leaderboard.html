@@ -62,7 +62,7 @@
                           {% for row in data %}
 							<tr>
 							  <th scope="row">{{ row['rank'] }}</th>
-                                <td><a href="{{ url_for('BLP_general.public_profile', user_id=row['id']) }}"><b>@{{ row['username'] }}</b></a></td>
+                                <td><a href="{{ url_for('BLP_general.public_profile', user_id=row['id']) }}"><b>@{{ row['username'] }} {% if user.id == row['id'] %}(You){% endif %}</b></a></td>
 							  <td>{{ row['total_balance_format'] }} <i class="fa fa-bitcoin"></i></td>
                               <td>{{ row['crypto_balance_format'] }}  <i class="fa fa-bitcoin"></i></td>
                               <td>{{ row['web3_balance_format'] }}  <i class="fa fa-bitcoin"></i></td>

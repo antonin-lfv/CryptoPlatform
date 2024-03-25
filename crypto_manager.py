@@ -28,7 +28,6 @@ class CryptoDataManager:
                     latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
                     if latest_data and latest_data.date == datetime.utcnow().date():
-                        # print(f"Les données pour {symbol} sont déjà à jour.")
                         continue
 
                     try:
@@ -61,9 +60,9 @@ class CryptoDataManager:
                         # Get all NFTs
                         nfts = NFT.query.all()
                         for nft in nfts:
-                            print(f"Updating price for NFT {nft.id} with symbol {nft.symbol} and price {nft.price}.")
+                            print(f"Updating price for NFT {nft.id} with price {nft.price} ETH.")
                             nft.price = nft.price * (1 + eth_price_change)
-                            print(f"New price for NFT {nft.id} with symbol {nft.symbol} is {nft.price}.")
+                            print(f"New price for NFT {nft.id} is {nft.price} ETH.")
                         db.session.commit()
 
                     except KeyError as e:

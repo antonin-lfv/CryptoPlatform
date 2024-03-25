@@ -78,6 +78,16 @@ class NFT_manager:
         return len(UserNFT.query.filter_by(user_id=user_id).all())
 
     @staticmethod
+    def get_number_of_bids_user(user_id):
+        """
+        Get the number of bids placed by a user
+
+        Return:
+            int
+        """
+        return len(NFTBid.query.filter_by(user_id=user_id).all())
+
+    @staticmethod
     def get_NFT(nft_id, user_id):
         """
         Get a NFT from the marketplace

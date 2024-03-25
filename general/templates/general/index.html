@@ -24,55 +24,145 @@
             <!-- Main content -->
             <section class="content">
                 <div class="row">
-
-                    <div class="col-lg-4 col-12">
+                    <div class="col-lg-8 col-12">
                         <div class="box">
-						<div class="box-header">
-							<h4 class="box-title">
-								Your Portfolio
-							</h4>
-						</div>
-						<div class="box-body p-0">
-							<div class="table-responsive">
-								<table class="table m-0 recent-table">
-									<tbody>
-
-                                    {% for row in top_cryptos %}
-										<tr>
-											<td>
-												<div class="d-flex align-items-center">
-													<a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row[0]) }}">
-                                                        <i class="cc {{ row[0].split('-')[0] }}"></i></a>
-													<span>{{ row[1]['name'] }}</span>
-												</div>
-											</td>
-											<td>
-												<div class="progress">
-													<div class="progress-bar progress-bar-primary" role="progressbar"
-                                                         aria-valuenow="{{ row[1]['percentage_int'] }}"
-                                                         aria-valuemin="0"
-                                                         aria-valuemax="100"
-                                                         style="width: {{ row[1]['percentage_int'] }}%">
-													</div>
-												</div>
-												<small class="fw-300 mb-5">{% if row[1]['percentage']==1 %}< {% endif %}{{ row[1]['percentage'] }}%</small>
-											</td>
-											<td class="text-end">
-												<h5 class="my-0">{{ row[1]['quantity'] }} {{ row[0].split('-')[0] }}</h5>
-											</td>
-										</tr>
+                            <div class="box-body">
+                                <ul id="webticker-2" class="text-center">
+                                    {% for crypto_row in crypto_prices_list %}
+                                        <li class="py-5"><a
+                                                href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=crypto_row["symbol"]+'-USD') }}"><i
+                                                class="cc {{ crypto_row['symbol'] }} d-block mx-auto mb-10"></i></a>
+                                            <p class="mb-0">{{ crypto_row['symbol'] }}</p>
+                                            <span class="d-block text-{% if crypto_row['change_24h']<0 %}danger{% else %}success{% endif %}"> {{ crypto_row['change_24h'] }}% <i
+                                                    class="fa fa-arrow-{% if crypto_row['change_24h']<0 %}down{% else %}up{% endif %}"></i></span>
+                                        </li>
                                     {% endfor %}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="box-header">
+                                <h3 class="box-title">
+                                    Your {{ number_most_valuable_cryptos }} most valuable cryptos
+                                </h3>
+                            </div>
+                            <div class="box-body p-0">
+                                {% if not top_cryptos %}
+                                    <p class="text-center mt-15 mb-15">You don't have any crypto yet</p>
+                                {% else %}
+                                    <div class="table-responsive">
+                                        <table class="table m-0 recent-table">
+                                            <tbody>
+
+                                            {% for row in top_cryptos %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row[0]) }}">
+                                                                <i class="cc {{ row[0].split('-')[0] }}"></i></a>
+                                                            <span>{{ row[1]['name'] }}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-primary"
+                                                                 role="progressbar"
+                                                                 aria-valuenow="{{ row[1]['percentage_int'] }}"
+                                                                 aria-valuemin="0"
+                                                                 aria-valuemax="100"
+                                                                 style="width: {{ row[1]['percentage_int'] }}%">
+                                                            </div>
+                                                        </div>
+                                                        <small class="fw-300 mb-5">{% if row[1]['percentage']==1 %}
+                                                            < {% endif %}{{ row[1]['percentage'] }}%</small>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <h5 class="my-0">{{ row[1]['quantity'] }} {{ row[0].split('-')[0] }}</h5>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Your position in Leaderboard</h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Rank</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Total wallet value</th>
+                                            <th scope="col">Crypto wallet value</th>
+                                            <th scope="col">NFT wallet value</th>
+                                            <th scope="col">Number of NFTs</th>
+                                            <th scope="col">Number of servers</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for row in user_ranking %}
+                                            <tr>
+                                                <th scope="row">{{ row['rank'] }}</th>
+                                                <td>
+                                                    <a href="{{ url_for('BLP_general.public_profile', user_id=row['id']) }}"><b>@{{ row['username'] }}
+                                                        {% if user.id == row['id'] %}(You){% endif %}</b></a></td>
+                                                <td>{{ row['total_balance_format'] }} <i class="fa fa-bitcoin"></i></td>
+                                                <td>{{ row['crypto_balance_format'] }} <i class="fa fa-bitcoin"></i>
+                                                </td>
+                                                <td>{{ row['web3_balance_format'] }} <i class="fa fa-bitcoin"></i></td>
+                                                <td>{{ row['number_of_NFTs'] }}</td>
+                                                <td>{{ row['total_servers'] }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
                     </div>
 
                     <div class="col-lg-4 col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="box">
+                                    <div class="box-body text-center">
+                                        <p class="text-primary">BTC CRYPTO BALANCE</p>
+                                        <h3>{{ crypto_balance_BTC }} <small>BTC</small></h3>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ url_for('BLP_general.nft_marketplace') }}"
+                                               class="btn btn-xs btn-dark me-10">BUY NFT</a>
+                                            <a href="{{ url_for('BLP_general.mining_place') }}"
+                                               class="btn btn-xs btn-danger">BUY SERVERS</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="box">
+                                    <div class="box-body text-center">
+                                        <p class="text-primary">USD CRYPTO BALANCE</p>
+                                        <h3>{{ crypto_balance_USD }} <small>USD</small></h3>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
+                                               class="btn btn-xs btn-primary me-10">DEPOSIT</a>
+                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
+                                               class="btn btn-xs btn-success">CONVERT</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="box">
                             <div class="box-header with-border">
-                                <h4 class="box-title">Mining overview</h4>
+                                <h3 class="box-title">Mining overview</h3>
                             </div>
                             <div class="box-body">
                                 <div class="table-responsive">
@@ -80,22 +170,30 @@
                                         <tbody>
                                         <tr>
                                             <td>Servers bought</td>
-                                            <td><span class="text-info">{{ mining_overview.total_servers_bought }}</span></td>
+                                            <td><span
+                                                    class="text-info"><b>{{ mining_overview.total_servers_bought }}</b></span>
+                                            </td>
                                             <td><i class="fa fa-bar-chart"></i></td>
                                         </tr>
                                         <tr>
                                             <td>Servers rented</td>
-                                            <td><span class="text-info">{{ mining_overview.total_servers_rented }}</span></td>
+                                            <td><span
+                                                    class="text-info"><b>{{ mining_overview.total_servers_rented }}</b></span>
+                                            </td>
                                             <td><i class="fa fa-bar-chart"></i></td>
                                         </tr>
                                         <tr>
                                             <td>Total servers</td>
-                                            <td><span class="text-info">{{ mining_overview.total_servers }}</span></td>
+                                            <td><span
+                                                    class="text-info"><b>{{ mining_overview.total_servers }}</b></span>
+                                            </td>
                                             <td><i class="fa fa-bar-chart"></i></td>
                                         </tr>
                                         <tr>
                                             <td>Total earning per day</td>
-                                            <td><span class="text-info">${{ mining_overview.total_power }}</span></td>
+                                            <td><span
+                                                    class="text-info"><b>$ {{ mining_overview.total_power }}</b></span>
+                                            </td>
                                             <td><i class="fa fa-bar-chart"></i></td>
                                         </tr>
                                         </tbody>
@@ -103,46 +201,34 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4 col-12">
-                        <div class="row">
-						<div class="col-md-6 col-12">
-							<div class="box">
-								<div class="box-body text-center">
-									<p class="text-primary">BTC BALANCE</p>
-									<h3>{{ crypto_balance_BTC }} <small>BTC</small></h3>
-									<div class="d-flex justify-content-center">
-										<button type="button" class="btn btn-xs btn-dark me-10">SEND</button>
-										<button type="button" class="btn btn-xs btn-danger">RECEIVE</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 col-12">
-							<div class="box">
-								<div class="box-body text-center">
-									<p class="text-primary">USD BALANCE</p>
-									<h3>{{ crypto_balance_USD }} <small>USD</small></h3>
-									<div class="d-flex justify-content-center">
-										<button type="button" class="btn btn-xs btn-primary me-10">DEPOSIT</button>
-										<button type="button" class="btn btn-xs btn-success">WITHDRAW</button>
-									</div>
-								</div>
-							</div>
-						</div>
-                            <div class="box">
-					  <div class="box-body">
-						  <ul id="webticker-2" class="text-center">
-                              {% for crypto_row in crypto_prices_list %}
-							<li class="py-5"><i class="cc {{ crypto_row['symbol'] }} d-block mx-auto mb-10"></i> <p class="mb-0">{{ crypto_row['symbol'] }}</p>
-                                <span class="d-block text-{% if crypto_row['change_24h']<0 %}danger{% else %}success{% endif %}"> {{ crypto_row['change_24h'] }}% <i class="fa fa-arrow-{% if crypto_row['change_24h']<0 %}down{% else %}up{% endif %}"></i></span>
-                            </li>
-						    {% endfor %}
-                          </ul>
-					  </div>
-					</div>
-					</div>
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">NFT overview</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover no-margin">
+                                        <tbody>
+                                        <tr>
+                                            <td>Number of NFTs</td>
+                                            <td><span class="text-info"><b>{{ number_of_NFTs }}</b></span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Active bids</td>
+                                            <td><span class="text-info"><b>{{ number_of_bids }}</b></span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Value of NFTs</td>
+                                            <td><span class="text-info"><b>$ {{ web3_balance_USD }}</b></span></td>
+                                            <td><i class="fa fa-bar-chart"></i></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -164,13 +250,13 @@
 
 <script>
     if ($('#webticker-2').length) {
-			$("#webticker-2").webTicker({
-				height:'auto',
-				duplicate:true,
-				startEmpty:false,
-				rssfrequency:5
-			});
-		}
+        $("#webticker-2").webTicker({
+            height: 'auto',
+            duplicate: true,
+            startEmpty: false,
+            rssfrequency: 5
+        });
+    }
 </script>
 
 </body>

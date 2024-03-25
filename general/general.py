@@ -3,8 +3,9 @@ from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
+from user_manager import UserManager
 from nft_manager import NFT_manager
-from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
+from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
 from utils import max_servers_rented, max_servers_bought, MAINTENANCE_MODE, symbol_to_name
 from models import MiningServer, User
 from mining_server_manager import Mining_server_manager
@@ -90,7 +91,9 @@ def home():
     #                     ...
     # }
     # Get the 5 crypto with the highest value in the wallet
-    top_cryptos = sorted(user_crypto.items(), key=lambda x: x[1]['balance'], reverse=True)[:5]
+    top_cryptos = sorted(user_crypto.items(),
+                         key=lambda x: x[1]['balance'],
+                         reverse=True)[:number_most_valuable_cryptos]
     # For each, get the percentage of the total crypto balance (balance['crypto_balance'])
     for crypto in top_cryptos.copy():
         # if quantity inferior to 0.0001, write < 0.0001
@@ -110,20 +113,23 @@ def home():
         # Format the balance with comma between thousands
         crypto[1]['balance'] = "{:,}".format(crypto[1]['balance'])
 
-    print(top_cryptos)
-
     # ===== NFT overview =====
     # Number of NFTs owned, number of bids
+    nft_manager = NFT_manager()
+    number_of_NFTs = nft_manager.get_number_of_NFTs_user(current_user.id)
+    number_of_bids = nft_manager.get_number_of_bids_user(current_user.id)
 
     # ===== Classement =====
-    # Get the ranking of the user in the platform
+    # Get the ranking of the user in the platform (show the leaderboard with 1 person after and before)
+    user_ranking = UserManager().get_user_in_leaderboard(current_user.id)
 
     return render_template('general/index.html', user=current_user,
                            mining_overview=mining_overview, crypto_prices_list=crypto_prices_list,
                            crypto_balance_USD=crypto_balance_USD, web3_balance_USD=web3_balance_USD,
                            total_balance_USD=total_balance_USD, crypto_balance_BTC=crypto_balance_BTC,
                            web3_balance_BTC=web3_balance_BTC, total_balance_BTC=total_balance_BTC,
-                           top_cryptos=top_cryptos)
+                           top_cryptos=top_cryptos, number_of_bids=number_of_bids, number_of_NFTs=number_of_NFTs,
+                           user_ranking=user_ranking, number_most_valuable_cryptos=number_most_valuable_cryptos)
 
 
 @BLP_general.route('/profile', methods=['GET', 'POST'])
