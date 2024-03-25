@@ -28,7 +28,7 @@ mini_wallet = 1000
 bank_wallet = 10000
 
 NFT_collections = ['Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Cats', 'Penguins', 'Cubes']
-min_prix_NFT = 3
+min_prix_NFT = 0.5
 max_prix_NFT = 100
 core_url_NFT = '/images/nft-item/'
 

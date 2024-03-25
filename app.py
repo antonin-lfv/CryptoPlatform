@@ -53,7 +53,7 @@ def create_app():
                 for i in range(1, nb_files + 1):
                     name = f"{collection} #{i}"
                     path = f"{collection_path}{collection.lower()}_{i}.png"
-                    price = round(min_prix_NFT + (max_prix_NFT - min_prix_NFT) * (1 - math.exp(-5 * random.random())), 3)
+                    price = random.uniform(min_prix_NFT, max_prix_NFT)
                     nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                     db.session.add(nft)
 
