@@ -24,7 +24,51 @@
             <!-- Main content -->
             <section class="content">
                 <div class="row">
-                    <div class="col-lg-3 col-12">
+
+                    <div class="col-lg-4 col-12">
+                        <div class="box">
+						<div class="box-header">
+							<h4 class="box-title">
+								Your Portfolio
+							</h4>
+						</div>
+						<div class="box-body p-0">
+							<div class="table-responsive">
+								<table class="table m-0 recent-table">
+									<tbody>
+
+                                    {% for row in top_cryptos %}
+										<tr>
+											<td>
+												<div class="d-flex align-items-center">
+													<i class="cc {{ row[0].split('-')[0] }}"></i>
+													<span>{{ row[1]['name'] }}</span>
+												</div>
+											</td>
+											<td>
+												<div class="progress">
+													<div class="progress-bar progress-bar-primary" role="progressbar"
+                                                         aria-valuenow="{{ row[1]['percentage_int'] }}"
+                                                         aria-valuemin="0"
+                                                         aria-valuemax="100"
+                                                         style="width: {{ row[1]['percentage_int'] }}%">
+													</div>
+												</div>
+												<small class="fw-300 mb-5">{% if row[1]['percentage']==1 %}< {% endif %}{{ row[1]['percentage'] }}%</small>
+											</td>
+											<td class="text-end">
+												<h5 class="my-0">{{ row[1]['quantity'] }} {{ row[0].split('-')[0] }}</h5>
+											</td>
+										</tr>
+                                    {% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+                    </div>
+
+                    <div class="col-lg-4 col-12">
                         <div class="box">
                             <div class="box-header with-border">
                                 <h4 class="box-title">Mining overview</h4>
@@ -60,6 +104,46 @@
                         </div>
                     </div>
 
+                    <div class="col-lg-4 col-12">
+                        <div class="row">
+						<div class="col-md-6 col-12">
+							<div class="box">
+								<div class="box-body text-center">
+									<p class="text-primary">BTC BALANCE</p>
+									<h3>{{ crypto_balance_BTC }} <small>BTC</small></h3>
+									<div class="d-flex justify-content-center">
+										<button type="button" class="btn btn-xs btn-dark me-10">SEND</button>
+										<button type="button" class="btn btn-xs btn-danger">RECEIVE</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-12">
+							<div class="box">
+								<div class="box-body text-center">
+									<p class="text-primary">USD BALANCE</p>
+									<h3>{{ crypto_balance_USD }} <small>USD</small></h3>
+									<div class="d-flex justify-content-center">
+										<button type="button" class="btn btn-xs btn-primary me-10">DEPOSIT</button>
+										<button type="button" class="btn btn-xs btn-success">WITHDRAW</button>
+									</div>
+								</div>
+							</div>
+						</div>
+                            <div class="box">
+					  <div class="box-body">
+						  <ul id="webticker-2" class="text-center">
+                              {% for crypto_row in crypto_prices_list %}
+							<li class="py-5"><i class="cc {{ crypto_row['symbol'] }} d-block mx-auto mb-10"></i> <p class="mb-0">{{ crypto_row['symbol'] }}</p>
+                                <span class="d-block text-{% if crypto_row['change_24h']<0 %}danger{% else %}success{% endif %}"> {{ crypto_row['change_24h'] }}% <i class="fa fa-arrow-{% if crypto_row['change_24h']<0 %}down{% else %}up{% endif %}"></i></span>
+                            </li>
+						    {% endfor %}
+                          </ul>
+					  </div>
+					</div>
+					</div>
+                    </div>
+
                 </div>
             </section>
             <!-- /.content -->
@@ -76,6 +160,17 @@
 
 
 {% include('includes/javascript_include_dashboard.html') %}
+
+<script>
+    if ($('#webticker-2').length) {
+			$("#webticker-2").webTicker({
+				height:'auto',
+				duplicate:true,
+				startEmpty:false,
+				rssfrequency:5
+			});
+		}
+</script>
 
 </body>
 </html>

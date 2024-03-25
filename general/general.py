@@ -5,7 +5,7 @@ from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections
-from utils import max_servers_rented, max_servers_bought, MAINTENANCE_MODE
+from utils import max_servers_rented, max_servers_bought, MAINTENANCE_MODE, symbol_to_name
 from models import MiningServer, User
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
@@ -55,8 +55,62 @@ def home():
     # Format total power with comma between thousands
     mining_overview['total_power'] = "{:,}".format(mining_overview['total_power'])
 
+    # ===== Crypto prices overview =====
+    # Get the price of all cryptos in the top_cryptos_symbols list
+    crypto_manager = CryptoDataManager()
+    crypto_prices = crypto_manager.get_crypto_market_info()
+    # create a list with all the values of the dict
+    crypto_prices_list = list(crypto_prices.values())
+
     # ===== Crypto wallet overview =====
     # Get the total amount of USD in the wallet (crypto and web3)
+    w_manager = wallet_manager()
+    balance = w_manager.get_user_balance(current_user)
+    crypto_balance_USD = balance['crypto_balance']  # in USD
+    web3_balance_USD = balance['web3_balance']  # in USD
+    total_balance_USD = crypto_balance_USD + web3_balance_USD  # in USD
+    # Convert all balances to BTC
+    crypto_balance_BTC = round(crypto_manager.get_crypto_from_USD('BTC-USD', crypto_balance_USD), 4)
+    web3_balance_BTC = round(crypto_manager.get_crypto_from_USD('BTC-USD', web3_balance_USD), 4)
+    total_balance_BTC = round(crypto_manager.get_crypto_from_USD('BTC-USD', total_balance_USD), 4)
+    # Format all balances with comma between thousands
+    crypto_balance_USD = "{:,}".format(crypto_balance_USD)
+    web3_balance_USD = "{:,}".format(web3_balance_USD)
+    total_balance_USD = "{:,}".format(total_balance_USD)
+    crypto_balance_BTC = "{:,}".format(crypto_balance_BTC)
+    web3_balance_BTC = "{:,}".format(web3_balance_BTC)
+    total_balance_BTC = "{:,}".format(total_balance_BTC)
+
+    # Get the 5 crypto with the highest value in the wallet
+    user_crypto = balance['crypto_balance_by_symbol']
+    # looks like this:
+    # user_crypto = {
+    # "BTC-USD": {quantity: 0, balance: 0},   # Quantity in BTC, Balance in USD
+    # "ETH-USD": {quantity: 0, balance: 0},   # Quantity in ETH, Balance in USD
+    #                     ...
+    # }
+    # Get the 5 crypto with the highest value in the wallet
+    top_cryptos = sorted(user_crypto.items(), key=lambda x: x[1]['balance'], reverse=True)[:5]
+    # For each, get the percentage of the total crypto balance (balance['crypto_balance'])
+    for crypto in top_cryptos.copy():
+        # if quantity inferior to 0.0001, write < 0.0001
+        if crypto[1]['balance'] == 0:
+            # delete the element from the list
+            top_cryptos.remove(crypto)
+            continue
+        elif crypto[1]['balance'] < 0.001:
+            crypto[1]['quantity'] = "< 0.001"
+        else:
+            crypto[1]['quantity'] = round(crypto[1]['quantity'], 2)
+            crypto[1]['quantity'] = "{:,}".format(crypto[1]['quantity'])
+
+        crypto[1]['percentage'] = max(round(crypto[1]['balance'] / balance['crypto_balance'] * 100, 2), 1)
+        crypto[1]['percentage_int'] = max(int(crypto[1]['balance'] / balance['crypto_balance'] * 100), 1)
+        crypto[1]['name'] = symbol_to_name[crypto[0]]
+        # Format the balance with comma between thousands
+        crypto[1]['balance'] = "{:,}".format(crypto[1]['balance'])
+
+    print(top_cryptos)
 
     # ===== NFT overview =====
     # Number of NFTs owned, number of bids
@@ -64,7 +118,12 @@ def home():
     # ===== Classement =====
     # Get the ranking of the user in the platform
 
-    return render_template('general/index.html', user=current_user, mining_overview=mining_overview)
+    return render_template('general/index.html', user=current_user,
+                           mining_overview=mining_overview, crypto_prices_list=crypto_prices_list,
+                           crypto_balance_USD=crypto_balance_USD, web3_balance_USD=web3_balance_USD,
+                           total_balance_USD=total_balance_USD, crypto_balance_BTC=crypto_balance_BTC,
+                           web3_balance_BTC=web3_balance_BTC, total_balance_BTC=total_balance_BTC,
+                           top_cryptos=top_cryptos)
 
 
 @BLP_general.route('/profile', methods=['GET', 'POST'])

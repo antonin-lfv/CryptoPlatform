@@ -87,7 +87,7 @@
                                 <div class="box-body">
 
                                     <div class="clearfix" style="display: flex;">
-                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#buy_NFT">Buy now</button>
+                                        <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#buy_NFT" onclick="display_ETH_of_user()">Buy now</button>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,8 @@
                                         </div>
 
                                         <div class="clearfix" style="display: flex;" id="button_place_bid">
-                                            <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#place_bid_modal" id="place_bid">Place a bid</button>
+                                            <button type="button" style="width: 100%; box-sizing: border-box; margin-top: 10px;" class="waves-effect waves-light btn btn-primary mb-5" data-bs-toggle="modal"
+                                            data-bs-target="#place_bid_modal" id="place_bid" onclick="display_ETH_of_user()">Place a bid</button>
                                         </div>
 
                                     </div>
@@ -148,7 +149,9 @@
             </div>
             <div class="modal-body">
                 <h5>You are going to pay {{ nft_data['price'] }} ETH </h5>
-                <h6>You have {{ eth_amount['tokens'] }} ETH in your wallet</h6>
+                <br>
+                <h5>You have <a id="number_ETH_user_buy"></a> ETH in your wallet</h5>
+                <br>
                 <p>You will immediately receive your NFT after the sale.</p>
 
             </div>
@@ -175,6 +178,9 @@
             </div>
             <div class="modal-body">
                 <h5>You are going to place a bid in ETH. </h5>
+                <br>
+                <h5>You have <a id="number_ETH_user_bid"></a> ETH in your wallet</h5>
+                <br>
                 <input type="text" id="bid_amount" value="0" class=" form-control" data-bts-button-down-class="btn btn-secondary" data-bts-button-up-class="btn btn-secondary">
             </div>
             <div class="modal-footer">
@@ -526,6 +532,25 @@ function update_price() {
     });
 }
 
+
+function display_ETH_of_user(){
+    $.ajax({
+        url: '/api/get_user_balance',
+        method: 'GET',
+        success: function(response) {
+            var eth_balance = response['crypto_balance_by_symbol']['ETH-USD']['quantity'];
+            // keep 2 decimal places
+            eth_balance = parseFloat(eth_balance).toFixed(4);
+            $('#number_ETH_user_bid').text(eth_balance);
+            $('#number_ETH_user_buy').text(eth_balance);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+
 $(document).ready(function() {
     // Get the owned status of the NFT
     owned_status({{ nft_data['id'] }});
@@ -539,6 +564,7 @@ $(document).ready(function() {
     increment_views({{ nft_data['id'] }});
     // Show the collection preview
     show_collection_preview();
+
 });
 
 </script>
