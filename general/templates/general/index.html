@@ -41,7 +41,8 @@
 										<tr>
 											<td>
 												<div class="d-flex align-items-center">
-													<i class="cc {{ row[0].split('-')[0] }}"></i>
+													<a href="{{ url_for('BLP_general.one_crypto_dashboard', symbol=row[0]) }}">
+                                                        <i class="cc {{ row[0].split('-')[0] }}"></i></a>
 													<span>{{ row[1]['name'] }}</span>
 												</div>
 											</td>

@@ -208,6 +208,9 @@ def crypto_dashboard():
 @BLP_general.route('/one_crypto_dashboard/<symbol>', methods=['GET', 'POST'])
 @login_required
 def one_crypto_dashboard(symbol):
+    # Check if the symbol exists
+    if symbol not in top_cryptos_symbols:
+        abort(404)
     return render_template('general/one_crypto_dashboard.html', user=current_user, symbol=symbol)
 
 
