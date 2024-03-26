@@ -7,7 +7,6 @@ from app import db
 from functools import lru_cache
 from collections import defaultdict
 from utils import top_cryptos_symbols, max_servers
-from tqdm import tqdm
 
 
 class Mining_server_manager:
