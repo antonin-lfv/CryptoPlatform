@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from models import User, GameWallet, CryptoWalletDailySnapshot
 from notification_manager import Notification_manager
 from app import db
@@ -15,6 +15,9 @@ BLP_auth = Blueprint('BLP_auth', __name__,
 @BLP_auth.route('/')
 @BLP_auth.route('/login', methods=["GET", "POST"])
 def login():
+    # Check if the user is already logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('BLP_general.home'))
     if request.method == "POST":
         if (email := request.form.get("login_email")) and (password := request.form.get("login_password")):
             user = User.query.filter_by(email=email).first()

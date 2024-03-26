@@ -59,7 +59,7 @@
                                         <tr>
                                             <th>Period</th>
                                             <th>Issued to</th>
-                                            <th>Issue date</th>
+                                            <th>Purchase date</th>
                                             <th>Type</th>
                                             <th>Server name</th>
                                             <th>Amount paid</th>
@@ -79,18 +79,7 @@
                             <div class="box-body">
                                 <div class="flexbox">
                                     <h5>Invoice</h5>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i
-                                                class="ion-android-more-vertical rotate-90"></i></span>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#"><i class="ion-android-list"></i>
-                                                Details</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add
-                                                new</a>
-                                            <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i>
-                                                Refresh</a>
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <div class="text-center my-2">
@@ -120,7 +109,7 @@
 <script>
     // Get invoices from server at the loading of the page
     // Api call : '/api/get_user_mining_servers_invoices/<server_name>'
-    // response : list of dict with keys : period, issuer, due_date, amount, type_payment, server_name, number_of_instances
+    // response : list of dict with keys : period, issuer, purchase_date, amount, type_payment, server_name, number_of_instances
     function get_invoices() {
         $.ajax({
             url: '/api/get_user_mining_servers_invoices/{{ server_name }}',
@@ -158,7 +147,7 @@
                     var invoice = data[i];
                     var period = invoice['period'];
                     var issuer = invoice['issuer'];
-                    var due_date = invoice['due_date'];
+                    var purchase_date = invoice['purchase_date'];
                     var amount = invoice['amount'];
                     var type_payment = invoice['type_payment'];
                     var server_name = invoice['server_name'];
@@ -167,7 +156,7 @@
                     var tr = $('<tr></tr>');
                     var td_period = $('<td></td>').text(period);
                     var td_issuer = $('<td></td>').html('<h6 class="mb-0"><a href="#">' + issuer + '</a></h6>');
-                    var td_due_date = $('<td></td>').text(due_date);
+                    var td_purchase_date = $('<td></td>').text(purchase_date);
                     if (type_payment === 'rent') {
                         var td_type_payment = $('<td></td>').html('<span class="badge badge-pill badge-info"> Rent </span>');
                     } else {
@@ -179,7 +168,7 @@
 
                     tr.append(td_period);
                     tr.append(td_issuer);
-                    tr.append(td_due_date);
+                    tr.append(td_purchase_date);
                     tr.append(td_type_payment);
                     tr.append(td_server_name);
                     tr.append(td_amount);

@@ -45,7 +45,12 @@ top_cryptos_names = [
 mini_wallet = 1000
 bank_wallet = 10000
 
-NFT_collections = ['Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Cats', 'Penguins', 'Cubes']
+NFT_collections = [
+    'Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Futuristic-city',
+    'Cats', 'Penguins', 'Cubes', 'Cyber-animals', 'Astronauts',
+    'Fantastic-animals', 'Garden', 'Haunted-house', 'Historic-buildings',
+    'Art', 'Nuketown', 'Space'
+    ]
 min_prix_NFT = 0.5
 max_prix_NFT = 100
 core_url_NFT = '/images/nft-item/'
@@ -63,8 +68,7 @@ symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))
 name_to_symbol = dict(zip(top_cryptos_names, top_cryptos_symbols))
 
 # Max number of servers to be bought and rented
-max_servers_bought = 50
-max_servers_rented = 50
+max_servers = 50
 
 
 # ===== Functions

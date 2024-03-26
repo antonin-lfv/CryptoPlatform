@@ -97,6 +97,8 @@ class wallet_manager:
             if wallet.symbol == symbol:
                 user_balance["tokens"] += wallet.quantity
                 user_balance["USD"] += self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
+        user_balance["tokens"] = round(user_balance["tokens"], 2)
+        user_balance["tokens_format"] = "{:,}".format(user_balance["tokens"])
         return user_balance
 
     @staticmethod
@@ -535,6 +537,8 @@ class wallet_manager:
         # if yes, update the wallet and return success
         # if not, return an error
         user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        if not user_wallet:
+            return {'error': 'You do not have this crypto'}
         if user_wallet.quantity >= quantity:
             # use max to avoid negative quantity with approximations
             user_wallet.quantity = max(user_wallet.quantity - quantity, 0)
@@ -555,6 +559,18 @@ class wallet_manager:
         """
         # get the user wallet for the crypto and update the wallet
         user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+        # If wallet does not exist, create it
+        if not user_wallet:
+            wallet = CryptoWallet()
+            wallet.user_id = user.id
+            wallet.symbol = symbol
+            wallet.quantity = 0
+            db.session.add(wallet)
+            # Commit changes
+            db.session.commit()
+            # Get user wallet for symbol_to_buy
+            user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
+
         user_wallet.quantity += quantity
         db.session.commit()
 

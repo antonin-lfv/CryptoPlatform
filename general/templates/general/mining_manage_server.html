@@ -100,10 +100,6 @@
                                 <div class="row mb-30">
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0"><strong>Token:</strong> {{ server_data.symbol }}</h5>
-                                        <h5 class="p-15 mb-0"><strong>Rent
-                                            price:</strong> {{ server_data.rent_amount_per_week }} {{ server_data.symbol }}/week <small
-                                                class="fs-12 mb-0 text-uppercase text-mute"> (${{ server_data.rent_amount_per_week_USD }})</small>
-                                        </h5>
                                         <h5 class="p-15 mb-0"><strong>Server
                                             power:</strong> {{ server_data.power }} {{ server_data.symbol }}/day <small
                                                 class="fs-12 mb-0 text-uppercase text-mute"> (${{ server_data.power_USD }})</small>
@@ -117,12 +113,6 @@
                                                 class="fs-12 mb-0 text-uppercase text-mute"> (${{ server_data.buy_amount_USD }})</small>
                                         </h5>
                                     </div>
-                                    <div class="col-12 col-lg-12">
-                                        <h5 class="p-15 mb-0"><strong>Maintenance (only if
-                                            rent):</strong> {{ server_data.maintenance_cost_per_week }} {{ server_data.symbol }}/week <small
-                                                class="fs-12 mb-0 text-uppercase text-mute"> (${{ server_data.maintenance_cost_per_week_USD }})</small>
-                                        </h5>
-                                    </div>
                                 </div>
                             </div>
                             <div class="box-header">
@@ -130,21 +120,6 @@
                             </div>
                             <div class="box-body">
                                 <div class="row">
-                                    <div class="col-12 col-lg-6">
-                                        <h5 class="p-15 mb-0"><strong>Server rented:</strong><a id="server_rented"></a>&nbsp;&nbsp;<span
-                                                class="badge badge-lg badge-danger" onclick="" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#rent_server"
-                                        ><i
-                                                class="fa fa-plus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
-                                                class="badge badge-lg badge-info" onclick="" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#unrent_server"
-                                        ><i
-                                                class="fa fa-minus faa-horizontal animated"></i></span></h5>
-                                        <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
-                                            spent to rent:</strong><a id="token_spent_to_rent"></a></h5>
-                                        <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
-                                            spent to buy:</strong><a id="token_spent_to_buy"></a></h5>
-                                    </div>
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0"><strong>Server bought:</strong><a id="server_bought"></a>&nbsp;&nbsp;<span
                                                 class="badge badge-lg badge-danger" onclick="" href="#"
@@ -155,8 +130,10 @@
                                                 data-bs-toggle="modal" data-bs-target="#sell_server"
                                         ><i
                                                 class="fa fa-minus faa-horizontal animated"></i></span></h5>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
-                                            spent for maintenance:</strong><a id="maintenance_cost"></a></h5>
+                                            spent per day:</strong><a id="token_spent_to_buy"></a></h5>
                                     </div>
                                 </div>
                             </div>
@@ -171,64 +148,6 @@
     <!-- /.content-wrapper -->
 
     <!-- Modals -->
-    <div id="rent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Rent {{ server_data.name }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the rent.</p>
-                    <div class="form-group">
-                        <label class="form-label">Choose the number of server to rent </label>
-                        <input id="range_int_selector_rent" type="text" value="1" name="range_int_selector_rent"
-                               data-bts-button-down-class="btn btn-secondary"
-                               data-bts-button-up-class="btn btn-secondary" onchange="update_amount_rent_modal()">
-                    </div>
-                    <p>You have <a id="rent_crypto_amount"></a> {{ server_data.symbol }} in your wallet</p>
-                    <p>You will pay <a id="amount_rent_modal"></a> {{ server_data.symbol }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                            id="validate_rent_server">Validate
-                    </button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <div id="unrent_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Stop {{ server_data.name }} rental</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>You will immediately receive your {{ server_data.symbol }} tokens after the unrent.</p>
-                    <div class="form-group">
-                        <label class="form-label">Choose the number of server to unrent </label>
-                        <input id="range_int_selector_unrent" type="text" value="1" name="range_int_selector_unrent"
-                               data-bts-button-down-class="btn btn-secondary"
-                               data-bts-button-up-class="btn btn-secondary">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                            id="validate_unrent_server">Validate
-                    </button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
     <div id="buy_server" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
@@ -307,17 +226,12 @@
             url: `/api/get_user_mining_server_details/${serverId}/${userId}`, // URL de votre endpoint API
             method: 'GET',
             success: function (serverDetails) {
-                $('#server_rented').html(` ${serverDetails.number_of_servers_rented}`);
-                $('#server_bought').html(` ${serverDetails.number_of_servers_bought}`);
-                $('#total_server_number').html(` ${serverDetails.number_of_servers_rented +
-                serverDetails.number_of_servers_bought} running server(s)`);
+                $('#server_bought').html(` ${serverDetails.number_of_servers}`);
+                $('#total_server_number').html(` ${serverDetails.number_of_servers} running server(s)`);
                 $('#token_spent_to_buy').html(` ${serverDetails.total_buy_amount} ${serverDetails.symbol} <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_buy_amount_USD})</small>`);
-                $('#token_spent_to_rent').html(` ${serverDetails.total_rent_amount_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_rent_amount_per_week_USD})</small>`);
-                $('#maintenance_cost').html(` ${serverDetails.total_maintenance_cost_per_week} ${serverDetails.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute"> ($${serverDetails.total_maintenance_cost_per_week_USD})</small>`);
 
-                $('#total_power').html(` ${((serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power).toFixed(1)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${((serverDetails.number_of_servers_rented +
-                    serverDetails.number_of_servers_bought) * serverDetails.power_USD).toFixed(1)})</small>`);
+                $('#total_power').html(` ${(serverDetails.number_of_servers * serverDetails.power).toFixed(1)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${(
+                    serverDetails.number_of_servers * serverDetails.power_USD).toFixed(1)})</small>`);
 
 
             },
@@ -332,10 +246,6 @@
     // Api call : /api/buy_mining_server/<server_id>/<user_id>/<number_of_servers_to_buy>'
     // 2. function to sell a server
     // Api call : /api/sell_mining_server/<server_id>/<user_id>/<number_of_servers_to_sell>'
-    // 3. function to rent a server
-    // Api call : /api/rent_mining_server/<server_id>/<user_id>/<number_of_servers_to_rent>'
-    // 4. function to unrent a server
-    // Api call : /api/stop_renting_mining_server/<server_id>/<user_id>/<number_of_servers_to_unrent>'
 
     function manageServerModalValidation(serverId, userId, number_of_servers, action) {
         // Make sure that the number of servers is an integer superior to 0 strictly (convert it to int)
@@ -348,8 +258,8 @@
                 url: `/api/${action}_mining_server/${serverId}/${userId}/${number_of_servers}`,
                 method: 'GET',
                 success: function (serverDetails) {
-                    success_call = serverDetails.success;
-                    message_call = serverDetails.message;
+                    var success_call = serverDetails.success;
+                    var message_call = serverDetails.message;
                     if (success_call) {
                         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
                         toggle_icon_notifications();
@@ -372,17 +282,10 @@
     $('#validate_sell_server').click(function () {
         manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_sell').val(), 'sell');
     });
-    $('#validate_rent_server').click(function () {
-        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_rent').val(), 'rent');
-    });
-    $('#validate_unrent_server').click(function () {
-        manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_unrent').val(), 'stop_renting');
-    });
 
     $(document).ready(function () {
         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
         update_amount_pay_modal();
-        update_amount_rent_modal();
     });
 
     function get_user_balance(symbol) {
@@ -408,7 +311,6 @@
 function update_user_balance_display(symbol) {
     get_user_balance(symbol).then(balance => {
         $('#buy_crypto_amount').text(balance);
-        $('#rent_crypto_amount').text(balance);
     }).catch(error => console.error('Failed to fetch user balance:', error));
 }
 
@@ -428,28 +330,6 @@ function update_amount_pay_modal() {
             $('#amount_pay_modal').css('color', 'green');
         } else {
             $('#amount_pay_modal').css('color', 'red');
-        }
-    }).catch(error => console.error('Error:', error));
-}
-
-function update_amount_rent_modal() {
-    var rentAmountPerWeek = Number('{{ server_data.rent_amount_per_week }}');
-    var maintenanceCostPerWeek = Number('{{ server_data.maintenance_cost_per_week }}');
-    var numServersToRent = Number($('#range_int_selector_rent').val());
-    var symbol = '{{ server_data.symbol }}';
-
-    var totalCostToRent = (numServersToRent * rentAmountPerWeek) + (numServersToRent * maintenanceCostPerWeek);
-
-    $('#amount_rent_modal').text(totalCostToRent);
-
-    get_user_balance(symbol).then(userBalance => {
-        var balanceNumeric = Number(userBalance);
-        $('#rent_crypto_amount').text(balanceNumeric); // Met à jour le solde de l'utilisateur
-
-        if (totalCostToRent <= balanceNumeric) {
-            $('#amount_rent_modal').css('color', 'green');
-        } else {
-            $('#amount_rent_modal').css('color', 'red');
         }
     }).catch(error => console.error('Error:', error));
 }

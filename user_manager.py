@@ -1,9 +1,9 @@
-from models import User
 from app import db
 from wallet_manager import wallet_manager
 from crypto_manager import CryptoDataManager
 from nft_manager import NFT_manager
 from mining_server_manager import Mining_server_manager
+from models import User
 
 
 class UserManager:
@@ -65,9 +65,8 @@ class UserManager:
             user_dict['number_of_NFTs'] = nft_manager.get_number_of_NFTs_user(user.id)
             # Get the number of servers bought and rented
             mining_server_manager = Mining_server_manager()
-            total_servers_bought = mining_server_manager.get_total_servers_bought(user.id)
-            total_servers_rented = mining_server_manager.get_total_servers_rented(user.id)
-            user_dict['total_servers'] = total_servers_bought + total_servers_rented
+            total_servers = mining_server_manager.get_total_servers(user.id)
+            user_dict['total_servers'] = total_servers
 
             data.append(user_dict)
 

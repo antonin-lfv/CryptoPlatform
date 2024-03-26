@@ -132,18 +132,13 @@
                                             <h3 class="no-margin text-bold">${server.name}</h3>
                                         </a>
                                         Power: <span class="text-success">${server.power}</span> ${server.symbol}/day <small class="fs-11 mb-0 text-uppercase text-mute">($${server.power_USD})</small><br>
-                                        Rent price: <span class="text-warning">${server.rent_amount_per_week} + ${server.maintenance_cost_per_week}</span> ${server.symbol}/week <small class="fs-11 mb-0 text-uppercase text-mute">($${server.rent_amount_per_week_USD} + ${server.maintenance_cost_per_week_USD})</small><br>
                                         Buy price: <span class="text-danger">${server.buy_amount}</span> ${server.symbol} <small class="fs-11 mb-0 text-uppercase text-mute">($${server.buy_amount_USD})</small><br>
                                     </div>
                                 </div>
                                 <div>
 									<div>
-									  <p class="no-margin fw-600"><span class="text-info">${server.number_of_servers_rented}</span> / {{ max_servers_rented }}</p>
-                                      <p class="no-margin">Rented</p>
-									</div>
-									<div class="mt-10">
-									  <p class="no-margin fw-600"><span class="text-info">${server.number_of_servers_bought}</span> / {{ max_servers_bought }}</p>
-									  <p class="no-margin">Bought</p>
+									  <p class="no-margin fw-600"><span class="text-info">${server.number_of_servers}</span> / {{ max_servers }}</p>
+                                      <p class="no-margin">Bought</p>
 									</div>
 								</div>
                             </div>

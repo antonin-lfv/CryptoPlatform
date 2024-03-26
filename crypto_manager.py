@@ -50,21 +50,6 @@ class CryptoDataManager:
                         db.session.commit()
                         # print(f"Les données pour {symbol} ont été mises à jour.")
 
-                        # Update the price of all NFTS by applying the same pourcentage change than ETH between
-                        # the last two days
-                        # Get the price of ETH for the last two days
-                        eth_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).limit(2).all()
-                        # Get the pourcentage change
-                        eth_price_change = (eth_data[1].price - eth_data[0].price) / eth_data[0].price
-                        print(f"ETH price change: {eth_price_change}")
-                        # Get all NFTs
-                        nfts = NFT.query.all()
-                        for nft in nfts:
-                            print(f"Updating price for NFT {nft.id} with price {nft.price} ETH.")
-                            nft.price = nft.price * (1 + eth_price_change)
-                            print(f"New price for NFT {nft.id} is {nft.price} ETH.")
-                        db.session.commit()
-
                     except KeyError as e:
                         print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
                         # Try again with the same symbol and then move on to the next one
@@ -72,6 +57,28 @@ class CryptoDataManager:
 
                     except Exception as e:
                         print(f"Une erreur inattendue est survenue: {e}.")
+
+                # Update the price of all NFTS by applying the same pourcentage change than ETH between
+                # the last two days
+                # Get the price of ETH for the last two days
+                eth_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).limit(
+                    2).all()
+                # Get the pourcentage change
+                eth_price_change = (eth_data[1].price - eth_data[0].price) / eth_data[0].price
+                # print(f"ETH price change: {eth_price_change}")
+                # Get all NFTs
+                nfts = NFT.query.all()
+                for nft in nfts:
+                    # New price of the NFT
+                    new_nft_price = round(nft.price * (1 + eth_price_change), 3)
+                    # Get the price change of the NFT (in ETH)
+                    nft_price_change = new_nft_price - nft.price
+                    # Update the price of the NFT
+                    nft.price = new_nft_price
+                    # Update the ETH change of the NFT price
+                    nft.price_change_24h = round(nft_price_change, 2)
+
+                db.session.commit()
 
             else:
                 latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()

@@ -7,10 +7,6 @@ import os
 from utils import NFT_collections, min_prix_NFT, max_prix_NFT, core_url_NFT
 import random
 import json
-from utils import mini_wallet, bank_wallet
-from werkzeug.security import generate_password_hash
-from notification_manager import Notification_manager
-from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -73,46 +69,19 @@ def create_app():
                     mining_server = MiningServer(
                         name=mining_server['Name'],
                         symbol=mining_server['Symbol'],
-                        rent_amount_per_week=mining_server['RentAmountPerWeek'],
+                        rent_amount_per_day=mining_server['RentAmountPerDay'],
                         buy_amount=mining_server['BuyAmount'],
                         power=mining_server['Power'],
-                        maintenance_cost_per_week=mining_server['MaintenanceCostPerWeek'],
+                        maintenance_cost_per_day=mining_server['MaintenanceCostPerDay'],
                         logo_path=mining_server['Logo'],
                         category=mining_server['Category']
                     )
                     db.session.add(mining_server)
                 db.session.commit()
 
-            # Init the first user (admin)
-            from models import User, GameWallet, CryptoWalletDailySnapshot
-            email = os.getenv('ADMIN_EMAIL')
-            username = os.getenv('ADMIN_USERNAME')
-            password = os.getenv('ADMIN_PASSWORD')
-            assert email is not None, "ADMIN_EMAIL is not set"
-            assert username is not None, "ADMIN_USERNAME is not set"
-            assert password is not None, "ADMIN_PASSWORD is not set"
-            new_user = User()
-            new_user.email = email
-            new_user.username = username
-            new_user.password = generate_password_hash(password, method='scrypt')
-            db.session.add(new_user)
-            # init game wallet
-            game_wallet = GameWallet()
-            game_wallet.user_id = User.query.filter_by(email=email).first().id
-            game_wallet.mini_wallet = mini_wallet
-            game_wallet.bank_wallet = bank_wallet
-            db.session.add(game_wallet)
-            # Create the first wallet daily snapshot
-            wallet_daily_snapshot = CryptoWalletDailySnapshot()
-            wallet_daily_snapshot.user_id = User.query.filter_by(email=email).first().id
-            wallet_daily_snapshot.date = datetime.utcnow()
-            wallet_daily_snapshot.quantity = 0
-            db.session.add(wallet_daily_snapshot)
-            # Add a notification to welcome the user
-            Notification_manager().add_notification(user_id=User.query.filter_by(email=email).first().id,
-                                                    message=f"Welcome to CryptoSim {username}!",
-                                                    icon="user")
-            db.session.commit()
+            # ===== Init the first user (admin)
+            from init_fonctions import init_admin
+            init_admin()
 
     from models import User
 

@@ -95,21 +95,6 @@ class CryptoWalletEvolution(db.Model):
         return f'<WalletEvolution {self.wallet_id} {self.date} {self.quantity}>'
 
 
-class NFT(db.Model):
-    """
-    Table to record the NFTs available in the game
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)  # Name of the NFT
-    collection = db.Column(db.String(100), nullable=False)  # Collection of the NFT
-    price = db.Column(db.Float, nullable=False)  # Price of the NFT at this moment in ETH
-    image_path = db.Column(db.String(1000), nullable=False)  # Path to the image of the NFT
-    is_for_sale = db.Column(db.Boolean, default=True)  # Is the NFT for sale?
-    views_number = db.Column(db.Integer, default=0)  # Number of views of the NFT
-    # owner id is optional because the NFT can be for sale without having an owner
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
-
-
 class Notification(db.Model):
     """
     Table to record the notifications of the users
@@ -135,18 +120,93 @@ class Notification(db.Model):
 
 
 class MiningServer(db.Model):
+    """
+    Table to record the mining servers available in the game and their characteristics
+    This table is used to display the servers in the shop and to allow users to buy or rent them
+    It's a static table, just to store the characteristics of the servers
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     symbol = db.Column(db.String(10), nullable=False)
-    rent_amount_per_week = db.Column(db.Float, nullable=False)
+    rent_amount_per_day = db.Column(db.Float, nullable=False)
     buy_amount = db.Column(db.Float, nullable=False)
     power = db.Column(db.Float, nullable=False)
-    maintenance_cost_per_week = db.Column(db.Float, nullable=False)
+    maintenance_cost_per_day = db.Column(db.Float, nullable=False)
     logo_path = db.Column(db.String(1000), nullable=False)
     category = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return f'<Server {self.name}>'
+
+
+class UserServer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
+    # Next payment date (for rent, else None)
+    next_payment_date = db.Column(db.Date, nullable=True)
+    # Last earning date (None if no earning yet)
+    next_earning_date = db.Column(db.Date, nullable=True)
+    # Number of instances of the server
+    instances_number = db.Column(db.Integer, nullable=False, default=0)
+
+    user = db.relationship('User', backref=db.backref('user_servers', lazy=True))
+    server = db.relationship('MiningServer', backref=db.backref('server_users', lazy=True))
+
+    def __repr__(self):
+        return f'<UserServer {self.user_id} owns/rents {self.server_id}>'
+
+
+class ServerInvoices(db.Model):
+    """
+    Class to generate invoices for the servers
+
+    Attributes
+    - Period: Month and year of the invoice
+    - Issuer: Name of the issuer of the invoice (username)
+    - Due date: Date of payment of the invoice
+    - Amount: Amount to pay
+    - type_payment: 'rent' or 'buy'
+    - server_id: id of the server type in MiningServer
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    period = db.Column(db.String(10), nullable=False)
+    issuer = db.Column(db.String(100), nullable=False)
+    purchase_date = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    type_payment = db.Column(db.String(10), nullable=False)
+    server_id = db.Column(db.Integer, nullable=True)
+    instances_number = db.Column(db.Integer, nullable=True)
+
+
+class NFT(db.Model):
+    """
+    Table to record the NFTs available in the game
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)  # Name of the NFT
+    collection = db.Column(db.String(100), nullable=False)  # Collection of the NFT
+    price = db.Column(db.Float, nullable=False)  # Price of the NFT at this moment in ETH
+    image_path = db.Column(db.String(1000), nullable=False)  # Path to the image of the NFT
+    is_for_sale = db.Column(db.Boolean, default=True)  # Is the NFT for sale?
+    views_number = db.Column(db.Integer, default=0)  # Number of views of the NFT
+    price_change_24h = db.Column(db.Float, default=0)  # Pourcentage change of the price in the last 24h
+    # owner id is optional because the NFT can be for sale without having an owner
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'collection': self.collection,
+            'price': self.price,
+            'image_path': self.image_path,
+            'is_for_sale': self.is_for_sale,
+            'views_number': self.views_number,
+            'price_change_24h': self.price_change_24h,
+            'owner_id': self.owner_id
+        }
 
 
 class UserLikedNFT(db.Model):
@@ -175,48 +235,6 @@ class UserNFT(db.Model):
 
     def __repr__(self):
         return f'<UserNFT {self.user_id} owns {self.nft_id}>'
-
-
-class UserServer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
-    # Starting date of the rent (None if buy)
-    rent_start_date = db.Column(db.Date, nullable=True)
-    # Ending date of the rent (None if buy)
-    purchase_date = db.Column(db.Date, nullable=True)
-    # Last payment date (for rent, else None)
-    last_payment_date = db.Column(db.Date, nullable=True)
-    # Last earning date (None if no earning yet)
-    last_earning_date = db.Column(db.Date, nullable=True)
-
-    user = db.relationship('User', backref=db.backref('user_servers', lazy=True))
-    server = db.relationship('MiningServer', backref=db.backref('server_users', lazy=True))
-
-    def __repr__(self):
-        return f'<UserServer {self.user_id} owns/rents {self.server_id}>'
-
-
-class ServerInvoices(db.Model):
-    """
-    Class to generate invoices for the servers
-
-    Attributes
-    - Period: Month and year of the invoice
-    - Issuer: Name of the issuer of the invoice (username)
-    - Due date: Date of payment of the invoice
-    - Amount: Amount to pay
-    - type_payment: 'rent' or 'buy'
-    - server_id: id of the server type in MiningServer
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    period = db.Column(db.String(10), nullable=False)
-    issuer = db.Column(db.String(100), nullable=False)
-    due_date = db.Column(db.String(50), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    type_payment = db.Column(db.String(10), nullable=False)
-    server_id = db.Column(db.Integer, nullable=True)
 
 
 class NFTBid(db.Model):

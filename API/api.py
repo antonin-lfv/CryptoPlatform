@@ -202,6 +202,17 @@ def get_bids_NFTs():
     return jsonify(bids_NFTs)
 
 
+@BLP_api.route('/api/get_NFTs_in_my_budget', methods=['GET', 'POST'])
+@login_required
+def get_NFTs_in_my_budget():
+    """
+    Get all NFTs in the budget of the user
+    """
+    NFTs = NFT_manager().get_NFTs_in_my_budget(current_user.id)
+    print(NFTs)
+    return jsonify(NFTs)
+
+
 @BLP_api.route('/api/get_user_NFTs/<user_id>', methods=['GET', 'POST'])
 @login_required
 def get_user_NFTs(user_id):
@@ -342,8 +353,8 @@ def get_user_mining_server_details(server_id, user_id):
     - number_of_servers_bought
     - number_of_servers_rented
     - total_buy_amount
-    - total_rent_amount_per_week
-    - total_maintenance_cost_per_week (bought servers only)
+    - total_rent_amount_per_day
+    - total_maintenance_cost_per_day (bought servers only)
     """
     server_details = Mining_server_manager().get_user_mining_server_details(server_id, user_id)
     return jsonify(server_details)
@@ -362,19 +373,6 @@ def buy_mining_server(server_id, user_id, number_of_servers_to_buy):
     return jsonify(response)
 
 
-@BLP_api.route('/api/rent_mining_server/<server_id>/<user_id>/<number_of_servers_to_rent>', methods=['GET', 'POST'])
-@login_required
-def rent_mining_server(server_id, user_id, number_of_servers_to_rent):
-    """
-    Rent a mining server
-    """
-    response = Mining_server_manager().rent_server(server_id, user_id, number_of_servers_to_rent)
-    # Payment process for servers
-    mining_server_manager = Mining_server_manager()
-    mining_server_manager.check_for_server_payment(current_user.id)
-    return jsonify(response)
-
-
 @BLP_api.route('/api/sell_mining_server/<server_id>/<user_id>/<number_of_servers_to_sell>', methods=['GET', 'POST'])
 @login_required
 def sell_mining_server(server_id, user_id, number_of_servers_to_sell):
@@ -382,17 +380,6 @@ def sell_mining_server(server_id, user_id, number_of_servers_to_sell):
     Sell a mining server
     """
     response = Mining_server_manager().sell_server(server_id, user_id, number_of_servers_to_sell)
-    return jsonify(response)
-
-
-@BLP_api.route('/api/stop_renting_mining_server/<server_id>/<user_id>/<number_of_servers_to_stop_renting>',
-               methods=['GET', 'POST'])
-@login_required
-def stop_renting_mining_server(server_id, user_id, number_of_servers_to_stop_renting):
-    """
-    Stop renting a mining server
-    """
-    response = Mining_server_manager().stop_renting_server(server_id, user_id, number_of_servers_to_stop_renting)
     return jsonify(response)
 
 
@@ -417,6 +404,16 @@ def get_user_balance():
     Get user balance. (crypto + web3)
     """
     user_balance = wallet_manager().get_user_balance(current_user)
+    return jsonify(user_balance)
+
+
+@BLP_api.route('/api/get_user_specific_balance/<symbol>', methods=['GET', 'POST'])
+@login_required
+def get_user_specific_balance(symbol):
+    """
+    Get user balance for a specific crypto
+    """
+    user_balance = wallet_manager().get_user_specific_balance(current_user, symbol)
     return jsonify(user_balance)
 
 

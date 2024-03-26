@@ -6,7 +6,7 @@ from notification_manager import Notification_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
-from utils import max_servers_rented, max_servers_bought, MAINTENANCE_MODE, symbol_to_name
+from utils import max_servers, MAINTENANCE_MODE, symbol_to_name
 from models import MiningServer, User
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
@@ -17,21 +17,25 @@ BLP_general = Blueprint('BLP_general', __name__,
 
 
 @BLP_general.before_request
+@login_required
 def update_prices():
     # Update prices if needed
+    print("Updating prices")
     crypto_manager = CryptoDataManager()
     crypto_manager.update_crypto_data()
     # Update game wallet if needed
+    print("Updating game wallet")
     w_manager = wallet_manager()
     w_manager.update_game_wallet(current_user)
-    # Delete old notifications
+    # Delete old notifications if needed
+    print("Deleting old notifications")
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
-    # Update crypto wallet evolution
-    w_manager.update_crypto_wallet_evolution(current_user)
     # Start payment process for servers
+    print("Checking for server payment")
     mining_server_manager = Mining_server_manager()
     mining_server_manager.check_for_server_payment(current_user.id)
+    print("End of before_request")
 
 
 @BLP_general.before_request
@@ -49,9 +53,7 @@ def home():
     # Get the number of servers bought, rented and total and the total power
     mining_overview = {}
     mining_server_manager = Mining_server_manager()
-    mining_overview['total_servers_bought'] = mining_server_manager.get_total_servers_bought(current_user.id)
-    mining_overview['total_servers_rented'] = mining_server_manager.get_total_servers_rented(current_user.id)
-    mining_overview['total_servers'] = mining_overview['total_servers_bought'] + mining_overview['total_servers_rented']
+    mining_overview['total_servers'] = mining_server_manager.get_total_servers(current_user.id)
     mining_overview['total_power'] = round(mining_server_manager.get_total_power(current_user.id), 2)
     # Format total power with comma between thousands
     mining_overview['total_power'] = "{:,}".format(mining_overview['total_power'])
@@ -166,9 +168,8 @@ def leaderboard():
         user_dict['number_of_NFTs'] = nft_manager.get_number_of_NFTs_user(user.id)
         # Get the number of servers bought and rented
         mining_server_manager = Mining_server_manager()
-        total_servers_bought = mining_server_manager.get_total_servers_bought(user.id)
-        total_servers_rented = mining_server_manager.get_total_servers_rented(user.id)
-        user_dict['total_servers'] = total_servers_bought + total_servers_rented
+        total_servers = mining_server_manager.get_total_servers(user.id)
+        user_dict['total_servers'] = total_servers
 
         data.append(user_dict)
 
@@ -276,8 +277,7 @@ def mining_place():
     Grid with all types of mining servers
     """
     return render_template('general/mining_place.html', user=current_user,
-                           max_servers_bought=max_servers_bought,
-                           max_servers_rented=max_servers_rented)
+                           max_servers=max_servers)
 
 
 @BLP_general.route('/mining_manage_server/<server_name>', methods=['GET', 'POST'])
@@ -303,14 +303,14 @@ def mining_manage_server(server_name):
         'id': server.id,
         'name': server.name,
         'symbol': server.symbol,
-        'rent_amount_per_week': server.rent_amount_per_week,
-        'rent_amount_per_week_USD': round(cached_convert_fct(server.symbol, server.rent_amount_per_week), 3),
+        'rent_amount_per_day': server.rent_amount_per_day,
+        'rent_amount_per_day_USD': round(cached_convert_fct(server.symbol, server.rent_amount_per_day), 3),
         'buy_amount': server.buy_amount,
         'buy_amount_USD': round(cached_convert_fct(server.symbol, server.buy_amount), 3),
         'power': server.power,
         'power_USD': cached_convert_fct(server.symbol, server.power),
-        'maintenance_cost_per_week': server.maintenance_cost_per_week,
-        'maintenance_cost_per_week_USD': round(cached_convert_fct(server.symbol, server.maintenance_cost_per_week), 3),
+        'maintenance_cost_per_day': server.maintenance_cost_per_day,
+        'maintenance_cost_per_day_USD': round(cached_convert_fct(server.symbol, server.maintenance_cost_per_day), 3),
         'logo_path': server.logo_path,
         'category': server.category,
     }
