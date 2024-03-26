@@ -209,7 +209,6 @@ def get_NFTs_in_my_budget():
     Get all NFTs in the budget of the user
     """
     NFTs = NFT_manager().get_NFTs_in_my_budget(current_user.id)
-    print(NFTs)
     return jsonify(NFTs)
 
 

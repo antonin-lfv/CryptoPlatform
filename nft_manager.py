@@ -320,12 +320,43 @@ class NFT_manager:
         user = User.query.filter_by(id=user_id).first()
         # Get the amount of the user in ETH
         wallet = wallet_manager()
-        eth_amount = wallet.get_user_specific_balance(user, 'ETH-USD')['tokens']
-        # Get all the NFTs that are in the user's budget
-        nft_in_budget = NFT.query.filter(NFT.price <= eth_amount).all()
-        nft_in_budget = [n.to_dict() for n in nft_in_budget if n.owner_id != user_id]
+        budget = wallet.get_user_specific_balance(user, 'ETH-USD')['tokens']
 
-        return nft_in_budget
+        NFTs = NFT.query.filter(NFT.price <= budget).all()
+        # Trier par collection dans le même ordre que la liste NFT_collections
+        NFTs = sorted(NFTs, key=lambda x: NFT_collections.index(x.collection))
+
+        # Récupérez tous les NFTs aimés par l'utilisateur
+        nft_ids = UserLikedNFT.query.filter_by(user_id=user_id).all()
+
+        # Obtenez le nombre de likes pour chaque NFT
+        nft_likes = UserLikedNFT.query.all()
+        number_of_likes = {}
+        for nft_id in nft_likes:
+            if nft_id.nft_id in number_of_likes:
+                number_of_likes[nft_id.nft_id] += 1
+            else:
+                number_of_likes[nft_id.nft_id] = 1
+
+        # Créez un dict avec tous les NFTs
+        NFTs_list = []
+        for nft_item in NFTs:
+            NFTs_list.append({
+                'id': nft_item.id,
+                'name': nft_item.name,
+                'collection': nft_item.collection,
+                'price': nft_item.price,
+                'image_path': nft_item.image_path,
+                'is_for_sale': nft_item.is_for_sale,
+                'owner_id': nft_item.owner_id,
+                'owned': nft_item.owner_id == user_id,
+                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
+                'number_of_likes': number_of_likes.get(nft_item.id, 0),
+                'views_number': nft_item.views_number,
+                'price_change_24h': round(nft_item.price_change_24h, 2)
+            })
+
+        return NFTs_list
 
     @staticmethod
     def like_NFT(user_id, nft_id):

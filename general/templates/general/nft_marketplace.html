@@ -218,7 +218,8 @@ function active_liked() {
                             <h4 class="card-title
                             "><a href="${nft.details_path}">${nft.name}</a>&nbsp;${nft.owned ? '(Owned)' : ''}</h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
-                            <p class="card-subtitle">${nft.price} ETH</p>
+                            <p class="card-subtitle">${nft.price} ETH <small><span class="d-block text-${nft.price_change_24h<0 ? 'danger' : 'success'}"> ${nft.price_change_24h} ETH <i
+                                                    class="fa fa-arrow-${nft.price_change_24h<0 ? 'down' : 'up'}"></i></span></small></p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
@@ -277,7 +278,8 @@ function active_bids() {
                             <h4 class="card-title
                             "><a href="${nft.details_path}">${nft.name}</a></h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
-                            <p class="card-subtitle">${nft.price} ETH</p>
+                            <p class="card-subtitle">${nft.price} ETH <small><span class="d-block text-${nft.price_change_24h<0 ? 'danger' : 'success'}"> ${nft.price_change_24h} ETH <i
+                                                    class="fa fa-arrow-${nft.price_change_24h<0 ? 'down' : 'up'}"></i></span></small></p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
@@ -335,7 +337,8 @@ function active_owned() {
                             <h4 class="card-title
                             "><a href="${nft.details_path}">${nft.name}</a></h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
-                            <p class="card-subtitle">${nft.price} ETH</p>
+                            <p class="card-subtitle">${nft.price} ETH <small><span class="d-block text-${nft.price_change_24h<0 ? 'danger' : 'success'}"> ${nft.price_change_24h} ETH <i
+                                                    class="fa fa-arrow-${nft.price_change_24h<0 ? 'down' : 'up'}"></i></span></small></p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">
@@ -394,7 +397,8 @@ function active_in_my_budget(){
 
                             "><a href="${nft.details_path}">${nft.name}</a></h4>
                             <h6 class="card-text">${nft.collection} collection</h6>
-                            <p class="card-subtitle">${nft.price} ETH</p>
+                            <p class="card-subtitle">${nft.price} ETH <small><span class="d-block text-${nft.price_change_24h<0 ? 'danger' : 'success'}"> ${nft.price_change_24h} ETH <i
+                                                    class="fa fa-arrow-${nft.price_change_24h<0 ? 'down' : 'up'}"></i></span></small></p>
                         </div>
                         <div class="card-footer justify-content-between d-flex">
                             <ul class="list-inline mb-0 me-2">

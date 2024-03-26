@@ -57,7 +57,7 @@ class Mining_server_manager:
 
         print(f"[INFO]: Calculating payments and earnings for user {user_id} on {today_date.strftime('%Y-%m-%d')}")
 
-        for server_instance in tqdm(user_server_instances):
+        for server_instance in user_server_instances:
             # === Calculate total earnings
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
