@@ -358,6 +358,7 @@ class wallet_manager:
             for i in range((today - first_date).days + 1):
                 # get date
                 date = first_date + timedelta(days=i)
+                print(f"{date=}")
                 # check if date is in wallet daily snapshot
                 if date not in [snapshot["date"] for snapshot in wallet_daily_snapshot]:
                     # if not, add it with the value of the previous day
@@ -369,6 +370,8 @@ class wallet_manager:
         # Format date to look like this: "2021-10-01"
         for snapshot in wallet_daily_snapshot:
             snapshot["date"] = snapshot["date"].isoformat()
+
+        print(f"{wallet_daily_snapshot=}")
 
         return wallet_daily_snapshot
 

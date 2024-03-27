@@ -255,14 +255,19 @@
             var data1 = ['wallet value']; // Wallet value in USD
             var data2 = ['USD spent']; // USD spent to buy crypto
 
+            console.log(data1, data2, dates);
+
             data[0].forEach(function (item) {
                 dates.push(item.date);
                 data1.push(item.value);
             });
 
+
             data[1].forEach(function (item) {
                 data2.push(item.value);
             });
+
+            console.log(data1, data2, dates);
 
             // Créer le graphique avec les données transformées
             c3.generate({
@@ -295,7 +300,10 @@
                 },
                 tooltip: {
                 format: {
-                    title: function (d) { return d.toISOString().slice(0,10); }, // Formatte la date pour l'affichage
+                    title: function (d) {
+                        // garder uniquement la date (sans l'heure)
+                        return d.toDateString();
+                    },
                     value: function (value, ratio, id, index) {
                         // Vous pouvez personnaliser davantage l'affichage des valeurs ici si nécessaire
                         return "$" + value;

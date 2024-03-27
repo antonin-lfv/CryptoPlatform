@@ -28,6 +28,9 @@ class Mining_server_manager:
 
         # If the user has no servers, return
         if not UserServer.query.filter_by(user_id=user_id).first():
+            # Update wallet evolution
+            w_manager = wallet_manager()
+            w_manager.update_crypto_wallet_evolution(user)
             return
 
         # Get the closest next_earning_date for the user
@@ -36,6 +39,9 @@ class Mining_server_manager:
 
         # If the closest next_earning_date is in the future, return
         if closest_next_earning_date > today_date:
+            # Update wallet evolution
+            w_manager = wallet_manager()
+            w_manager.update_crypto_wallet_evolution(user)
             return
 
         # Get all servers for the user
@@ -44,9 +50,6 @@ class Mining_server_manager:
         # Get all mining servers in dict with id as key
         mining_servers = {server.id: server for server in MiningServer.query.all()}
 
-        # Get the user's wallet for all the crypto symbols
-        user_wallet_dict = wallet_manager().get_user_balance(user)['crypto_balance_by_symbol']
-
         # Get the price for one unit of each crypto in USD to use for conversion
         @lru_cache(maxsize=None)
         def cached_convert_fct(currency_pair, amount):
@@ -54,8 +57,6 @@ class Mining_server_manager:
 
         number_of_servers_deleted = 0
         USD_amount_earned = 0
-
-        print(f"[INFO]: Calculating payments and earnings for user {user_id} on {today_date.strftime('%Y-%m-%d')}")
 
         for server_instance in user_server_instances:
             # === Calculate total earnings
