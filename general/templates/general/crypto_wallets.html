@@ -517,12 +517,13 @@
                 var user_balance = data;
                 // Get the balance of the crypto to sell
                 var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol_to_sell];
-                var balance_to_sell = balanceInfo["quantity"];
-                var balance_to_sell_usd = balanceInfo["balance"];
+                var balance_to_sell = balanceInfo["quantity"].toFixed(4);
+                var balance_to_sell_usd = balanceInfo["balance"].toFixed(2)
+
                 // Get the balance of the crypto to buy
                 var balanceInfo = user_balance["crypto_balance_by_symbol"][symbol_to_buy];
-                var balance_to_buy = balanceInfo["quantity"];
-                var balance_to_buy_usd = balanceInfo["balance"];
+                var balance_to_buy = balanceInfo["quantity"].toFixed(4);
+                var balance_to_buy_usd = balanceInfo["balance"].toFixed(2);
                 // display the balance of the crypto to sell and to buy
                 $("#balance_crypto_to_sell").html(balance_to_sell + " " + symbol_to_sell.split("-")[0] + " ~ $" + balance_to_sell_usd.toLocaleString());
                 $("#balance_crypto_to_buy").html(balance_to_buy + " " + symbol_to_buy.split("-")[0] + " ~ $" + balance_to_buy_usd.toLocaleString());
