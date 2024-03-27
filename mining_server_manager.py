@@ -91,6 +91,10 @@ class Mining_server_manager:
                 # Update the next payment date
                 server_instance.next_payment_date = tomorrow_date
 
+        # Update wallet evolution
+        w_manager = wallet_manager()
+        w_manager.update_crypto_wallet_evolution(user)
+
         if number_of_servers_deleted > 0:
             Notification_manager.add_notification(user_id,
                                                   f"{number_of_servers_deleted} server(s) deleted due to not "
