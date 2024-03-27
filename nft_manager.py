@@ -341,20 +341,21 @@ class NFT_manager:
         # Créez un dict avec tous les NFTs
         NFTs_list = []
         for nft_item in NFTs:
-            NFTs_list.append({
-                'id': nft_item.id,
-                'name': nft_item.name,
-                'collection': nft_item.collection,
-                'price': nft_item.price,
-                'image_path': nft_item.image_path,
-                'is_for_sale': nft_item.is_for_sale,
-                'owner_id': nft_item.owner_id,
-                'owned': nft_item.owner_id == user_id,
-                'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
-                'number_of_likes': number_of_likes.get(nft_item.id, 0),
-                'views_number': nft_item.views_number,
-                'price_change_24h': round(nft_item.price_change_24h, 2)
-            })
+            if nft_item.owner_id != user_id:
+                NFTs_list.append({
+                    'id': nft_item.id,
+                    'name': nft_item.name,
+                    'collection': nft_item.collection,
+                    'price': nft_item.price,
+                    'image_path': nft_item.image_path,
+                    'is_for_sale': nft_item.is_for_sale,
+                    'owner_id': nft_item.owner_id,
+                    'owned': nft_item.owner_id == user_id,
+                    'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
+                    'number_of_likes': number_of_likes.get(nft_item.id, 0),
+                    'views_number': nft_item.views_number,
+                    'price_change_24h': round(nft_item.price_change_24h, 2)
+                })
 
         return NFTs_list
 

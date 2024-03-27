@@ -48,7 +48,7 @@ bank_wallet = 10000
 NFT_collections = [
     'Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Futuristic-city',
     'Cats', 'Penguins', 'Cubes', 'Cyber-animals', 'Astronauts',
-    'Fantastic-animals', 'Garden', 'Haunted-house', 'Historic-buildings',
+    'Fantastic-animals', 'Garden', 'Haunted-houses', 'Historic-buildings',
     'Art', 'Nuketown', 'Space'
     ]
 min_prix_NFT = 0.5
