@@ -598,9 +598,9 @@
                 type: "GET",
                 success: function (data) {
                     // display the amount to sell
-                    $("#input_crypto_to_buy").val(data + " " + symbol_to_buy.split("-")[0]);
+                    $("#input_crypto_to_buy").val(data);
                     // add the symbol in the field to sell after the amount
-                    $("#input_crypto_to_sell").val(input_crypto_to_sell + " " + symbol_to_sell.split("-")[0]);
+                    $("#input_crypto_to_sell").val(input_crypto_to_sell);
                     // Display the button to convert if the amount to sell is valid
                     if (input_crypto_to_sell <= maxAmount && input_crypto_to_sell > 0) {
                         // display the button to convert
