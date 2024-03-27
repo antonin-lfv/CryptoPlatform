@@ -103,6 +103,9 @@
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
+
+    var mixer;
+
     function loadMiningServers() {
         $.ajax({
             url: '/api/get_all_mining_servers', // Votre endpoint API
@@ -148,14 +151,19 @@
                 });
 
                 // reset mixitup with new documents in the DOM
-                var mixer = mixitup('.ico-filter');
+                initMixItUp();
                 mixer.forceRefresh();
-
-                // at first, show all servers ("all" filter)
-                $('#radio_0').prop('checked', true);
             },
             error: function (error) {
                 console.error('Error:', error);
+            }
+        });
+    }
+
+    function initMixItUp() {
+        mixer = mixitup('.ico-filter', {
+            load: {
+                filter: 'all'
             }
         });
     }
