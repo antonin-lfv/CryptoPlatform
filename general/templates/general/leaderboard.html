@@ -56,6 +56,9 @@
                               <th scope="col">NFT wallet value</th>
                               <th scope="col">Number of NFTs</th>
                               <th scope="col">Number of servers</th>
+                                {% if user.role == "ADMIN" %}
+                              <th scope="col">Give 1 Bitcoin</th>
+                                {% endif %}
 							</tr>
 						  </thead>
 						  <tbody>
@@ -68,6 +71,9 @@
                               <td>{{ row['web3_balance_format'] }}  <i class="fa fa-bitcoin"></i></td>
                               <td>{{ row['number_of_NFTs'] }}</td>
                               <td>{{ row['total_servers'] }}</td>
+                             {% if user.role == "ADMIN" %}
+                              <td><a onclick="send_bitcoin({{ row['id'] }})" class="btn btn-primary btn-xs">Give 1 Bitcoin</a></td>
+                                {% endif %}
 							</tr>
                           {% endfor %}
 						  </tbody>
@@ -92,6 +98,19 @@
 
 {% include('includes/javascript_include_dashboard.html') %}
 
+<script>
+    function send_bitcoin(user_id){
+        // call /api/send_BTC_to_user/<user_id>
+        $.ajax({
+            url: "/api/send_BTC_to_user/" + user_id,
+            type: "GET",
+            success: function(data){
+                // reload the page
+                location.reload();
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

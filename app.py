@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from configuration.config import Config as app_config
 import os
-from utils import NFT_collections, min_prix_NFT, max_prix_NFT, core_url_NFT
+from utils import NFT_collections, core_url_NFT, collection_to_min_max_price
 import random
 import json
 
@@ -54,7 +54,8 @@ def create_app():
                 for i in range(1, nb_files + 1):
                     name = f"{collection} #{i}"
                     path = f"{collection_path}{collection.lower()}_{i}.png"
-                    price = round(random.uniform(min_prix_NFT, max_prix_NFT), 3)
+                    price = round(random.uniform(collection_to_min_max_price[collection][0],
+                                                 collection_to_min_max_price[collection][1]), 3)
                     nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                     db.session.add(nft)
 

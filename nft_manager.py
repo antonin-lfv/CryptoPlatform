@@ -7,7 +7,7 @@ from notification_manager import Notification_manager
 from datetime import datetime
 from utils import user_profile_default_image_path
 import os
-from utils import NFT_collections, core_url_NFT, min_prix_NFT, max_prix_NFT
+from utils import NFT_collections, core_url_NFT, collection_to_min_max_price
 import random
 import math
 
@@ -20,7 +20,7 @@ class NFT_manager:
         ...
 
     @staticmethod
-    def update_NFT_price():
+    def update_NFT_price(init_app=False):
         latest_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).first()
 
         if latest_data and latest_data.date == datetime.utcnow().date():
@@ -81,7 +81,9 @@ class NFT_manager:
                 if file_path not in existing_nfts.keys():
                     # Si l'image n'est pas déjà dans la base, l'ajouter
                     name = f"{collection} #{filename.split('_')[-1].split('.')[0]}"
-                    price = round(min_prix_NFT + (max_prix_NFT - min_prix_NFT) * (1 - math.exp(-5 * random.random())), 3)
+                    price = round(collection_to_min_max_price[collection][0] +
+                                  (collection_to_min_max_price[collection][1] -
+                                   collection_to_min_max_price[collection][0]) * (1 - math.exp(-5 * random.random())), 3)
                     nft = NFT(name=name, collection=collection, image_path=file_path, price=price, owner_id=None,
                               price_change_24h=0)
                     db.session.add(nft)

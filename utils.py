@@ -51,8 +51,42 @@ NFT_collections = [
     'Fantastic-animals', 'Garden', 'Haunted-houses', 'Historic-buildings',
     'Art', 'Nuketown', 'Space'
     ]
-min_prix_NFT = 0.5
-max_prix_NFT = 100
+
+min_prix_common_NFT = 0.5
+max_prix_common_NFT = 5
+min_prix_rare_NFT = 2
+max_prix_rare_NFT = 40
+min_prix_epic_NFT = 20
+max_prix_epic_NFT = 100
+min_prix_legendary_NFT = 90
+max_prix_legendary_NFT = 200
+
+common_collection = ['Cars', 'Garden', 'Cubes']
+rare_collection = ['Picasso', 'Cyberpunk', 'Greece', 'Cats', 'Haunted-houses', 'Historic-buildings', 'Art']
+epic_collection = ['Futuristic-city', 'Penguins', 'Cyber-animals', 'Astronauts']
+legendary_collection = ['Fantastic-animals', 'Nuketown', 'Space']
+
+# map collection to min and max price
+collection_to_min_max_price = {
+    'Cars': (min_prix_common_NFT, max_prix_common_NFT),
+    'Garden': (min_prix_common_NFT, max_prix_common_NFT),
+    'Cubes': (min_prix_common_NFT, max_prix_common_NFT),
+    'Picasso': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Cyberpunk': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Greece': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Cats': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Haunted-houses': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Historic-buildings': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Art': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'Futuristic-city': (min_prix_epic_NFT, max_prix_epic_NFT),
+    'Penguins': (min_prix_epic_NFT, max_prix_epic_NFT),
+    'Cyber-animals': (min_prix_epic_NFT, max_prix_epic_NFT),
+    'Astronauts': (min_prix_epic_NFT, max_prix_epic_NFT),
+    'Fantastic-animals': (min_prix_legendary_NFT, max_prix_legendary_NFT),
+    'Nuketown': (min_prix_legendary_NFT, max_prix_legendary_NFT),
+    'Space': (min_prix_legendary_NFT, max_prix_legendary_NFT),
+}
+
 core_url_NFT = '/images/nft-item/'
 
 number_most_valuable_cryptos = 6

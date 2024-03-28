@@ -6,6 +6,7 @@ from notification_manager import Notification_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
 from mining_server_manager import Mining_server_manager
+from models import User
 
 BLP_api = Blueprint('BLP_api', __name__)
 
@@ -133,6 +134,18 @@ def buy_with_crypto():
     symbol = request.args.get('symbol', '')
     quantity = request.args.get('quantity', '')
     response = wallet_manager().buy_with_crypto(current_user, symbol, quantity)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/send_BTC_to_user/<user_id>', methods=['GET', 'POST'])
+@login_required
+def send_BTC_to_user(user_id):
+    """
+    ADMIN ONLY
+    Send BTC to a user
+    """
+    user = User.query.filter_by(id=user_id).first()
+    response = wallet_manager().receive_crypto(user, 'BTC-USD', 1)
     return jsonify(response)
 
 
