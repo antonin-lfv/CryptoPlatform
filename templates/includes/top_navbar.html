@@ -110,6 +110,8 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" onclick="refresh_NFT_base()" href="#"><i
                                         class="ti-dashboard text-muted me-2"></i> Refresh NFT base</a>
+                                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#send_notification_to_all_users" href="#"><i
+                                    class="ti-dashboard text-muted me-2"></i> Send notification to everyone</a>
                                 {% endif %}
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('BLP_auth.logout') }}"><i
@@ -123,6 +125,27 @@
         </nav>
     </div>
 </header>
+
+<div class="modal fade" id="send_notification_to_all_users" tabindex="-1" aria-labelledby="sendNotificationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sendNotificationLabel">Send notification to all users</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="notification_text" class="form-label">Notification text</label>
+          <textarea class="form-control" id="notification_text" rows="3" placeholder="Enter notification text"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="sendNotification">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
     function refresh_NFT_base() {

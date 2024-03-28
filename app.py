@@ -47,12 +47,14 @@ def create_app():
             for collection in NFT_collections:
                 collection_path = core_url_NFT + collection.lower() + '/'
                 # Add as many NFTs as there is in the folder with the same name and _index (starting at 1)
-                # get the number of file in collection_path
-                nb_files = len(os.listdir('assets' + collection_path))
+                # get the number of file in collection_path (just img files that end with .png or .jpg)
+                files_ = os.listdir('assets' + collection_path)
+                nb_files = len([f for f in files_ if f.endswith('.png') or f.endswith('.jpg')])
+
                 for i in range(1, nb_files + 1):
                     name = f"{collection} #{i}"
                     path = f"{collection_path}{collection.lower()}_{i}.png"
-                    price = random.uniform(min_prix_NFT, max_prix_NFT)
+                    price = round(random.uniform(min_prix_NFT, max_prix_NFT), 3)
                     nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                     db.session.add(nft)
 

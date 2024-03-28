@@ -547,8 +547,8 @@ def send_notification_to_all_users():
     Send a notification to all users
     """
     text = request.args.get('text', '')
-    icon = request.args.get('icon', 'user')
-    Notification_manager().send_notification_to_all_users(text, icon)
+    print(f"Sending notification to all users: {text}")
+    Notification_manager().send_notification_to_all_users(text, 'user')
     return {'status': 'success'}
 
 

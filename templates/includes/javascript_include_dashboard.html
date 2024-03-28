@@ -226,26 +226,30 @@
 
                 } else {
                     // Affichage des notifications (Ajouter un swal qui affiche une notification en cliquant sur une notification)
-                    data.forEach(function (notification) { // Utiliser forEach pour itérer sur les notifications
-                        var li = document.createElement('li');
-                        var a = document.createElement('a');
-                        var icon = document.createElement('i');
-                        icon.setAttribute('class', 'fa fa-' + notification['icon'] + ' text-info');
-                        a.appendChild(icon);
-                        a.innerHTML = notification['message'];
-                        li.appendChild(a);
-                        notifications_space.appendChild(li);
+                    data.forEach(function (notification) {
+                      var li = document.createElement('li');
+                      var a = document.createElement('a');
+                      var icon = document.createElement('i');
+                      icon.classList.add('fa', 'fa-' + notification.icon, 'text-info');
+                      a.appendChild(icon); // Ajouter l'icône au lien
+                      var messageSpan = document.createElement('span'); // Créer un span pour le message
+                      messageSpan.textContent = notification['message']; // Ajouter le message dans le span
+                      a.appendChild(messageSpan); // Ajouter le span au lien
+                      li.appendChild(a); // Ajouter le lien à l'élément li
+                      notifications_space.appendChild(li);
+                      console.log(li);
+                      console.log(notification.icon);
 
-                        a.setAttribute('href', '#')
-                        a.addEventListener('click', function () {
-                            swal({
-                                title: 'Notification',
-                                text: notification['message'],
-                                icon: 'info',
-                                confirmButtonText: 'Close',
-                                html: true
-                            });
+                      a.setAttribute('href', '#');
+                      a.addEventListener('click', function () {
+                        swal({
+                          title: 'Notification',
+                          text: notification['message'],
+                          icon: 'info',
+                          confirmButtonText: 'Close',
+                          html: true
                         });
+                      });
                     });
 
                     // show the clear all button
@@ -292,5 +296,47 @@
             }
         });
     }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // call /api/send_notification_to_all_users and pass 'text' as a parameter
+  var sendNotificationBtn = document.getElementById('sendNotification');
+  var notificationModal = new bootstrap.Modal(document.getElementById('send_notification_to_all_users'));
+
+  sendNotificationBtn.addEventListener('click', function() {
+    var notificationText = document.getElementById('notification_text').value;
+    if (notificationText) {
+      // Envoyer la requête AJAX à votre route Flask
+      fetch('/api/send_notification_to_all_users?text=' + encodeURIComponent(notificationText), {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          // Fermer le modal
+          notificationModal.hide();
+          // Afficher un message de succès
+          swal({
+            title: 'Notification sent',
+            text: 'The notification has been sent successfully.',
+            icon: 'success',
+            confirmButtonText: 'Close'
+          });
+        } else {
+          swal({
+            title: 'Error',
+            text: 'An error occurred while sending the notification.',
+            icon: 'error',
+            confirmButtonText: 'Close'
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Erreur :', error);
+        alert('Une erreur est survenue lors de l\'envoi de la notification.');
+      });
+    }
+  });
+});
 
 </script>

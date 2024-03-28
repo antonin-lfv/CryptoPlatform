@@ -134,13 +134,14 @@
                             <div class="col-12">
                                 <div class="box">
                                     <div class="box-body text-center">
-                                        <p class="text-primary">BTC CRYPTO BALANCE</p>
+                                        <p class="text-primary">CRYPTO WALLET BALANCE</p>
                                         <h3>{{ crypto_balance_BTC }} <small>BTC</small></h3>
+                                        <p class="text-fade"> ~ ${{ crypto_balance_USD }}</p>
                                         <div class="d-flex justify-content-center">
-                                            <a href="{{ url_for('BLP_general.nft_marketplace') }}"
-                                               class="btn btn-xs btn-dark me-10">BUY NFT</a>
-                                            <a href="{{ url_for('BLP_general.mining_place') }}"
-                                               class="btn btn-xs btn-danger">BUY SERVERS</a>
+                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
+                                               class="btn btn-xs btn-primary me-10">DEPOSIT</a>
+                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
+                                               class="btn btn-xs btn-success">CONVERT</a>
                                         </div>
                                     </div>
                                 </div>
@@ -148,13 +149,14 @@
                             <div class="col-12">
                                 <div class="box">
                                     <div class="box-body text-center">
-                                        <p class="text-primary">USD CRYPTO BALANCE</p>
-                                        <h3>{{ crypto_balance_USD }} <small>USD</small></h3>
+                                        <p class="text-primary">NFT WALLET BALANCE</p>
+                                        <h3>{{ web3_balance_BTC }} <small>BTC</small></h3>
+                                        <p class="text-fade"> ~ ${{ web3_balance_USD }}</p>
                                         <div class="d-flex justify-content-center">
-                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
-                                               class="btn btn-xs btn-primary me-10">DEPOSIT</a>
-                                            <a href="{{ url_for('BLP_general.crypto_wallet') }}"
-                                               class="btn btn-xs btn-success">CONVERT</a>
+                                            <a href="{{ url_for('BLP_general.nft_marketplace') }}"
+                                               class="btn btn-xs btn-danger me-10">BUY NFT</a>
+                                            <a href="{{ url_for('BLP_general.mining_place') }}"
+                                               class="btn btn-xs btn-primary">PLACE BIDS</a>
                                         </div>
                                     </div>
                                 </div>
@@ -176,11 +178,6 @@
                                         <tr>
                                             <td>Active bids</td>
                                             <td><span class="text-info"><b>{{ number_of_bids }}</b></span></td>
-                                            <td><i class="fa fa-bar-chart"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Value of NFTs</td>
-                                            <td><span class="text-info"><b>$ {{ web3_balance_USD }}</b></span></td>
                                             <td><i class="fa fa-bar-chart"></i></td>
                                         </tr>
                                         </tbody>
