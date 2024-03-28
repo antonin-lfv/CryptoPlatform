@@ -68,3 +68,13 @@ class Notification_manager:
             if notification.date < datetime.utcnow() - timedelta(days=7):
                 db.session.delete(notification)
         db.session.commit()
+
+    @staticmethod
+    def send_notification_to_all_users(message, icon):
+        """
+        Send a notification to all users
+        """
+        users = User.query.all()
+        for user in users:
+            Notification_manager.add_notification(user.id, message, icon)
+        db.session.commit()

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
-from models import CryptoPrice, NFT
+from models import CryptoPrice
 from app import db
 
 
@@ -34,7 +34,6 @@ class CryptoDataManager:
                         # Télécharge les données depuis Yahoo Finance
                         start_date = latest_data.date if latest_data else '2000-01-01'
                         data = yf.download(symbol, start=start_date)
-
                         # Ajoute les nouvelles données dans la base de données
                         for index, row in data.iterrows():
                             index_date = index.date()
@@ -46,9 +45,8 @@ class CryptoDataManager:
                                     volume=row['Volume']
                                 )
                                 db.session.add(new_data)
-
-                        db.session.commit()
                         # print(f"Les données pour {symbol} ont été mises à jour.")
+                        db.session.commit()
 
                     except KeyError as e:
                         print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
@@ -57,28 +55,6 @@ class CryptoDataManager:
 
                     except Exception as e:
                         print(f"Une erreur inattendue est survenue: {e}.")
-
-                # Update the price of all NFTS by applying the same pourcentage change than ETH between
-                # the last two days
-                # Get the price of ETH for the last two days
-                eth_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).limit(
-                    2).all()
-                # Get the pourcentage change
-                eth_price_change = (eth_data[1].price - eth_data[0].price) / eth_data[0].price
-                # print(f"ETH price change: {eth_price_change}")
-                # Get all NFTs
-                nfts = NFT.query.all()
-                for nft in nfts:
-                    # New price of the NFT
-                    new_nft_price = round(nft.price * (1 + eth_price_change), 3)
-                    # Get the price change of the NFT (in ETH)
-                    nft_price_change = new_nft_price - nft.price
-                    # Update the price of the NFT
-                    nft.price = new_nft_price
-                    # Update the ETH change of the NFT price
-                    nft.price_change_24h = round(nft_price_change, 2)
-
-                db.session.commit()
 
             else:
                 latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
@@ -230,7 +206,8 @@ class CryptoDataManager:
         Return:
             float
         """
-        latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
-        data = CryptoPrice.query.filter_by(symbol=symbol).filter(
-            CryptoPrice.date >= latest_data.date - timedelta(days=days)).all()
-        return round((data[-1].price - data[0].price) / data[0].price * 100, 3)
+        last_days = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(days+1).all()
+        # pourcentage change from last_days[-1].date to last_days[0].date
+        coeff = last_days[0].price / last_days[-1].price
+        pourcentage_change = (coeff - 1) * 100
+        return round(pourcentage_change, 2)

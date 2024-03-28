@@ -540,6 +540,18 @@ def delete_all_notifications():
     return {'status': 'success'}
 
 
+@BLP_api.route('/api/send_notification_to_all_users', methods=['GET', 'POST'])
+@login_required
+def send_notification_to_all_users():
+    """
+    Send a notification to all users
+    """
+    text = request.args.get('text', '')
+    icon = request.args.get('icon', 'user')
+    Notification_manager().send_notification_to_all_users(text, icon)
+    return {'status': 'success'}
+
+
 # ================================
 # General functions
 # ================================

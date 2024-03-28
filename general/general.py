@@ -23,6 +23,10 @@ def update_prices():
     print("Updating prices")
     crypto_manager = CryptoDataManager()
     crypto_manager.update_crypto_data()
+    # Update NFT prices if needed
+    print("Updating NFT prices")
+    nft_manager = NFT_manager()
+    nft_manager.update_NFT_price()
     # Update game wallet if needed
     print("Updating game wallet")
     w_manager = wallet_manager()
