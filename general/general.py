@@ -163,12 +163,20 @@ def profile():
     # The pourcentage is between 0 and 1200%
     # To get the completion, we had 100% for each step of the steps list, and compute the pourcentage of the last step
     completion = 0
-    for i, step in enumerate(steps):
-        if user_total_balance >= step:
-            completion += 100
-        else:
-            completion += 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1])
-            break
+    if user_total_balance >= steps[0]:
+        for i, step in enumerate(steps):
+            print(i, step, user_total_balance)
+            if user_total_balance >= step:
+                print("add 100")
+                completion += 100
+            else:
+                completion += 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1])
+                print("add", 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1]))
+                print(f"steps[i-1]: {steps[i-1]}, steps[i]: {steps[i]}")
+                break
+    else:
+        completion = 100 * user_total_balance / (steps[0])
+
     return render_template('general/profile.html',
                            user=current_user,
                            user_total_balance=user_total_balance,
