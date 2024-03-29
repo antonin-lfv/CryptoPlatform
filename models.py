@@ -144,8 +144,6 @@ class UserServer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     server_id = db.Column(db.Integer, db.ForeignKey('mining_server.id'), nullable=False)
-    # Next payment date (for rent, else None)
-    next_payment_date = db.Column(db.Date, nullable=True)
     # Last earning date (None if no earning yet)
     next_earning_date = db.Column(db.Date, nullable=True)
     # Number of instances of the server

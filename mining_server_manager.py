@@ -29,6 +29,7 @@ class Mining_server_manager:
         # If the user has no servers, return
         if not UserServer.query.filter_by(user_id=user_id).first():
             # Update wallet evolution
+            print(f"[INFO]: No servers for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -40,6 +41,7 @@ class Mining_server_manager:
         # If the closest next_earning_date is in the future, return
         if closest_next_earning_date > today_date:
             # Update wallet evolution
+            print(f"[INFO]: Next earning date is in the future for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -58,15 +60,20 @@ class Mining_server_manager:
         number_of_servers_deleted = 0
         USD_amount_earned = 0
 
+        print(f"[INFO]: Checking for server payment for user {user_id}")
+        print(f"[INFO]: Today's date: {today_date}")
+        print(f"[INFO]: Number of servers: {len(user_server_instances)}")
+
         for server_instance in user_server_instances:
             # === Calculate total earnings
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
+            print(f"[INFO]: Server {server_instance.server_id} - Next earning date: {server_instance.next_earning_date}")
             # For each server instance, we compute the number of days since the last earning
             # Convert next_earning_date to datetime
             if server_instance.next_earning_date <= today_date:
                 # Number of days since the last earning
-                number_of_days_since_last_earning = (today_date - server_instance.next_earning_date).days
+                number_of_days_since_last_earning = (today_date - server_instance.next_earning_date).days + 1
                 # Compute the total earnings for the server instance
                 total_earnings = server_details.power * server_instance.instances_number * number_of_days_since_last_earning
                 # Convert the total earnings to USD
@@ -78,19 +85,6 @@ class Mining_server_manager:
 
                 # Update the next earning date
                 server_instance.next_earning_date = tomorrow_date
-
-                # === Calculate total payments
-            # For each server instance (rent only), we compute the number of days since the last payment
-            if server_instance.next_payment_date and server_instance.next_payment_date <= today_date:
-                # Number of days since the last payment
-                number_of_days_since_last_payment = (today_date - server_instance.next_payment_date).days
-                # Compute the total payment for the server instance
-                total_payment = server_details.rent_amount_per_day * server_instance.instances_number * number_of_days_since_last_payment
-                # Update the user's wallet
-                wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD', total_payment)
-
-                # Update the next payment date
-                server_instance.next_payment_date = tomorrow_date
 
         # Update wallet evolution
         w_manager = wallet_manager()
