@@ -104,5 +104,16 @@ name_to_symbol = dict(zip(top_cryptos_names, top_cryptos_symbols))
 # Max number of servers to be bought and rented
 max_servers = 50
 
+# User bonus on mining servers
+steps = [2, 4, 8, 12, 16, 32, 64, 128, 256, 512, 1024, 2048]
+steps_bonus = [0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3]
 
 # ===== Functions
+
+
+def get_bonus_from_BTC_wallet(BTC_wallet_value):
+    for btc, bonus in zip(steps[::-1], [steps_bonus[-1]]+steps_bonus[::-1]):
+        if BTC_wallet_value >= btc:
+            print(bonus)
+            return bonus
+    return 0

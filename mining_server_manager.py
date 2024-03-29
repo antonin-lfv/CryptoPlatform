@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from app import db
 from functools import lru_cache
 from collections import defaultdict
-from utils import top_cryptos_symbols, max_servers
+from utils import top_cryptos_symbols, max_servers, get_bonus_from_BTC_wallet
 
 
 class Mining_server_manager:
@@ -46,6 +46,15 @@ class Mining_server_manager:
             w_manager.update_crypto_wallet_evolution(user)
             return
 
+        # Get the total BTC value of the user's wallet (NFTs and crypto)
+        w_manager = wallet_manager()
+        user_wallet = w_manager.get_user_balance(user)
+        user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
+        # Convert all balances to BTC
+        user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
+        # Get the bonus for the user
+        BONUS_FROM_BTC_WALLET = get_bonus_from_BTC_wallet(user_total_balance) + 1
+
         # Get all servers for the user
         user_server_instances = UserServer.query.filter_by(user_id=user_id).all()
 
@@ -55,9 +64,8 @@ class Mining_server_manager:
         # Get the price for one unit of each crypto in USD to use for conversion
         @lru_cache(maxsize=None)
         def cached_convert_fct(currency_pair, amount):
-            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+            return CryptoDataManager().get_USD_from_crypto(currency_pair, amount)
 
-        number_of_servers_deleted = 0
         USD_amount_earned = 0
 
         print(f"[INFO]: Checking for server payment for user {user_id}")
@@ -75,7 +83,8 @@ class Mining_server_manager:
                 # Number of days since the last earning
                 number_of_days_since_last_earning = (today_date - server_instance.next_earning_date).days + 1
                 # Compute the total earnings for the server instance
-                total_earnings = server_details.power * server_instance.instances_number * number_of_days_since_last_earning
+                total_earnings = (server_details.power * server_instance.instances_number *
+                                  number_of_days_since_last_earning * BONUS_FROM_BTC_WALLET)
                 # Convert the total earnings to USD
                 total_earnings_USD = cached_convert_fct(server_details.symbol + '-USD', total_earnings)
                 # Update the user's wallet
@@ -90,16 +99,10 @@ class Mining_server_manager:
         w_manager = wallet_manager()
         w_manager.update_crypto_wallet_evolution(user)
 
-        if number_of_servers_deleted > 0:
-            Notification_manager.add_notification(user_id,
-                                                  f"{number_of_servers_deleted} server(s) deleted due to not "
-                                                  f"enough crypto to afford rent on {today_date.strftime('%Y-%m-%d')}",
-                                                  "warning")
-
         if USD_amount_earned > 0:
             Notification_manager.add_notification(user_id,
-                                                  f"You earned {round(USD_amount_earned, 2)} USD from mining "
-                                                  f"on {today_date.strftime('%Y-%m-%d')}",
+                                                  f"You earned {round(USD_amount_earned, 3)} USD from mining "
+                                                  f"on {today_date.strftime('%Y-%m-%d')}.",
                                                   "shopping-cart")
 
     @staticmethod
@@ -165,7 +168,7 @@ class Mining_server_manager:
         # Use caching for currency conversion
         @lru_cache(maxsize=None)
         def cached_convert_fct(currency_pair, amount):
-            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+            return CryptoDataManager().get_USD_from_crypto(currency_pair, amount)
 
         # Création d'un dictionnaire pour stocker la conversion de 1 unité de chaque devise en USD
         conversion_rates = {}
@@ -218,7 +221,7 @@ class Mining_server_manager:
         # Use caching for currency conversion
         @lru_cache(maxsize=None)
         def cached_convert_fct(currency_pair, amount):
-            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+            return CryptoDataManager().get_USD_from_crypto(currency_pair, amount)
 
         output['power_USD'] = cached_convert_fct(server_details.symbol + '-USD', server_details.power)
 
@@ -271,7 +274,6 @@ class Mining_server_manager:
                                          "%Y-%m-%d").date()
             if user_server_details is None:
                 new_server = UserServer(user_id=user_id, server_id=server_id,
-                                        next_payment_date=None,
                                         next_earning_date=tomorrow,
                                         instances_number=number_of_servers_to_buy)
                 db.session.add(new_server)
@@ -364,7 +366,7 @@ class Mining_server_manager:
         # caching for currency conversion
         @lru_cache(maxsize=None)
         def cached_convert_fct(currency_pair, amount):
-            return round(CryptoDataManager().get_USD_from_crypto(currency_pair, amount), 1)
+            return CryptoDataManager().get_USD_from_crypto(currency_pair, amount)
 
         # Get conversion rate for all cryptos
         conversion_rates = {}
@@ -377,6 +379,18 @@ class Mining_server_manager:
             # convert power to USD
             power_in_usd = conversion_rates[server.server.symbol + '-USD'] * server.server.power
             total_power += power_in_usd * server.instances_number
+
+        # Multiply by the bonus of the user
+        user = User.query.filter_by(id=user_id).first()
+        # Get the total BTC value of the user's wallet (NFTs and crypto)
+        w_manager = wallet_manager()
+        user_wallet = w_manager.get_user_balance(user)
+        user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
+        # Convert all balances to BTC
+        user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
+        # Get the bonus for the user
+        BONUS_FROM_BTC_WALLET = get_bonus_from_BTC_wallet(user_total_balance) + 1
+        total_power *= BONUS_FROM_BTC_WALLET
         return total_power
 
 

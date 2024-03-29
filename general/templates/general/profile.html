@@ -59,6 +59,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Crypto wallet -->
                     <div class="col-lg-6 col-12">
                         <a class="box box-link-pop text-center" href="javascript:void(0)">
                             <div class="box-body">
@@ -74,6 +75,7 @@
                             </div>
                         </a>
                     </div>
+                    <!-- Web3 balance -->
                     <div class="col-lg-6 col-12">
                         <a class="box box-link-pop text-center" href="javascript:void(0)">
                             <div class="box-body">
@@ -89,6 +91,7 @@
                             </div>
                         </a>
                     </div>
+                    <!-- pie chart -->
                     <div class="col-xl-12 col-12">
                         <div class="box">
                             <div class="box-body analytics-info">
@@ -97,8 +100,52 @@
                         </div>
                     </div>
 
+                    <!-- Level or success -->
+                     <div class="col-xl-12 col-12 mt-20">
+                        <h1 class="text-center">Bonus on mining earnings</h1>
+                        <div class="box">
+					        <div class="box-body">
+						<div class="table-responsive">
+							<table class="table no-border">
+								<tr>
+									<td>
+										<div class="new-progress-wrap px-25">
+											<ul class="new-progress-line row list-unstyled mt-80 mb-50">
+											  <li class="col-1 current">
+											  <div class="filled bg-info text-dark" style="width:{{ completion }}%;white-space: nowrap;z-index: 10;"><b>{{ user_total_balance }} BTC</b></div>
+												 <div class="progress bg-warning"></div>
+												  <div class="scale text-dark">
+													 0 BTC
+												  </div>
+											  </li>
+											  {% for btc_value, percent in zip(steps[:-1], steps_bonus_list) %}
+                                                  <li class="col-1">
+                                                      <div class="history text-dark"><div class="badge badge-pill badge-{% if user_total_balance >= btc_value %}success{% else %}gray{% endif %}">+{{ percent }}%</div></div>
+                                                      <div class="scale text-dark">
+                                                        {{ btc_value }} BTC
+                                                      </div>
+                                                      {% if btc_value == steps[-2] %}
+                                                      <div class="scale last text-dark">
+                                                        {{ steps[-1] }} BTC
+                                                      </div>
+                                                      {% endif %}
+                                                  </li>
+											  {% endfor %}
+											</ul>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<!-- /.box-body -->
+				  </div>
+				     </div>
 
                     <!-- NFT grid -->
+                    <div class="col-xl-12 col-12 mt-20">
+                        <h1 class="text-center">My NFTs collection</h1>
+                    </div>
                     <div class="row" id="user_NFT_div" style="margin: 0 auto"></div>
 
                 </div>

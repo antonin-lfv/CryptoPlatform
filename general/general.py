@@ -6,7 +6,7 @@ from notification_manager import Notification_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
-from utils import max_servers, MAINTENANCE_MODE, symbol_to_name
+from utils import max_servers, MAINTENANCE_MODE, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from models import MiningServer, User, CryptoWalletEvolution
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
@@ -151,7 +151,31 @@ def home():
 @BLP_general.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('general/profile.html', user=current_user)
+    # Get user total balance
+    w_manager = wallet_manager()
+    user_wallet = w_manager.get_user_balance(current_user)
+    user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
+    # Convert all balances to BTC
+    user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
+    steps_bonus_list = [i*100 for i in steps_bonus]
+    # Get the pourcentage of completion. The bar is full when the user has 2048 BTC (user_total_balance)
+    # and 0 if the user has 0 BTC
+    # The pourcentage is between 0 and 1200%
+    # To get the completion, we had 100% for each step of the steps list, and compute the pourcentage of the last step
+    completion = 0
+    for i, step in enumerate(steps):
+        if user_total_balance >= step:
+            completion += 100
+        else:
+            completion += 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1])
+            break
+    return render_template('general/profile.html',
+                           user=current_user,
+                           user_total_balance=user_total_balance,
+                           steps=steps,
+                           steps_bonus_list=steps_bonus_list,
+                           zip=zip,
+                           completion=completion)
 
 
 @BLP_general.route('/leaderboard', methods=['GET', 'POST'])
@@ -294,8 +318,18 @@ def mining_place():
     """
     Grid with all types of mining servers
     """
+    # Get the user
+    user = User.query.filter_by(id=current_user.id).first()
+    # Get the total BTC value of the user's wallet (NFTs and crypto)
+    w_manager = wallet_manager()
+    user_wallet = w_manager.get_user_balance(user)
+    user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
+    # Convert all balances to BTC
+    user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
+    # Get the bonus for the user
+    BONUS_FROM_BTC_WALLET = get_bonus_from_BTC_wallet(user_total_balance)
     return render_template('general/mining_place.html', user=current_user,
-                           max_servers=max_servers)
+                           max_servers=max_servers, BONUS_FROM_BTC_WALLET=BONUS_FROM_BTC_WALLET)
 
 
 @BLP_general.route('/mining_manage_server/<server_name>', methods=['GET', 'POST'])
@@ -314,7 +348,7 @@ def mining_manage_server(server_name):
     # Use caching for currency conversion
     @lru_cache(maxsize=None)
     def cached_convert_fct(currency_pair, amount):
-        return round(CryptoDataManager().get_USD_from_crypto(currency_pair + '-USD', amount), 1)
+        return CryptoDataManager().get_USD_from_crypto(currency_pair + '-USD', amount)
 
     # Get the overall server data
     server_data = {
