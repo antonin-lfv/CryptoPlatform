@@ -7,7 +7,7 @@ from user_manager import UserManager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
 from utils import max_servers, MAINTENANCE_MODE, symbol_to_name
-from models import MiningServer, User
+from models import MiningServer, User, CryptoWalletEvolution
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
 
@@ -87,6 +87,15 @@ def home():
     crypto_balance_BTC = "{:,}".format(crypto_balance_BTC)
     web3_balance_BTC = "{:,}".format(web3_balance_BTC)
     total_balance_BTC = "{:,}".format(total_balance_BTC)
+    # Get the percentage of evolution of the total balance using crypto_wallet_evolution for the last 24h
+    crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=current_user.id).order_by(
+        CryptoWalletEvolution.date.desc()).limit(2).all()
+    if len(crypto_wallet_evolution) == 2:
+        coeff = crypto_wallet_evolution[0].quantity / crypto_wallet_evolution[1].quantity
+        value_change = round((coeff - 1) * 100, 2)
+        crypto_wallet_evolution_percent = value_change
+    else:
+        crypto_wallet_evolution_percent = 0
 
     # Get the 5 crypto with the highest value in the wallet
     user_crypto = balance['crypto_balance_by_symbol']
@@ -135,7 +144,8 @@ def home():
                            total_balance_USD=total_balance_USD, crypto_balance_BTC=crypto_balance_BTC,
                            web3_balance_BTC=web3_balance_BTC, total_balance_BTC=total_balance_BTC,
                            top_cryptos=top_cryptos, number_of_bids=number_of_bids, number_of_NFTs=number_of_NFTs,
-                           user_ranking=user_ranking, number_most_valuable_cryptos=number_most_valuable_cryptos)
+                           user_ranking=user_ranking, number_most_valuable_cryptos=number_most_valuable_cryptos,
+                           crypto_wallet_evolution_percent=crypto_wallet_evolution_percent)
 
 
 @BLP_general.route('/profile', methods=['GET', 'POST'])
@@ -152,7 +162,7 @@ def leaderboard():
     # Get all user
     users = User.query.all()
     for user in users:
-        user_dict = {'username': user.username, 'id': user.id}
+        user_dict = {'username': user.username, 'id': user.id, 'last_login': user.last_login.strftime("%d/%m/%Y %H:%M")}
         # Get the balance of the user
         w_manager = wallet_manager()
         balance = w_manager.get_user_balance(user)

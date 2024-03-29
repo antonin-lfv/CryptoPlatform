@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(100), default='USER')
     profile_img_path = db.Column(db.String(1000), default="images/avatar/avatar-1.png")
     notifications_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime, default=None)
     wallets = db.relationship('CryptoWallet', backref='user', lazy=True)
     game_wallet = db.relationship('GameWallet', backref='user', lazy=True)
 

@@ -102,8 +102,8 @@
                                             <th scope="col">Total wallet value</th>
                                             <th scope="col">Crypto wallet value</th>
                                             <th scope="col">NFT wallet value</th>
-                                            <th scope="col">Number of NFTs</th>
-                                            <th scope="col">Number of servers</th>
+                                            <th scope="col">NFTs</th>
+                                            <th scope="col">Mining servers</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -137,6 +137,8 @@
                                         <p class="text-primary">CRYPTO WALLET BALANCE</p>
                                         <h3>{{ crypto_balance_BTC }} <small>BTC</small></h3>
                                         <p class="text-fade"> ~ ${{ crypto_balance_USD }}</p>
+                                        <p class="text-fade"><span class="d-block text-{% if crypto_wallet_evolution_percent<0 %}danger{% else %}success{% endif %}"> {{ crypto_wallet_evolution_percent }}% <i
+                                                class="fa fa-arrow-{% if crypto_wallet_evolution_percent<0 %}down{% else %}up{% endif %}"></i></span></p>
                                         <div class="d-flex justify-content-center">
                                             <a href="{{ url_for('BLP_general.crypto_wallet') }}"
                                                class="btn btn-xs btn-primary me-10">DEPOSIT</a>

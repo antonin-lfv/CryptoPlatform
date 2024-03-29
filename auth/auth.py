@@ -24,6 +24,8 @@ def login():
             # if user doesn't exist or wrong password
             if not user or not check_password_hash(user.password, password):
                 return render_template('auth/auth_login.html', wrong_credentials=True)
+            user.last_login = datetime.utcnow()
+            db.session.commit()
             login_user(user)
             return redirect(url_for('BLP_general.home'))
     return render_template('auth/auth_login.html', wrong_credentials=False)

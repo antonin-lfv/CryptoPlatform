@@ -237,6 +237,11 @@ function active_liked() {
                 marketplaceDiv.append(nftHTML);  // Append the new HTML
             });
 
+            // if empty, display a message
+            if (NFTs.length === 0) {
+                marketplaceDiv.append('<h3 class="text-center">You do not have any liked NFTs</h3>');
+            }
+
             // deactivate all collections
             $('#collection_picker .nav-link').removeClass('active');
             // activate liked section
@@ -295,6 +300,11 @@ function active_bids() {
                 </div>`;
                 marketplaceDiv.append(nftHTML);  // Append the new HTML
             });
+
+            // if empty, display a message
+            if (NFTs.length === 0) {
+                marketplaceDiv.append('<h3 class="text-center">You do not have any bids</h3>');
+            }
 
             // deactivate all collections
             $('#collection_picker .nav-link').removeClass('active');
@@ -355,6 +365,11 @@ function active_owned() {
                 marketplaceDiv.append(nftHTML);  // Append the new HTML
             });
 
+            // if empty, display a message
+            if (NFTs.length === 0) {
+                marketplaceDiv.append('<h3 class="text-center">You do not own any NFTs</h3>');
+            }
+
             // deactivate all collections
             $('#collection_picker .nav-link').removeClass('active');
             // activate owned section
@@ -414,6 +429,11 @@ function active_in_my_budget(){
                 </div>`;
                 marketplaceDiv.append(nftHTML);  // Append the new HTML
             });
+
+            // if empty, display a message
+            if (NFTs.length === 0) {
+                marketplaceDiv.append('<h3 class="text-center">There are no NFTs in your budget</h3>');
+            }
 
             // activate in my budget section
             $('#in_my_budget_section').addClass('active');

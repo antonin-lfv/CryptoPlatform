@@ -20,7 +20,7 @@ class NFT_manager:
         ...
 
     @staticmethod
-    def update_NFT_price(init_app=False):
+    def update_NFT_price():
         latest_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).first()
 
         if latest_data and latest_data.date == datetime.utcnow().date():
@@ -33,18 +33,15 @@ class NFT_manager:
                 CryptoPrice.id.desc()).limit(2).all()
             # pourcentage change from last_days[-1].date to last_days[0].date
             coeff = last_days[0].price / last_days[-1].price
+            # Multiply the coeff to improve the price change
             eth_price_change = round((coeff - 1), 2) * 2
-            print(f"ETH price change: {eth_price_change}")
             # Get all NFTs
             nfts = NFT.query.all()
             for nft in nfts:
                 # New price of the NFT
-                print(f"Old price of {nft.name}: {nft.price}")
                 new_nft_price = round(nft.price * (1 + eth_price_change), 3)
-                print(f"New price of {nft.name}: {new_nft_price}")
                 # Get the price change of the NFT (in ETH)
                 nft_price_change = new_nft_price - nft.price
-                print(f"Price change of {nft.name}: {nft_price_change} ETH")
                 # Update the price of the NFT
                 nft.price = new_nft_price
                 # Update the ETH change of the NFT price
