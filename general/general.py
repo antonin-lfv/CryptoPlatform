@@ -162,7 +162,11 @@ def leaderboard():
     # Get all user
     users = User.query.all()
     for user in users:
-        user_dict = {'username': user.username, 'id': user.id, 'last_login': user.last_login.strftime("%d/%m/%Y %H:%M")}
+        user_dict = {'username': user.username, 'id': user.id}
+        if user.last_login:
+            user_dict['last_login'] = user.last_login.strftime("%d/%m/%Y %H:%M")
+        else:
+            user_dict['last_login'] = "Never logged in"
         # Get the balance of the user
         w_manager = wallet_manager()
         balance = w_manager.get_user_balance(user)
