@@ -153,15 +153,26 @@ def send_BTC_to_user(user_id):
 # NFT data
 # ================================
 
-@BLP_api.route('/api/refresh_NFT_base/<user_id>', methods=['GET', 'POST'])
+@BLP_api.route('/api/refresh_NFT_base', methods=['GET', 'POST'])
 @login_required
-def refresh_NFT_base(user_id):
+def refresh_NFT_base():
     """
     ADMIN ONLY
     Refresh the NFT base
     """
-    refresh = NFT_manager().refresh_NFT_base(user_id)
+    refresh = NFT_manager().refresh_NFT_base(current_user.id)
     return jsonify(refresh)
+
+
+@BLP_api.route('/api/restart_NFT_base', methods=['GET', 'POST'])
+@login_required
+def restart_NFT_base():
+    """
+    ADMIN ONLY
+    Restart the NFT base
+    """
+    restart = NFT_manager().restart_NFT_base(current_user.id)
+    return jsonify(restart)
 
 
 @BLP_api.route('/api/get_NFT_marketplace', methods=['GET', 'POST'])

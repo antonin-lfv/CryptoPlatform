@@ -31,7 +31,7 @@ class CryptoDataManager:
 
                     try:
                         # Télécharge les données depuis Yahoo Finance
-                        start_date = latest_data.date.strftime('%Y-%m-%d') if latest_data else '2000-01-01'
+                        start_date = latest_data.date.isoformat() if latest_data else '2000-01-01'
                         data = yf.download(symbol, start=start_date)
 
                         # Ajoute ou remplace les données dans la base de données
