@@ -27,7 +27,7 @@ class CryptoDataManager:
                 for symbol in self.top_cryptos:
                     latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
-                    if latest_data and latest_data.date == datetime.utcnow().date():
+                    if latest_data and latest_data == datetime.utcnow():
                         continue
 
                     try:
