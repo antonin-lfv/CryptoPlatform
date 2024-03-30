@@ -190,7 +190,7 @@ class NFT(db.Model):
     image_path = db.Column(db.String(1000), nullable=False)  # Path to the image of the NFT
     is_for_sale = db.Column(db.Boolean, default=True)  # Is the NFT for sale?
     views_number = db.Column(db.Integer, default=0)  # Number of views of the NFT
-    price_change_24h = db.Column(db.Float, default=0)  # Pourcentage change of the price in the last 24h
+    price_change_24h = db.Column(db.Float, default=0)  # Pourcentage change of the price in the last 24h in USD
     # owner id is optional because the NFT can be for sale without having an owner
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
 

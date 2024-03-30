@@ -59,7 +59,7 @@
                                     <h5 id="set_as_profile_picture"></h5>
 
                                     <h6>Current price</h6>
-                                    <h3><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small><small><span class="d-block text-{% if nft_data['price_change_24h']<0 %}danger{% else %}success{% endif %}"> {{ nft_data['price_change_24h'] }} ETH <i
+                                    <h3><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small><small><span class="d-block text-{% if nft_data['price_change_24h']<0 %}danger{% else %}success{% endif %}"> ${{ nft_data['price_change_24h'] }}<i
                                                     class="fa fa-arrow-{% if nft_data['price_change_24h']<0 %}down{% else %}up{% endif %}"></i></span></small></h3>
 
 

@@ -233,7 +233,7 @@
                       icon.classList.add('fa', 'fa-' + notification.icon, 'text-info');
                       a.appendChild(icon); // Ajouter l'icône au lien
                       var messageSpan = document.createElement('span'); // Créer un span pour le message
-                      messageSpan.textContent = notification['message']; // Ajouter le message dans le span
+                      messageSpan.innerHTML = notification['message']; // Ajouter le message dans le span
                       a.appendChild(messageSpan); // Ajouter le span au lien
                       li.appendChild(a); // Ajouter le lien à l'élément li
                       notifications_space.appendChild(li);
