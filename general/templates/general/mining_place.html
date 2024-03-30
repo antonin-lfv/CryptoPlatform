@@ -136,9 +136,10 @@
                                             <h3 class="no-margin text-bold">${server.name}</h3>
                                         </a>
                                         Power: <span class="text-success">${server.power}</span> ${server.symbol}/day
-                                        ${BONUS_FROM_BTC_WALLET > 0 ? '+<span class="text-success">'+ BONUS_FROM_BTC_WALLET*100 + '% </span>' :''} <small class="fs-11 mb-0 text-uppercase text-mute">($${server.power_USD}${BONUS_FROM_BTC_WALLET > 0 ? ' + $'+ ((BONUS_FROM_BTC_WALLET) * server.power_USD).toFixed(1) : ''})</small>
+                                        <small class="fs-11 mb-0 text-uppercase text-mute">($${server.power_USD})</small>
                                         <br>
                                         Buy price: <span class="text-danger">${server.buy_amount}</span> ${server.symbol} <small class="fs-11 mb-0 text-uppercase text-mute">($${server.buy_amount_USD})</small><br>
+                                        ${BONUS_FROM_BTC_WALLET > 0 ? 'Bonus: + <span class="text-success">'+ BONUS_FROM_BTC_WALLET*100 + '% </span>' :''}
                                     </div>
                                 </div>
                                 <div>
