@@ -33,10 +33,17 @@ class CryptoDataManager:
                         # Télécharge les données depuis Yahoo Finance
                         start_date = latest_data.date.strftime('%Y-%m-%d') if latest_data else '2000-01-01'
                         data = yf.download(symbol, start=start_date)
-                        # Ajoute les nouvelles données dans la base de données
+
+                        # Ajoute ou remplace les données dans la base de données
                         for index, row in data.iterrows():
                             index_date = index.date()
-                            if not latest_data or index_date > latest_data.date:
+
+                            if latest_data and index_date == latest_data.date:
+                                # Si la date existe déjà, on met à jour le prix et le volume
+                                latest_data.price = row['Open']
+                                latest_data.volume = row['Volume']
+                            else:
+                                # Sinon on ajoute une nouvelle entrée
                                 new_data = CryptoPrice(
                                     symbol=symbol,
                                     date=index_date,
@@ -44,12 +51,11 @@ class CryptoDataManager:
                                     volume=row['Volume']
                                 )
                                 db.session.add(new_data)
-                        # print(f"Les données pour {symbol} ont été mises à jour.")
+
                         db.session.commit()
 
                     except KeyError as e:
                         print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
-                        # Try again with the same symbol and then move on to the next one
                         self.update_crypto_data(symbol)
 
                     except Exception as e:
@@ -58,19 +64,19 @@ class CryptoDataManager:
             else:
                 latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
-                if latest_data and latest_data.date == datetime.utcnow().date():
-                    # print(f"Les données pour {symbol} sont déjà à jour.")
-                    return
-
                 try:
                     # Télécharge les données depuis Yahoo Finance
-                    start_date = latest_data.date if latest_data else '2000-01-01'
+                    start_date = latest_data.date.strftime('%Y-%m-%d') if latest_data else '2000-01-01'
                     data = yf.download(symbol, start=start_date)
 
-                    # Ajoute les nouvelles données dans la base de données
+                    # Ajoute ou remplace les données dans la base de données
                     for index, row in data.iterrows():
                         index_date = index.date()
-                        if not latest_data or index_date > latest_data.date:
+
+                        if latest_data and index_date == latest_data.date:
+                            latest_data.price = row['Open']
+                            latest_data.volume = row['Volume']
+                        else:
                             new_data = CryptoPrice(
                                 symbol=symbol,
                                 date=index_date,
@@ -80,7 +86,6 @@ class CryptoDataManager:
                             db.session.add(new_data)
 
                     db.session.commit()
-                    # print(f"Les données pour {symbol} ont été mises à jour.")
 
                 except KeyError as e:
                     print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}.")
