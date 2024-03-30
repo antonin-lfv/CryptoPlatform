@@ -11,6 +11,6 @@ yfinance
 flask_sqlalchemy
 flask_login
 flask-migrate
+flask_apscheduler
 gunicorn
-APScheduler
 alembic
