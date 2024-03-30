@@ -17,6 +17,9 @@ BLP_auth = Blueprint('BLP_auth', __name__,
 def login():
     # Check if the user is already logged in
     if current_user.is_authenticated:
+        user = User.query.filter_by(email=current_user.email).first()
+        user.last_login = datetime.utcnow()
+        db.session.commit()
         return redirect(url_for('BLP_general.home'))
     if request.method == "POST":
         if (email := request.form.get("login_email")) and (password := request.form.get("login_password")):

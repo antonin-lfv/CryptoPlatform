@@ -1,12 +1,15 @@
+import json
+import os
+import random
+
 from flask import Flask, render_template
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from flask_apscheduler import APScheduler
+
 from configuration.config import Config as app_config
-import os
 from utils import NFT_collections, core_url_NFT, collection_to_min_max_price
-import random
-import json
 
 db = SQLAlchemy()
 
@@ -15,6 +18,10 @@ def create_app():
     # ===== Flask app
     app = Flask(__name__, template_folder='templates', static_folder='assets')
     app.config.from_object(app_config)
+    # Initialisation de l'APScheduler
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
     # ===== Blueprint
     from auth.auth import BLP_auth
     from general.general import BLP_general
@@ -101,6 +108,28 @@ def create_app():
     @app.errorhandler(500)
     def forbidden(error):
         return render_template('errors/error_500.html')
+
+    # ===== Scheduler
+    from crypto_manager import CryptoDataManager
+    from nft_manager import NFT_manager
+
+    def schedule_update():
+        # Update crypto data
+        manager = CryptoDataManager()
+        manager.update_crypto_data()
+        # Update NFT prices if needed
+        nft_manager = NFT_manager()
+        nft_manager.update_NFT_price()
+
+    # Add the task to the scheduler
+    @scheduler.task('cron', id='crypto_update', hour='*')
+    def cron_crypto_update():
+        with app.app_context():
+            schedule_update()
+
+    # Start the first update
+    with app.app_context():
+        schedule_update()
 
     return app
 

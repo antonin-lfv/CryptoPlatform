@@ -19,6 +19,8 @@ class CryptoDataManager:
         Parameters:
             symbol: symbol of the crypto to update (ex. BTC-USD) if None update all cryptos
         """
+        print(f"[INFO] Updating crypto data")
+
         if Config.OFFLINE:
             print("You are in offline mode. No data will be updated.")
             return
@@ -27,12 +29,9 @@ class CryptoDataManager:
                 for symbol in self.top_cryptos:
                     latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
-                    if latest_data and latest_data == datetime.utcnow():
-                        continue
-
                     try:
                         # Télécharge les données depuis Yahoo Finance
-                        start_date = latest_data.date if latest_data else '2000-01-01'
+                        start_date = latest_data.date.strftime('%Y-%m-%d') if latest_data else '2000-01-01'
                         data = yf.download(symbol, start=start_date)
                         # Ajoute les nouvelles données dans la base de données
                         for index, row in data.iterrows():

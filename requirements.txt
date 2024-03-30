@@ -12,3 +12,5 @@ flask_sqlalchemy
 flask_login
 flask-migrate
 gunicorn
+APScheduler
+alembic

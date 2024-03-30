@@ -18,15 +18,7 @@ BLP_general = Blueprint('BLP_general', __name__,
 
 @BLP_general.before_request
 @login_required
-def update_prices():
-    # Update prices if needed
-    print("Updating prices")
-    crypto_manager = CryptoDataManager()
-    crypto_manager.update_crypto_data()
-    # Update NFT prices if needed
-    print("Updating NFT prices")
-    nft_manager = NFT_manager()
-    nft_manager.update_NFT_price()
+def user_updates():
     # Update game wallet if needed
     print("Updating game wallet")
     w_manager = wallet_manager()
