@@ -122,7 +122,7 @@ def create_app():
         nft_manager.update_NFT_price()
 
     # Add the task to the scheduler
-    @scheduler.task('cron', id='crypto_update', hour='*')
+    @scheduler.task('cron', id='crypto_update', minute='*/5')
     def cron_crypto_update():
         with app.app_context():
             schedule_update()

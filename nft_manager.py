@@ -22,32 +22,27 @@ class NFT_manager:
     @staticmethod
     def update_NFT_price():
         print("[INFO] Updating NFT prices")
-        latest_data = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(CryptoPrice.date.desc()).first()
-
-        if latest_data and latest_data.date == datetime.utcnow().date():
-            ...
-        else:
-            # Update the price of all NFTS by applying the same pourcentage change than ETH between
-            # the last two days
-            # Get the price of ETH for the last two days
-            last_days = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(
-                CryptoPrice.id.desc()).limit(2).all()
-            # pourcentage change from last_days[-1].date to last_days[0].date
-            coeff = last_days[0].price / last_days[-1].price
-            # Multiply the coeff to improve the price change
-            eth_price_change = round((coeff - 1), 2) * 2
-            # Get all NFTs
-            nfts = NFT.query.all()
-            for nft in nfts:
-                # New price of the NFT
-                new_nft_price = round(nft.price * (1 + eth_price_change), 3)
-                # Get the price change of the NFT (in ETH)
-                nft_price_change = new_nft_price - nft.price
-                # Update the price of the NFT
-                nft.price = new_nft_price
-                # Update the ETH change of the NFT price
-                nft.price_change_24h = round(nft_price_change, 2)
-            db.session.commit()
+        # Update the price of all NFTS by applying the same pourcentage change than ETH between
+        # the last two days
+        # Get the price of ETH for the last two days
+        last_days = CryptoPrice.query.filter_by(symbol='ETH-USD').order_by(
+            CryptoPrice.id.desc()).limit(2).all()
+        # pourcentage change from last_days[-1].date to last_days[0].date
+        coeff = last_days[0].price / last_days[-1].price
+        # Multiply the coeff to improve the price change
+        eth_price_change = round((coeff - 1), 2) * 2
+        # Get all NFTs
+        nfts = NFT.query.all()
+        for nft in nfts:
+            # New price of the NFT
+            new_nft_price = round(nft.price * (1 + eth_price_change), 3)
+            # Get the price change of the NFT (in ETH)
+            nft_price_change = new_nft_price - nft.price
+            # Update the price of the NFT
+            nft.price = new_nft_price
+            # Update the ETH change of the NFT price
+            nft.price_change_24h = round(nft_price_change, 2)
+        db.session.commit()
 
     @staticmethod
     def refresh_NFT_base(user_id):

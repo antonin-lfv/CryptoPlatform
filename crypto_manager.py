@@ -40,14 +40,14 @@ class CryptoDataManager:
 
                             if latest_data and index_date == latest_data.date:
                                 # Si la date existe déjà, on met à jour le prix et le volume
-                                latest_data.price = row['Open']
+                                latest_data.price = row['Close']
                                 latest_data.volume = row['Volume']
                             else:
                                 # Sinon on ajoute une nouvelle entrée
                                 new_data = CryptoPrice(
                                     symbol=symbol,
                                     date=index_date,
-                                    price=row['Open'],
+                                    price=row['Close'],
                                     volume=row['Volume']
                                 )
                                 db.session.add(new_data)
@@ -74,13 +74,13 @@ class CryptoDataManager:
                         index_date = index.date()
 
                         if latest_data and index_date == latest_data.date:
-                            latest_data.price = row['Open']
+                            latest_data.price = row['Close']
                             latest_data.volume = row['Volume']
                         else:
                             new_data = CryptoPrice(
                                 symbol=symbol,
                                 date=index_date,
-                                price=row['Open'],
+                                price=row['Close'],
                                 volume=row['Volume']
                             )
                             db.session.add(new_data)
