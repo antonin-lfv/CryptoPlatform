@@ -83,9 +83,15 @@ def home():
     crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=current_user.id).order_by(
         CryptoWalletEvolution.date.desc()).limit(2).all()
     if len(crypto_wallet_evolution) == 2:
-        coeff = crypto_wallet_evolution[0].quantity / crypto_wallet_evolution[1].quantity
-        value_change = round((coeff - 1) * 100, 2)
-        crypto_wallet_evolution_percent = value_change
+        if crypto_wallet_evolution[1].quantity == 0:
+            if crypto_wallet_evolution[0].quantity == 0:
+                crypto_wallet_evolution_percent = 0
+            else:
+                crypto_wallet_evolution_percent = -1
+        else:
+            coeff = crypto_wallet_evolution[0].quantity / crypto_wallet_evolution[1].quantity
+            value_change = round((coeff - 1) * 100, 2)
+            crypto_wallet_evolution_percent = value_change
     else:
         crypto_wallet_evolution_percent = 0
 
