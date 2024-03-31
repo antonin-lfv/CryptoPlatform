@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
@@ -31,17 +31,20 @@ class CryptoDataManager:
 
                     try:
                         # Télécharge les données depuis Yahoo Finance
-                        start_date = latest_data.date.isoformat() if latest_data else '2000-01-01'
+                        start_date = (latest_data.date + timedelta(days=1)).isoformat() if latest_data else '2000-01-01'
                         data = yf.download(symbol, start=start_date)
 
                         # Ajoute ou remplace les données dans la base de données
                         for index, row in data.iterrows():
                             index_date = index.date()
 
-                            if latest_data and index_date == latest_data.date:
+                            # Vérifie si la date existe déjà dans la base de données
+                            existing_data = CryptoPrice.query.filter_by(symbol=symbol, date=index_date).first()
+
+                            if existing_data:
                                 # Si la date existe déjà, on met à jour le prix et le volume
-                                latest_data.price = row['Close']
-                                latest_data.volume = row['Volume']
+                                existing_data.price = row['Close']
+                                existing_data.volume = row['Volume']
                             else:
                                 # Sinon on ajoute une nouvelle entrée
                                 new_data = CryptoPrice(
@@ -212,6 +215,7 @@ class CryptoDataManager:
         """
         last_days = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(days+1).all()
         # pourcentage change from last_days[-1].date to last_days[0].date
+        print(last_days[0].date, last_days[-1].date)
         coeff = last_days[0].price / last_days[-1].price
         pourcentage_change = (coeff - 1) * 100
         return round(pourcentage_change, 2)
