@@ -215,7 +215,7 @@ class Mining_server_manager:
         # - Symbol
 
         output = {'number_of_servers': 0, 'total_buy_amount': 0,
-                  'power': server_details.power, 'symbol': server_details.symbol,
+                  'power': round(server_details.power, 2), 'symbol': server_details.symbol,
                   'total_buy_amount_USD': 0, 'power_USD': 0}
 
         # Use caching for currency conversion
@@ -223,7 +223,7 @@ class Mining_server_manager:
         def cached_convert_fct(currency_pair, amount):
             return CryptoDataManager().get_USD_from_crypto(currency_pair, amount)
 
-        output['power_USD'] = cached_convert_fct(server_details.symbol + '-USD', server_details.power)
+        output['power_USD'] = round(cached_convert_fct(server_details.symbol + '-USD', server_details.power), 2)
 
         for server in user_server_details:
             output['number_of_servers'] += server.instances_number
@@ -233,7 +233,7 @@ class Mining_server_manager:
 
         # round the values
         output['total_buy_amount'] = round(output['total_buy_amount'], 3)
-        output['total_buy_amount_USD'] = round(output['total_buy_amount_USD'], 3)
+        output['total_buy_amount_USD'] = round(output['total_buy_amount_USD'], 2)
 
         return output
 
