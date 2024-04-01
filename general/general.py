@@ -6,10 +6,11 @@ from notification_manager import Notification_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
-from utils import max_servers, MAINTENANCE_MODE, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
+from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from models import MiningServer, User, CryptoWalletEvolution
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
+import os
 
 BLP_general = Blueprint('BLP_general', __name__,
                         template_folder='templates',
@@ -32,7 +33,7 @@ def user_updates():
 @BLP_general.before_request
 @login_required
 def check_for_maintenance():
-    if MAINTENANCE_MODE and current_user.role != 'ADMIN':
+    if (os.getenv('MAINTENANCE_MODE') == 'True') and current_user.role != 'ADMIN':
         # call maintenance page
         return render_template('general/error_maintenance.html', user=current_user)
 
@@ -267,16 +268,15 @@ def one_crypto_dashboard(symbol):
 @BLP_general.route('/nft_marketplace', methods=['GET', 'POST'])
 @BLP_general.route('/nft_marketplace/<collection>', methods=['GET', 'POST'])
 @login_required
-def nft_marketplace(collection=None):
-    if collection is not None:
-        # Check if the collection exists
-        if collection not in NFT_collections:
-            abort(404)
-        return render_template('general/nft_marketplace.html',
-                               user=current_user, NFT_collections=NFT_collections,
-                               collection=collection)
+def nft_marketplace(collection=NFT_collections[0]):
+    if collection is None:
+        collection = NFT_collections[0]
+    # Check if the collection exists
+    if collection not in NFT_collections:
+        abort(404)
     return render_template('general/nft_marketplace.html',
-                           user=current_user, NFT_collections=NFT_collections)
+                           user=current_user, NFT_collections=NFT_collections,
+                           collection=collection)
 
 
 @BLP_general.route('/nft_details/<nft_id>', methods=['GET', 'POST'])

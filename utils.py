@@ -93,8 +93,6 @@ number_most_valuable_cryptos = 6
 
 user_profile_default_image_path = "images/avatar/avatar-1.png"
 
-MAINTENANCE_MODE = False
-
 # dict to get name from symbol
 symbol_to_name = dict(zip(top_cryptos_symbols, top_cryptos_names))
 

@@ -41,9 +41,9 @@
 
             <!-- Main content -->
             <section class="content">
-                <div class="row">
+                <div class="row" style="height: 100vh;">
                     <!-- Research area -->
-                    <div class="col-xl-2 col-lg-4 col-12">
+                    <div class="col-xl-2 col-lg-4 col-12" style="overflow-y: auto; max-height: 100vh;">
                         <div class="box">
                             <div class="box-body" style="overflow-y: auto">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -69,10 +69,6 @@
                                     id="liked_section"><i
                                             class="fa fa-heart-o text-danger"></i> Liked</a>
                                     </li>
-                                    <li class="nav-item"><a class="nav-link" href="#" onclick="active_in_my_budget()"
-                                    id="in_my_budget_section"><i
-                                            class="fa fa-dollar text-danger"></i> In my budget</a>
-                                    </li>
                                     <li class="nav-item"><a class="nav-link" href="#" onclick="active_bids()"
                                     id="bids_section"><i
                                             class="fa fa-money text-danger"></i> My bids</a>
@@ -91,10 +87,6 @@
                             </div>
                             <div class="box-body no-padding mailbox-nav">
                                 <ul class="nav nav-pills flex-column" id="collection_picker">
-                                    <li class="nav-item"><a class="nav-link active" href="#" id="show_all_nft"
-                                                            onclick="active_collection(this)"><i
-                                            class="ion ion-ios-albums-outline"></i> All</a>
-                                    </li>
                                     {% for collection in NFT_collections %}
                                         <li class="nav-item">
                                             <a class="nav-link" href="#" id="{{ collection.replace(' ', '_') }}"
@@ -110,9 +102,11 @@
                         </div>
                     </div>
                     <!-- NFT grid -->
-                    <div class="col-xl-10 col-lg-8 col-12">
-                        <div class="row" id="markeplace_NFT_div">
+                    <div class="col-xl-10 col-lg-8 col-12" style="overflow-y: auto; max-height: 100vh;">
+                        <div class="box" id="collection_details">
 
+                        </div>
+                        <div class="row" id="markeplace_NFT_div">
                         </div>
                     </div>
                 </div>
@@ -132,6 +126,7 @@
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
+
 function active_collection(collectionElement) {
     var collection = collectionElement.id;
 
@@ -141,12 +136,53 @@ function active_collection(collectionElement) {
 
     // Requête AJAX à l'API Flask
     $.ajax({
-        url: `/api/get_NFT_marketplace${collection === 'show_all_nft' ? '' : '/'+collection}`,
+        url: `/api/get_NFT_marketplace/${collection}`,
         method: 'GET',
         success: function(NFTs) {
 
             var marketplaceDiv = $('#markeplace_NFT_div');
             marketplaceDiv.empty();  // Nettoyer le contenu existant
+            var collectionDiv = $('#collection_details');
+            collectionDiv.empty();
+
+            // Add a box to display the collection details
+            $.ajax({
+                url: '/api/get_collection_details/' + collection,
+                type: 'GET',
+                success: function(data) {
+                    // Construction du contenu HTML avec les données de la collection
+                    var content = '<div class="box-body">'
+                                + '<div class="stats-container">'
+                                + '<div class="stats-item">'
+                                + '<h2>' + data.number_of_NFTs+'</h2>'
+                                + '<p>Number of NFTs</p>'
+                                + '</div>'
+                                + '<div class="stats-item">'
+                                + '<h2>' + data.floor_price + ' ETH</h2>'
+                                + '<p>Floor price</p>'
+                                + '</div>'
+                                + '<div class="stats-item">'
+                                + '<h2>' + data.total_volume + ' ETH</h2>' // Ajustez cette ligne en fonction des données réelles retournées
+                                + '<p>Total volume</p>'
+                                + '</div>'
+                                + '<div class="stats-item">'
+                                + '<h2>' + data.average_price + ' ETH</h2>' // Ajustez cette ligne en fonction des données réelles retournées
+                                + '<p>Average price</p>'
+                                + '</div>'
+                                + '<div class="stats-item">'
+                                + '<h2>' + data.number_of_owners + '</h2>'
+                                + '<p>Owners (Unique)</p>'
+                                + '</div>'
+                                + '</div>'
+                                + '</div>';
+
+                    // Injecter le contenu dans le DIV
+                    collectionDiv.append(content);
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
 
             // Générer le HTML pour chaque NFT et l'ajouter à la div
             NFTs.forEach(function(nft) {
@@ -203,6 +239,8 @@ function active_liked() {
 
             var marketplaceDiv = $('#markeplace_NFT_div');
             marketplaceDiv.empty();  // Nettoyer le contenu existant
+            var collectionDiv = $('#collection_details');
+            collectionDiv.empty();
 
             // Générer le HTML pour chaque NFT et l'ajouter à la div
             NFTs.forEach(function(nft) {
@@ -268,6 +306,8 @@ function active_bids() {
 
             var marketplaceDiv = $('#markeplace_NFT_div');
             marketplaceDiv.empty();  // Nettoyer le contenu existant
+            var collectionDiv = $('#collection_details');
+            collectionDiv.empty();
 
             // Générer le HTML pour chaque NFT et l'ajouter à la div
             NFTs.forEach(function(nft) {
@@ -332,6 +372,8 @@ function active_owned() {
 
             var marketplaceDiv = $('#markeplace_NFT_div');
             marketplaceDiv.empty();  // Nettoyer le contenu existant
+            var collectionDiv = $('#collection_details');
+            collectionDiv.empty();
 
             // Générer le HTML pour chaque NFT et l'ajouter à la div
             NFTs.forEach(function(nft) {
@@ -387,72 +429,6 @@ function active_owned() {
     });
 }
 
-function active_in_my_budget(){
-    // Requête AJAX à l'API Flask
-    $.ajax({
-        url: '/api/get_NFTs_in_my_budget',
-        method: 'GET',
-        success: function(NFTs) {
-
-            var marketplaceDiv = $('#markeplace_NFT_div');
-            marketplaceDiv.empty();  // Nettoyer le contenu existant
-
-            // Générer le HTML pour chaque NFT et l'ajouter à la div
-            NFTs.forEach(function(nft) {
-                var staticBaseURL_img = "{{ url_for('static', filename='PATH') }}";
-                nft.image_path = staticBaseURL_img.replace('PATH', nft.image_path);
-                var staticBaseURL_details = "{{ url_for('BLP_general.nft_details', nft_id='PATH') }}";
-                nft.details_path = staticBaseURL_details.replace('PATH', nft.id);
-                var nftHTML = `
-                <div class="col-md-12 col-lg-3">
-                    <div class="card">
-                        <a href="${nft.details_path}"><img class="card-img-top" src="${nft.image_path}" alt="Card image cap" loading="lazy"></a>
-                        <div class="card-body">
-                            <h4 class="card-title
-
-                            "><a href="${nft.details_path}">${nft.name}</a></h4>
-                            <h6 class="card-text">${nft.collection} collection</h6>
-                            <p class="card-subtitle">${nft.price} ETH <small><span class="d-block text-${nft.price_change_24h<0 ? 'danger' : 'success'}"> $${nft.price_change_24h}<i
-                                                    class="fa fa-arrow-${nft.price_change_24h<0 ? 'down' : 'up'}"></i></span></small></p>
-                        </div>
-                        <div class="card-footer justify-content-between d-flex">
-                            <ul class="list-inline mb-0 me-2">
-                                <li class="list-inline-item">
-                                    <a id="number_of_likes_for_${nft.id}">${nft.number_of_likes}</a>&nbsp;<a href="#" onclick=like_nft(${nft.id})><i class="fa fa-heart${nft.liked}"></i></a>
-                                </li>
-                            </ul>
-                            <ul class="list-inline mb-0">
-                                <li><a href="${nft.details_path}">${nft.owned ? 'Sell now' : 'Buy now'}</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>`;
-                marketplaceDiv.append(nftHTML);  // Append the new HTML
-            });
-
-            // if empty, display a message
-            if (NFTs.length === 0) {
-                marketplaceDiv.append('<h3 class="text-center">There are no NFTs in your budget</h3>');
-            }
-
-            // activate in my budget section
-            $('#in_my_budget_section').addClass('active');
-            // deactivate all collections
-            $('#collection_picker .nav-link').removeClass('active');
-            // deactivate liked section
-            $('#liked_section').removeClass('active');
-            // deactivate owned section
-            $('#owned_section').removeClass('active');
-            // deactivate bids section
-            $('#bids_section').removeClass('active');
-        },
-        error: function(error) {
-            console.error('Error:', error);
-        }
-    });
-
-}
-
 function like_nft(nft_id) {
     // Requête AJAX à l'API Flask
     $.ajax({
@@ -487,13 +463,9 @@ function like_nft(nft_id) {
 
 
 // Charger les NFTs quand la page est chargée entièrement
-$(document).ready(function() {
-    // Simuler un clic sur le lien "All" pour charger tous les NFTs
-    var collection = "show_all_nft"
+$(document).ready(function(){
     // test if flask variable is defined
-    {% if collection is defined %}
-        collection = "{{ collection }}"
-    {% endif %}
+    collection = "{{ collection }}"
     active_collection(document.getElementById(collection));
     // Requête AJAX à l'API Flask pour obtenir le solde de l'adresse Ethereum
     $.ajax({

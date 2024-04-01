@@ -186,6 +186,16 @@ def get_NFT_marketplace(collection=None):
     return jsonify(NFTs)
 
 
+@BLP_api.route('/api/get_collection_details/<collection>', methods=['GET', 'POST'])
+@login_required
+def get_collection_details(collection):
+    """
+    Get details of an NFT collection
+    """
+    collection_details = NFT_manager().get_collection_details(collection)
+    return jsonify(collection_details)
+
+
 @BLP_api.route('/api/get_NFT_collections_preview/<collection>/<nft_id>', methods=['GET', 'POST'])
 @login_required
 def get_NFT_collections_preview(collection, nft_id):
@@ -224,16 +234,6 @@ def get_bids_NFTs():
     """
     bids_NFTs = NFT_manager().get_bids_NFTs(current_user.id)
     return jsonify(bids_NFTs)
-
-
-@BLP_api.route('/api/get_NFTs_in_my_budget', methods=['GET', 'POST'])
-@login_required
-def get_NFTs_in_my_budget():
-    """
-    Get all NFTs in the budget of the user
-    """
-    NFTs = NFT_manager().get_NFTs_in_my_budget(current_user.id)
-    return jsonify(NFTs)
 
 
 @BLP_api.route('/api/get_user_NFTs/<user_id>', methods=['GET', 'POST'])

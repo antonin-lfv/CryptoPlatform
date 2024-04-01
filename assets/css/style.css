@@ -144,12 +144,29 @@ body {
     z-index: 1050;
 }
 
-/* For c3 graphs */
-.dark-mode .c3-axis text {
-    fill: white;
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-size: cover;
 }
-.dark-mode .c3-legend-item text {
-    fill: white;
+
+.stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Ajouter d'autres styles comme le padding, la marge, etc. si nécessaire */
+}
+
+.stats-item > p {
+    margin: 0;
+    font-size: 1em; /* Ou la taille de police souhaitée */
+}
+
+.stats-item > h1 {
+    margin: 0;
+    font-size: 2em; /* Ou la taille de police souhaitée */
 }
 
 

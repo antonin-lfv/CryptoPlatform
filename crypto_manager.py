@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
@@ -21,7 +22,7 @@ class CryptoDataManager:
         """
         print(f"[INFO] Updating crypto data")
 
-        if Config.OFFLINE:
+        if os.getenv('MAINTENANCE_MODE') == 'True':
             print("You are in offline mode. No data will be updated.")
             return
         else:
@@ -215,7 +216,6 @@ class CryptoDataManager:
         """
         last_days = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(days+1).all()
         # pourcentage change from last_days[-1].date to last_days[0].date
-        print(last_days[0].date, last_days[-1].date)
         coeff = last_days[0].price / last_days[-1].price
         pourcentage_change = (coeff - 1) * 100
         return round(pourcentage_change, 2)

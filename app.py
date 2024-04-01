@@ -128,10 +128,18 @@ def create_app():
             mining_server_manager.check_for_server_payment(user.id)
 
     # Add the task to the scheduler
-    @scheduler.task('cron', id='crypto_update', minute='*/5')
-    def cron_crypto_update():
-        with app.app_context():
-            schedule_update()
+    if os.getenv('MAINTENANCE_MODE') == 'True':
+        print("Maintenance mode is on, update every hour")
+
+        @scheduler.task('cron', id='crypto_update', hour='*')
+        def cron_crypto_update():
+            with app.app_context():
+                schedule_update()
+    else:
+        @scheduler.task('cron', id='crypto_update', minute='*/5')
+        def cron_crypto_update():
+            with app.app_context():
+                schedule_update()
 
     # Start the first update
     with app.app_context():

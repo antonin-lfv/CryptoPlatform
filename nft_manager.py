@@ -285,7 +285,42 @@ class NFT_manager:
                 'price_change_24h': round(nft_item.price_change_24h, 2)
             })
 
+        # Sort by price
+        NFTs_list = sorted(NFTs_list, key=lambda x: x['price'])
+
         return NFTs_list
+
+    @staticmethod
+    def get_collection_details(collection):
+        # Get details of a collection
+        # - Name
+        # - Number of NFTs
+        # - Floor price
+        # - Ceiling price
+        # - Average price
+        # - Total volume
+        # - Number of owners (unique)
+        collection_details = {
+            'name': collection,
+        }
+        # Get all NFTs of the collection
+        NFTs = NFT.query.filter_by(collection=collection).all()
+        # Get the number of NFTs
+        collection_details['number_of_NFTs'] = len(NFTs)
+        # Get the floor price
+        floor_price = min([nft.price for nft in NFTs])
+        collection_details['floor_price'] = round(floor_price, 2)
+        # Get the average price
+        average_price = sum([nft.price for nft in NFTs]) / len(NFTs)
+        collection_details['average_price'] = round(average_price, 2)
+        # Get the total volume
+        total_volume = sum([nft.price for nft in NFTs])
+        collection_details['total_volume'] = round(total_volume, 2)
+        # Get the number of owners
+        owners = list(set([nft.owner_id for nft in NFTs if nft.owner_id is not None]))
+        collection_details['number_of_owners'] = len(owners)
+
+        return collection_details
 
     @staticmethod
     def get_NFTS_preview(collection, nft_id):
@@ -364,57 +399,6 @@ class NFT_manager:
         nft_bids_list = [self.get_NFT(nft_id, user_id) for nft_id in nft_ids_list]
 
         return nft_bids_list
-
-    @staticmethod
-    def get_NFTs_in_my_budget(user_id):
-        """
-        Get all NFTs that are in the user's budget
-
-        Return:
-            dict
-        """
-        # Get the user
-        user = User.query.filter_by(id=user_id).first()
-        # Get the amount of the user in ETH
-        wallet = wallet_manager()
-        budget = wallet.get_user_specific_balance(user, 'ETH-USD')['tokens']
-
-        NFTs = NFT.query.filter(NFT.price <= budget).all()
-        # Trier par collection dans le même ordre que la liste NFT_collections
-        NFTs = sorted(NFTs, key=lambda x: NFT_collections.index(x.collection))
-
-        # Récupérez tous les NFTs aimés par l'utilisateur
-        nft_ids = UserLikedNFT.query.filter_by(user_id=user_id).all()
-
-        # Obtenez le nombre de likes pour chaque NFT
-        nft_likes = UserLikedNFT.query.all()
-        number_of_likes = {}
-        for nft_id in nft_likes:
-            if nft_id.nft_id in number_of_likes:
-                number_of_likes[nft_id.nft_id] += 1
-            else:
-                number_of_likes[nft_id.nft_id] = 1
-
-        # Créez un dict avec tous les NFTs
-        NFTs_list = []
-        for nft_item in NFTs:
-            if nft_item.owner_id != user_id:
-                NFTs_list.append({
-                    'id': nft_item.id,
-                    'name': nft_item.name,
-                    'collection': nft_item.collection,
-                    'price': nft_item.price,
-                    'image_path': nft_item.image_path,
-                    'is_for_sale': nft_item.is_for_sale,
-                    'owner_id': nft_item.owner_id,
-                    'owned': nft_item.owner_id == user_id,
-                    'liked': '' if nft_item.id in [n.nft_id for n in nft_ids] else '-o',
-                    'number_of_likes': number_of_likes.get(nft_item.id, 0),
-                    'views_number': nft_item.views_number,
-                    'price_change_24h': round(nft_item.price_change_24h, 2)
-                })
-
-        return NFTs_list
 
     @staticmethod
     def like_NFT(user_id, nft_id):
