@@ -111,6 +111,7 @@ def create_app():
 
     # ===== Scheduler
     from crypto_manager import CryptoDataManager
+    from mining_server_manager import Mining_server_manager
     from nft_manager import NFT_manager
 
     def schedule_update():
@@ -120,6 +121,11 @@ def create_app():
         # Update NFT prices if needed
         nft_manager = NFT_manager()
         nft_manager.update_NFT_price()
+        # Start payment process for servers
+        users = User.query.all()
+        mining_server_manager = Mining_server_manager()
+        for user in users:
+            mining_server_manager.check_for_server_payment(user.id)
 
     # Add the task to the scheduler
     @scheduler.task('cron', id='crypto_update', minute='*/5')

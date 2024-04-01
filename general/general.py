@@ -27,11 +27,6 @@ def user_updates():
     print("Deleting old notifications")
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
-    # Start payment process for servers
-    print("Checking for server payment")
-    mining_server_manager = Mining_server_manager()
-    mining_server_manager.check_for_server_payment(current_user.id)
-    print("End of before_request")
 
 
 @BLP_general.before_request
