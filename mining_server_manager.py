@@ -38,10 +38,12 @@ class Mining_server_manager:
         closest_next_earning_date = UserServer.query.filter_by(user_id=user_id).order_by(
             UserServer.next_earning_date).first().next_earning_date
 
+        print(f"[INFO]: Next earning date for user {user_id}: {closest_next_earning_date}")
+
         # If the closest next_earning_date is in the future, return
         if closest_next_earning_date > today_date:
             # Update wallet evolution
-            # print(f"[INFO]: Next earning date is in the future for user {user_id}")
+            print(f"[INFO]: Next earning date is in the future for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -76,7 +78,6 @@ class Mining_server_manager:
             # === Calculate total earnings
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
-            # print(f"[INFO]: Server {server_instance.server_id} - Next earning date: {server_instance.next_earning_date}")
             # For each server instance, we compute the number of days since the last earning
             # Convert next_earning_date to datetime
             if server_instance.next_earning_date <= today_date:
@@ -94,6 +95,9 @@ class Mining_server_manager:
 
                 # Update the next earning date
                 server_instance.next_earning_date = tomorrow_date
+
+        # Commit the changes
+        db.session.commit()
 
         # Update wallet evolution
         w_manager = wallet_manager()

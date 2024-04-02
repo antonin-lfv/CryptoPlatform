@@ -112,6 +112,5 @@ steps_bonus = [0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3]
 def get_bonus_from_BTC_wallet(BTC_wallet_value):
     for btc, bonus in zip(steps[::-1], [steps_bonus[-1]]+steps_bonus[::-1]):
         if BTC_wallet_value >= btc:
-            print(bonus)
             return bonus
     return 0
