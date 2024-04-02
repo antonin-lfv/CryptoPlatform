@@ -1,0 +1,12 @@
+.idea
+__pycache__
+auth/__pycache__
+general/__pycache__
+.python-version
+/test.py
+/instance/db.sqlite
+/documentation/coinGecko_API_doc.md
+/configuration/setup_server_from_scratch.md
+/configuration/update_server.md
+/white_paper.md
+/.env
