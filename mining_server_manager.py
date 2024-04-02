@@ -5,6 +5,7 @@ from notification_manager import Notification_manager
 from datetime import datetime, timedelta
 from app import db
 from functools import lru_cache
+import json
 from collections import defaultdict
 from utils import top_cryptos_symbols, max_servers, get_bonus_from_BTC_wallet
 
@@ -108,6 +109,35 @@ class Mining_server_manager:
                                                   f"You earned {round(USD_amount_earned, 3)} USD from mining "
                                                   f"on {today_date.strftime('%Y-%m-%d')}.",
                                                   "shopping-cart")
+
+    @staticmethod
+    def restart_mining_servers_price(user_id):
+        user = User.query.filter_by(id=user_id).first()
+        if user.role != 'ADMIN':
+            return {'status': 'error', 'message': 'You are not authorized to restart the mining servers'}
+        else:
+            # Empty the mining servers table
+            MiningServer.query.delete()
+            # Reinitialize the mining servers
+            path_to_mining_server_config = 'configuration/mining_servers.json'
+            # Iterate over all the json in the document, and add the mining server to the database
+            with open(path_to_mining_server_config) as json_file:
+                data = json.load(json_file)
+                for mining_server in data:
+                    mining_server = MiningServer(
+                        name=mining_server['Name'],
+                        symbol=mining_server['Symbol'],
+                        rent_amount_per_day=mining_server['RentAmountPerDay'],
+                        buy_amount=mining_server['BuyAmount'],
+                        power=mining_server['Power'],
+                        maintenance_cost_per_day=mining_server['MaintenanceCostPerDay'],
+                        logo_path=mining_server['Logo'],
+                        category=mining_server['Category']
+                    )
+                    db.session.add(mining_server)
+
+            db.session.commit()
+            return {'status': 'success', 'message': 'Mining servers restarted successfully'}
 
     @staticmethod
     def get_user_mining_servers_invoices(user, server_name):
