@@ -49,7 +49,8 @@ NFT_collections = [
     'Picasso', 'Cyberpunk', 'Greece', 'Cars', 'Futuristic-city',
     'Cats', 'Penguins', 'Cubes', 'Cyber-animals', 'Astronauts',
     'Fantastic-animals', 'Garden', 'Haunted-houses', 'Historic-buildings',
-    'Art', 'Nuketown', 'Space'
+    'Art', 'Nuketown', 'Space', 'ethereal-swirls', 'floating-islands', 'frogs',
+    'lights', 'playmobs', 'rebel-rootz'
     ]
 
 min_prix_common_NFT = 0.5
@@ -61,10 +62,11 @@ max_prix_epic_NFT = 100
 min_prix_legendary_NFT = 90
 max_prix_legendary_NFT = 200
 
-common_collection = ['Cars', 'Garden', 'Cubes']
-rare_collection = ['Picasso', 'Cyberpunk', 'Greece', 'Cats', 'Haunted-houses', 'Historic-buildings', 'Art']
-epic_collection = ['Futuristic-city', 'Penguins', 'Cyber-animals', 'Astronauts']
-legendary_collection = ['Fantastic-animals', 'Nuketown', 'Space']
+common_collection = ['Cars', 'Garden', 'Cubes', 'floating-islands', 'frogs']
+rare_collection = ['Picasso', 'Cyberpunk', 'Greece', 'Cats', 'Haunted-houses', 'Historic-buildings', 'Art',
+                   'lights', 'playmobs']
+epic_collection = ['Futuristic-city', 'Penguins', 'Cyber-animals', 'Astronauts', 'ethereal-swirls']
+legendary_collection = ['Fantastic-animals', 'Nuketown', 'Space', 'rebel-rootz']
 
 # map collection to min and max price
 collection_to_min_max_price = {
@@ -85,6 +87,12 @@ collection_to_min_max_price = {
     'Fantastic-animals': (min_prix_legendary_NFT, max_prix_legendary_NFT),
     'Nuketown': (min_prix_legendary_NFT, max_prix_legendary_NFT),
     'Space': (min_prix_legendary_NFT, max_prix_legendary_NFT),
+    'ethereal-swirls': (min_prix_epic_NFT, max_prix_epic_NFT),
+    'floating-islands': (min_prix_common_NFT, max_prix_common_NFT),
+    'frogs': (min_prix_common_NFT, max_prix_common_NFT),
+    'lights': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'playmobs': (min_prix_rare_NFT, max_prix_rare_NFT),
+    'rebel-rootz': (min_prix_legendary_NFT, max_prix_legendary_NFT)
 }
 
 core_url_NFT = '/images/nft-item/'

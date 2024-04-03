@@ -356,6 +356,17 @@ def increment_views(nft_id):
 # ================================
 
 
+@BLP_api.route('/api/restart_mining_servers_price', methods=['GET', 'POST'])
+@login_required
+def restart_mining_servers_price():
+    """
+    ADMIN ONLY
+    Restart the mining servers price
+    """
+    response = Mining_server_manager().restart_mining_servers_price(current_user.id)
+    return jsonify(response)
+
+
 @BLP_api.route('/api/get_all_mining_servers', methods=['GET', 'POST'])
 @login_required
 def get_all_mining_servers():

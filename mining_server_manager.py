@@ -5,6 +5,7 @@ from notification_manager import Notification_manager
 from datetime import datetime, timedelta
 from app import db
 from functools import lru_cache
+import json
 from collections import defaultdict
 from utils import top_cryptos_symbols, max_servers, get_bonus_from_BTC_wallet
 
@@ -19,12 +20,15 @@ class Mining_server_manager:
         """
         Calculate and apply payment and earnings for all servers in one operation instead of daily iterations.
         """
+        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id}")
 
         # Get the user
         user = User.query.filter_by(id=user_id).first()
 
         today_date = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
         tomorrow_date = today_date + timedelta(days=1)
+
+        print(f"today date: {today_date}, tomorrow date: {tomorrow_date}")
 
         # If the user has no servers, return
         if not UserServer.query.filter_by(user_id=user_id).first():
@@ -70,11 +74,13 @@ class Mining_server_manager:
 
         USD_amount_earned = 0
 
-        # print(f"[INFO]: Checking for server payment for user {user_id}")
-        # print(f"[INFO]: Today's date: {today_date}")
-        # print(f"[INFO]: Number of servers: {len(user_server_instances)}")
+        print(f"[INFO]: Checking for server payment for user {user_id}")
+        print(f"[INFO]: Today's date: {today_date}")
+        print(f"[INFO]: Number of server types: {len(user_server_instances)}")
 
         for server_instance in user_server_instances:
+            print(f"Loop for server instance {server_instance.id}, where next earning date is "
+                  f"{server_instance.next_earning_date}")
             # === Calculate total earnings
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
@@ -95,6 +101,10 @@ class Mining_server_manager:
 
                 # Update the next earning date
                 server_instance.next_earning_date = tomorrow_date
+            print(f"earned {USD_amount_earned} {server_details.symbol} for server {server_instance.id}")
+
+        for server_instance in user_server_instances:
+            print(f"next earning date for server {server_instance.id}: {server_instance.next_earning_date}")
 
         # Commit the changes
         db.session.commit()
@@ -104,10 +114,40 @@ class Mining_server_manager:
         w_manager.update_crypto_wallet_evolution(user)
 
         if USD_amount_earned > 0:
+            print(f"Adding notification for user {user_id}")
             Notification_manager.add_notification(user_id,
                                                   f"You earned {round(USD_amount_earned, 3)} USD from mining "
                                                   f"on {today_date.strftime('%Y-%m-%d')}.",
                                                   "shopping-cart")
+
+    @staticmethod
+    def restart_mining_servers_price(user_id):
+        user = User.query.filter_by(id=user_id).first()
+        if user.role != 'ADMIN':
+            return {'status': 'error', 'message': 'You are not authorized to restart the mining servers'}
+        else:
+            # Empty the mining servers table
+            MiningServer.query.delete()
+            # Reinitialize the mining servers
+            path_to_mining_server_config = 'configuration/mining_servers.json'
+            # Iterate over all the json in the document, and add the mining server to the database
+            with open(path_to_mining_server_config) as json_file:
+                data = json.load(json_file)
+                for mining_server in data:
+                    mining_server = MiningServer(
+                        name=mining_server['Name'],
+                        symbol=mining_server['Symbol'],
+                        rent_amount_per_day=mining_server['RentAmountPerDay'],
+                        buy_amount=mining_server['BuyAmount'],
+                        power=mining_server['Power'],
+                        maintenance_cost_per_day=mining_server['MaintenanceCostPerDay'],
+                        logo_path=mining_server['Logo'],
+                        category=mining_server['Category']
+                    )
+                    db.session.add(mining_server)
+
+            db.session.commit()
+            return {'status': 'success', 'message': 'Mining servers restarted successfully'}
 
     @staticmethod
     def get_user_mining_servers_invoices(user, server_name):

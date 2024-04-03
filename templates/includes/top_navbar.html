@@ -112,6 +112,8 @@
                                         class="ti-dashboard text-muted me-2"></i> Refresh NFT base</a>
                                 <a class="dropdown-item" onclick="restart_NFT_base()" href="#"><i
                                         class="ti-dashboard text-muted me-2"></i> Restart NFT base</a>
+                                <a class="dropdown-item" onclick="restart_mining_servers_price()" href="#"><i
+                                        class="ti-dashboard text-muted me-2"></i> Restart mining servers price</a>
                                 <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#send_notification_to_all_users" href="#"><i
                                     class="ti-dashboard text-muted me-2"></i> Send notification to everyone</a>
                                 {% endif %}
@@ -207,6 +209,38 @@
                 swal({
                     title: 'Error',
                     text: 'An error occurred while restarting the NFT base',
+                    icon: 'error',
+                    button: 'Ok'
+                });
+            }
+        });
+    }
+
+    function restart_mining_servers_price(){
+        $.ajax({
+            url: "api/restart_mining_servers_price",
+            type: 'POST',
+            success: function (response) {
+                if (response.status === 'success') {
+                    swal({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        button: 'Ok'
+                    });
+                } else {
+                    swal({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        button: 'Ok'
+                    });
+                }
+            },
+            error: function (response) {
+                swal({
+                    title: 'Error',
+                    text: 'An error occurred while restarting the mining servers',
                     icon: 'error',
                     button: 'Ok'
                 });
