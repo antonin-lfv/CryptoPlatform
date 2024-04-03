@@ -1,6 +1,8 @@
 import json
 import os
 import random
+import time
+from datetime import datetime
 
 from flask import Flask, render_template
 from flask_login import LoginManager
@@ -22,6 +24,7 @@ def create_app():
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
+
     # ===== Blueprint
     from auth.auth import BLP_auth
     from general.general import BLP_general
@@ -29,6 +32,7 @@ def create_app():
     app.register_blueprint(BLP_auth)
     app.register_blueprint(BLP_general)
     app.register_blueprint(BLP_api)
+
     # ===== Login manager
     login_manager = LoginManager()
     login_manager.login_view = 'BLP_auth.login'
@@ -40,6 +44,8 @@ def create_app():
             # ===== init SQLAlchemy
             db.create_all()
 
+            time.sleep(1)
+
             # ===== Init NFT marketplace
             # Go trhough all NFTs and add them to the database
             # Add a random price between 0.1 and 100 in crypto among :
@@ -48,7 +54,7 @@ def create_app():
             # Add a name that is the same as the collection and the index with #
             # add the collection name
             # add the image path
-            from models import NFT
+            from models import NFT, NFTPriceOwnerHistory
             print("Adding NFTs to the database")
 
             for collection in NFT_collections:
@@ -59,12 +65,14 @@ def create_app():
                 nb_files = len([f for f in files_ if f.endswith('.png') or f.endswith('.jpg')])
 
                 for i in range(1, nb_files + 1):
+                    # Init the NFT
                     name = f"{collection} #{i}"
                     path = f"{collection_path}{collection.lower()}_{i}.png"
                     price = round(random.uniform(collection_to_min_max_price[collection][0],
                                                  collection_to_min_max_price[collection][1]), 3)
                     nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                     db.session.add(nft)
+                    db.session.flush()
 
                 db.session.commit()
 
@@ -79,10 +87,8 @@ def create_app():
                     mining_server = MiningServer(
                         name=mining_server['Name'],
                         symbol=mining_server['Symbol'],
-                        rent_amount_per_day=mining_server['RentAmountPerDay'],
                         buy_amount=mining_server['BuyAmount'],
                         power=mining_server['Power'],
-                        maintenance_cost_per_day=mining_server['MaintenanceCostPerDay'],
                         logo_path=mining_server['Logo'],
                         category=mining_server['Category']
                     )
@@ -143,8 +149,7 @@ def create_app():
 
     # Start the first update
     with app.app_context():
-        if os.getenv('MIGRATION_TASKS') == 'False':
-            schedule_update()
+        schedule_update()
 
     return app
 

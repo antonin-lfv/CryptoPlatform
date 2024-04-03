@@ -137,10 +137,8 @@ class Mining_server_manager:
                     mining_server = MiningServer(
                         name=mining_server['Name'],
                         symbol=mining_server['Symbol'],
-                        rent_amount_per_day=mining_server['RentAmountPerDay'],
                         buy_amount=mining_server['BuyAmount'],
                         power=mining_server['Power'],
-                        maintenance_cost_per_day=mining_server['MaintenanceCostPerDay'],
                         logo_path=mining_server['Logo'],
                         category=mining_server['Category']
                     )

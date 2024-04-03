@@ -129,10 +129,8 @@ class MiningServer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     symbol = db.Column(db.String(10), nullable=False)
-    rent_amount_per_day = db.Column(db.Float, nullable=False)
     buy_amount = db.Column(db.Float, nullable=False)
     power = db.Column(db.Float, nullable=False)
-    maintenance_cost_per_day = db.Column(db.Float, nullable=False)
     logo_path = db.Column(db.String(1000), nullable=False)
     category = db.Column(db.String(50), nullable=False)
 
@@ -243,7 +241,7 @@ class NFTBid(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)
-    bid_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    bid_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
     bid_price_crypto = db.Column(db.Float, nullable=False)
     bid_crypto_symbol = db.Column(db.String(10), nullable=False)
 
@@ -252,3 +250,20 @@ class NFTBid(db.Model):
 
     def __repr__(self):
         return f'<UserBid {self.user_id} bids {self.nft_id}>'
+
+
+class NFTPriceOwnerHistory(db.Model):
+    """
+    Table to record the history of the price and the owner of the NFT
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)  # NFT id
+    date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # Date of the transaction
+    price = db.Column(db.Float, nullable=False)  # Price of purchase in ETH
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
+
+    nft = db.relationship('NFT', backref=db.backref('nft_price_owner_history', lazy=True))
+    owner = db.relationship('User', backref=db.backref('user_nft_price_owner_history', lazy=True))
+
+    def __repr__(self):
+        return f'<NFTPriceOwnerHistory {self.nft_id} {self.date} {self.price}>'

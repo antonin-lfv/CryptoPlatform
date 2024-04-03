@@ -286,6 +286,16 @@ def get_NFT_details(nft_id):
     return jsonify(response)
 
 
+@BLP_api.route('/api/get_NFT_history/<nft_id>', methods=['GET', 'POST'])
+@login_required
+def get_NFT_history(nft_id):
+    """
+    Get history of an NFT
+    """
+    history = NFT_manager().get_NFT_history(nft_id)
+    return jsonify(history)
+
+
 @BLP_api.route('/api/set_as_profile_picture/<nft_id>', methods=['GET', 'POST'])
 @login_required
 def set_as_profile_picture(nft_id):

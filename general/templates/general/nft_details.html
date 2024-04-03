@@ -110,19 +110,31 @@
 
                                     </div>
                                 </div>
-                                <div class="col-12">
-                            <div class="box">
-                              <div class="box-header with-border">
-                                <h4 class="box-title"><i class="fa fa-bookmark"></i> &nbsp; More from this collection</h4>
-                              </div>
-                              <div class="box-body row" id="NFT_collection_div">
+                                <!-- Graph of history price -->
+                                <div class="col-12" id="div_NFT_history">
+                                    <div class="box">
+                                      <div class="box-header with-border">
+                                        <h4 class="box-title"><i class="fa fa-line-chart"></i> &nbsp; Price and owner history</h4>
+                                      </div>
+                                      <div class="box-body row" id="NFT_history" style="height:40vh;">
 
-                              </div>
-                              <div class="box-footer text-center">
-                                <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}" class="btn btn-default btn-sm">View collection</a>
-                              </div>
-                            </div>
-                          </div>
+                                      </div>
+                                    </div>
+                                </div>
+                                <!-- More from the collection -->
+                                <div class="col-12">
+                                    <div class="box">
+                                      <div class="box-header with-border">
+                                        <h4 class="box-title"><i class="fa fa-bookmark"></i> &nbsp; More from this collection</h4>
+                                      </div>
+                                      <div class="box-body row" id="NFT_collection_div">
+
+                                      </div>
+                                      <div class="box-footer text-center">
+                                        <a href="{{ url_for('BLP_general.nft_marketplace', collection=nft_data['collection']) }}" class="btn btn-default btn-sm">View collection</a>
+                                      </div>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -454,7 +466,6 @@ function increment_views(nft_id) {
 }
 
 
-
 function owned_status(nft_id) {
     // Requête AJAX à l'API Flask
     $.ajax({
@@ -475,6 +486,7 @@ function owned_status(nft_id) {
         }
     });
 }
+
 
 function set_as_profile_picture(nft_id) {
     $.ajax({
@@ -552,6 +564,61 @@ function display_ETH_of_user(){
 }
 
 
+function show_NFT_history(nft_id) {
+    fetch(`/api/get_NFT_history/${nft_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length <= 1) {
+                document.getElementById('div_NFT_history').style.display = 'none';
+            } else {
+                document.getElementById('div_NFT_history').style.display = 'block';
+                var gradiantChart = echarts.init(document.getElementById('NFT_history'));
+
+                var dateList = data.map(item => item.date);
+                var valueList = data.map(item => item.price);
+
+                alert(valueList);
+                alert(dateList);
+
+                var option = {
+                    visualMap: [{
+                        show: false,
+                        type: 'continuous',
+                        seriesIndex: 0,
+                        min: Math.min(...valueList),
+                        max: Math.max(...valueList)
+                    }],
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: dateList
+                    },
+                    yAxis: {
+                        type: 'value',
+                        splitLine: { show: false }
+                    },
+                    series: [{
+                        type: 'line',
+                        showSymbol: false,
+                        data: valueList
+                    }]
+                };
+
+                gradiantChart.setOption(option);
+
+                alert(gradiantChart)
+
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching NFT history:', error);
+        });
+}
+
+
+
 $(document).ready(function() {
     // Get the owned status of the NFT
     owned_status({{ nft_data['id'] }});
@@ -565,6 +632,8 @@ $(document).ready(function() {
     increment_views({{ nft_data['id'] }});
     // Show the collection preview
     show_collection_preview();
+    // show history of the NFT
+    show_NFT_history({{ nft_data['id'] }});
 
 });
 

@@ -1,4 +1,4 @@
-from models import NFT, UserLikedNFT, User, UserNFT, NFTBid, CryptoPrice
+from models import NFT, UserLikedNFT, User, UserNFT, NFTBid, CryptoPrice, NFTPriceOwnerHistory
 from flask import url_for
 from app import db
 from wallet_manager import wallet_manager
@@ -77,10 +77,12 @@ class NFT_manager:
                     name = f"{collection} #{filename.split('_')[-1].split('.')[0]}"
                     price = round(collection_to_min_max_price[collection][0] +
                                   (collection_to_min_max_price[collection][1] -
-                                   collection_to_min_max_price[collection][0]) * (1 - math.exp(-5 * random.random())), 3)
+                                   collection_to_min_max_price[collection][0]) * (1 - math.exp(-5 * random.random())),
+                                  3)
                     nft = NFT(name=name, collection=collection, image_path=file_path, price=price, owner_id=None,
                               price_change_24h=0)
                     db.session.add(nft)
+
                     n_NFT_refreshed += 1
 
         db.session.commit()
@@ -94,6 +96,8 @@ class NFT_manager:
             return {"status": "error", "message": "You are not an admin"}
         # Empty the NFT table
         NFT.query.delete()
+        # Empty NFT history
+        NFTPriceOwnerHistory.query.delete()
         db.session.commit()
         # Add the NFTs to the database
         for collection in NFT_collections:
@@ -104,12 +108,14 @@ class NFT_manager:
             nb_files = len([f for f in files_ if f.endswith('.png') or f.endswith('.jpg')])
 
             for i in range(1, nb_files + 1):
+                # Add NFT
                 name = f"{collection} #{i}"
                 path = f"{collection_path}{collection.lower()}_{i}.png"
                 price = round(random.uniform(collection_to_min_max_price[collection][0],
                                              collection_to_min_max_price[collection][1]), 3)
                 nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
                 db.session.add(nft)
+                db.session.flush()
 
             db.session.commit()
 
@@ -465,6 +471,12 @@ class NFT_manager:
                 # Update the NFT object
                 nft.is_for_sale = False
                 nft.owner_id = user_id
+                # Update the NFT history
+                history_nft = NFTPriceOwnerHistory(nft_id=nft_id, price=nft_price,
+                                                   owner_id=user_id,
+                                                   date=datetime.now())
+                db.session.add(history_nft)
+                # Commit the changes
                 db.session.commit()
                 # Buy the NFT with ETH
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
@@ -689,6 +701,12 @@ class NFT_manager:
         nft.price = bid.bid_price_crypto
         db.session.commit()
 
+        # Update the NFT history
+        history_nft = NFTPriceOwnerHistory(nft_id=nft.id, price=bid.bid_price_crypto,
+                                           owner_id=bid.user_id,
+                                           date=datetime.now())
+        db.session.add(history_nft)
+
         # Transfer the amount of the bid to the seller
         wallet = wallet_manager()
         wallet.receive_crypto(seller, 'ETH-USD', bid.bid_price_crypto)
@@ -706,3 +724,23 @@ class NFT_manager:
         wallet_manager().update_crypto_wallet_evolution(seller)
 
         return {"status": "success", "message": "Bid accepted successfully"}
+
+    @staticmethod
+    def get_NFT_history(nft_id):
+        """
+        Get the history of a NFT
+        """
+        # Get the history of the NFT
+        nft_history = NFTPriceOwnerHistory.query.filter_by(nft_id=nft_id).all()
+        # Create a list with all the history
+        history_list = []
+        for history in nft_history:
+            user = User.query.filter_by(id=history.owner_id).first()
+            history_list.append({
+                'owner_id': history.owner_id,
+                'owner_username': user.username,
+                'price': history.price,
+                'date': history.date
+            })
+
+        return history_list
