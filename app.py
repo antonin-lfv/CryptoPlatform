@@ -143,7 +143,8 @@ def create_app():
 
     # Start the first update
     with app.app_context():
-        schedule_update()
+        if os.getenv('MIGRATION_TASKS') == 'False':
+            schedule_update()
 
     return app
 
