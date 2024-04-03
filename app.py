@@ -128,8 +128,8 @@ def create_app():
             mining_server_manager.check_for_server_payment(user.id)
 
     # Add the task to the scheduler
-    if os.getenv('MAINTENANCE_MODE') == 'True':
-        print("Maintenance mode is on, update every hour")
+    if os.getenv('DEBUG_MODE') == 'True':
+        print("Debug mode is on, update every hour")
 
         @scheduler.task('cron', id='crypto_update', hour='*')
         def cron_crypto_update():
