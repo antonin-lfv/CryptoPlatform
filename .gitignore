@@ -10,3 +10,4 @@ general/__pycache__
 /configuration/update_server.md
 /white_paper.md
 /.env
+.DS_Store
