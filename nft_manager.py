@@ -736,11 +736,12 @@ class NFT_manager:
         history_list = []
         for history in nft_history:
             user = User.query.filter_by(id=history.owner_id).first()
+            # For the date, only keep year, month, day, hour and minute
             history_list.append({
                 'owner_id': history.owner_id,
                 'owner_username': user.username,
                 'price': history.price,
-                'date': history.date
+                'date': history.date.strftime("%Y-%m-%d %H:%M")
             })
 
         return history_list

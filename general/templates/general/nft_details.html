@@ -74,7 +74,7 @@
                                     </ul>
                                 </div>
                                 <div id="div_NFT_history">
-                                    <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#faa700" data-highlight-Line-Color="#222" data-offset="90" data-width="100%" data-height="100px" data-line-Width="1" data-line-Color="#06d79c" data-fill-Color="rgba(57, 204, 204, 0.08)">
+                                    <div class="sparkline mb-5" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#faa700" data-highlight-Line-Color="#222" data-offset="90" data-width="100%" data-height="100px" data-line-Width="1" data-line-Color="#06d79c" data-fill-Color="rgba(57, 204, 204, 0.08)">
 
                                     </div>
                                 </div>
@@ -391,6 +391,7 @@ function accept_bid(bid_id) {
             owned_status({{ nft_data['id'] }});
             get_bids({{ nft_data['id'] }});
             update_price();
+            drawNFTHistoryChart({{ nft_data['id'] }});
             swal(response['status'], response['message'], response['status']);
         },
         error: function(response) {
@@ -565,13 +566,12 @@ function drawNFTHistoryChart(nftId) {
     // Extraction des prix et des noms d'owner de l'historique
     var prices = [];
     var owners = [];
+    var dates = [];
     data.forEach(function(item) {
       prices.push(item['price']);
       owners.push(item['owner_username']);
+        dates.push(item['date']);
     });
-
-    alert(prices)
-    alert(owners)
 
     // Construction de la chaîne de données pour sparkline
     var priceData = prices.join(",");
@@ -592,9 +592,17 @@ function drawNFTHistoryChart(nftId) {
       highlightLineColor: '',
       minSpotColor: '',
       maxSpotColor: '',
+      tooltipFormatter: function(sparkline, options, fields) {
+          // round to 2 decimal places
+        var price = (prices[fields.x]).toFixed(2);
+        var owner = owners[fields.x];
+        var date = dates[fields.x];
+        return `<b>Price: ${price} ETH</b> <br> <b>Owner: ${owner}</b> <br> <b>Date: ${date}</b>`;
+      }
     });
   });
 }
+
 
 $(document).ready(function() {
     // Get the owned status of the NFT
