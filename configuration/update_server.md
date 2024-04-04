@@ -48,3 +48,13 @@ sudo systemctl start CryptoPlatform
 ```bash
 sudo systemctl status CryptoPlatform
 ```
+
+# Check the status with journalctl
+```bash
+sudo journalctl -u CryptoPlatform
+```
+
+# Check the logs
+```bash
+sudo journalctl -u CryptoPlatform -e
+```
