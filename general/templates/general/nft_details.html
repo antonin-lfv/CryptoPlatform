@@ -73,6 +73,11 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <div id="div_NFT_history">
+                                    <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#faa700" data-highlight-Line-Color="#222" data-offset="90" data-width="100%" data-height="100px" data-line-Width="1" data-line-Color="#06d79c" data-fill-Color="rgba(57, 204, 204, 0.08)">
+
+                                    </div>
+                                </div>
                             </div>
                             <div id="nft_data"
                                  data-owned="{{ nft_data['owned'] }}"
@@ -110,17 +115,7 @@
 
                                     </div>
                                 </div>
-                                <!-- Graph of history price -->
-                                <div class="col-12" id="div_NFT_history">
-                                    <div class="box">
-                                      <div class="box-header with-border">
-                                        <h4 class="box-title"><i class="fa fa-line-chart"></i> &nbsp; Price and owner history</h4>
-                                      </div>
-                                      <div class="box-body row" id="NFT_history" style="height:40vh;">
 
-                                      </div>
-                                    </div>
-                                </div>
                                 <!-- More from the collection -->
                                 <div class="col-12">
                                     <div class="box">
@@ -564,60 +559,42 @@ function display_ETH_of_user(){
 }
 
 
-function show_NFT_history(nft_id) {
-    fetch(`/api/get_NFT_history/${nft_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length <= 1) {
-                document.getElementById('div_NFT_history').style.display = 'none';
-            } else {
-                document.getElementById('div_NFT_history').style.display = 'block';
-                var gradiantChart = echarts.init(document.getElementById('NFT_history'));
+function drawNFTHistoryChart(nftId) {
+  // Appel AJAX pour récupérer l'historique du NFT
+  $.getJSON(`/api/get_NFT_history/${nftId}`, function(data) {
+    // Extraction des prix et des noms d'owner de l'historique
+    var prices = [];
+    var owners = [];
+    data.forEach(function(item) {
+      prices.push(item['price']);
+      owners.push(item['owner_username']);
+    });
 
-                var dateList = data.map(item => item.date);
-                var valueList = data.map(item => item.price);
+    alert(prices)
+    alert(owners)
 
-                alert(valueList);
-                alert(dateList);
+    // Construction de la chaîne de données pour sparkline
+    var priceData = prices.join(",");
 
-                var option = {
-                    visualMap: [{
-                        show: false,
-                        type: 'continuous',
-                        seriesIndex: 0,
-                        min: Math.min(...valueList),
-                        max: Math.max(...valueList)
-                    }],
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: dateList
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitLine: { show: false }
-                    },
-                    series: [{
-                        type: 'line',
-                        showSymbol: false,
-                        data: valueList
-                    }]
-                };
+    // Mise à jour du contenu de la div avec les données de prix
+    $("#div_NFT_history .sparkline").text(priceData);
 
-                gradiantChart.setOption(option);
-
-                alert(gradiantChart)
-
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching NFT history:', error);
-        });
+    // (Re)dessin du graphique sparkline
+    $("#div_NFT_history .sparkline").sparkline('html', {
+      type: 'line',
+      width: '100%',
+      height: '100px',
+      lineWidth: 1,
+      lineColor: '#06d79c',
+      fillColor: 'rgba(57, 204, 204, 0.08)',
+      spotRadius: 0,
+      highlightSpotColor: '',
+      highlightLineColor: '',
+      minSpotColor: '',
+      maxSpotColor: '',
+    });
+  });
 }
-
-
 
 $(document).ready(function() {
     // Get the owned status of the NFT
@@ -633,7 +610,7 @@ $(document).ready(function() {
     // Show the collection preview
     show_collection_preview();
     // show history of the NFT
-    show_NFT_history({{ nft_data['id'] }});
+    drawNFTHistoryChart({{ nft_data['id'] }});
 
 });
 
