@@ -59,6 +59,13 @@
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Buy {{ step }} NFT{% if step>1 %}s{% endif %}</h5>
                                         </div>
+                                        {% if loop.index - 1 <= index_nft_bougth and loop.index - 1 not in index_nft_bougth_recovered %}
+                                            <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs"
+                                                        onclick="recover_reward({{ step }}, 'nfts_bought')"
+                                                id="nfts_bought_{{ step }}">Get reward</button>
+                                            </div>
+                                        {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
                                         </div>
@@ -86,6 +93,13 @@
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Sold {{ step }} NFT{% if step>1 %}s{% endif %}</h5>
                                         </div>
+                                        {% if loop.index - 1 <= index_nft_sold and loop.index - 1 not in index_nft_sold_recovered %}
+                                            <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs"
+                                                        onclick="recover_reward({{ step }}, 'nfts_sold')"
+                                                id="nfts_sold_{{ step }}">Get reward</button>
+                                            </div>
+                                        {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
                                         </div>
@@ -113,6 +127,13 @@
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Place {{ step }} Bid{% if step>1 %}s{% endif %}</h5>
                                         </div>
+                                        {% if loop.index - 1 <= index_nft_bid and loop.index - 1 not in index_nft_bid_recovered %}
+                                            <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs"
+                                                        onclick="recover_reward({{ step }}, 'bids_made')"
+                                                id="bids_made_{{ step }}">Get reward</button>
+                                            </div>
+                                        {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
                                         </div>
@@ -140,6 +161,13 @@
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Buy {{ step }} Serveur{% if step>1 %}s{% endif %}</h5>
                                         </div>
+                                        {% if loop.index - 1 <= index_servers_bought and loop.index - 1 not in index_servers_bought_recovered %}
+                                            <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs"
+                                                        onclick="recover_reward({{ step }}, 'servers_bought')"
+                                                id="servers_bought_{{ step }}">Get reward</button>
+                                            </div>
+                                        {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
                                         </div>
@@ -180,6 +208,25 @@ $('#bids_nft_quests').slimScroll({
 $('#buy_servers_quests').slimScroll({
         height: $(window).height() + 'px'
 });
+
+
+function recover_reward(step, type){
+    $.ajax({
+        url: 'api/recover_quest',
+        type: 'POST',
+        data: {
+            step: step,
+            quest_type: type
+        },
+        success: function(data){
+            if(data.status === 'success'){
+                // disable button and change text to "reward recovered"
+                $('#'+type+'_'+step).attr('disabled', true);
+                $('#'+type+'_'+step).text('Reward recovered');
+        }
+    });
+}
+
 </script>
 
 </body>

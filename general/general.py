@@ -9,7 +9,7 @@ from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, numbe
 from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from utils import NFTs_sold_steps, NFTs_bought_steps, NFTs_bid_steps, Servers_bought_steps, reward_factor
 from utils import get_current_quest_step
-from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats
+from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats, UserQuestRewards
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
 import os
@@ -418,14 +418,21 @@ def player_quests():
                                                                        quests_stats.bids_made,
                                                                        quests_stats.servers_bought)
 
-    print("index_nft_bougth", index_nft_bougth)
-    print("index_nft_sold", index_nft_sold)
-    print("index_nft_bid", index_nft_bid)
-    print("index_servers_bought", index_servers_bought)
+    # Get all recovered steps
+    quest_rewards = UserQuestRewards.query.filter_by(user_id=current_user.id).all()
+    # For each type of quest, get the steps that have been recovered
+    index_nft_bougth_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nft_bought']
+    index_nft_sold_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nft_sold']
+    index_nft_bid_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'bids_made']
+    index_servers_bought_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'servers_bought']
 
     return render_template('general/quests.html', user=current_user,
                            NFTs_bought_steps=NFTs_bought_steps, NFTs_sold_steps=NFTs_sold_steps,
                            NFTs_bid_steps=NFTs_bid_steps, Servers_bought_steps=Servers_bought_steps,
                            reward_factor=reward_factor,
                            index_nft_bougth=index_nft_bougth, index_nft_sold=index_nft_sold,
-                           index_nft_bid=index_nft_bid, index_servers_bought=index_servers_bought)
+                           index_nft_bid=index_nft_bid, index_servers_bought=index_servers_bought,
+                           index_nft_bougth_recovered=index_nft_bougth_recovered,
+                           index_nft_sold_recovered=index_nft_sold_recovered,
+                           index_nft_bid_recovered=index_nft_bid_recovered,
+                           index_servers_bought_recovered=index_servers_bought_recovered)

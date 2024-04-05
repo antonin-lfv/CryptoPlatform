@@ -1,20 +1,30 @@
-from models import User, UserQuestsStats
+from models import User, UserQuestRewards
 from app import db
+from wallet_manager import wallet_manager
+from utils import reward_factor
 
 
 class Quests_manager:
 
     @staticmethod
-    def check_and_reward(user_id):
-        """
-        Check if the user has completed a quest and reward him
-        """
-        # get the current step of all quests
-        user_step_quest = UserQuestsStats.query.filter_by(user_id=user_id).first()
-        if user_step_quest is None:
-            user_step_quest = UserQuestsStats(user_id=user_id)
-            db.session.add(user_step_quest)
-            db.session.commit()
-            nft_bougth, nft_sold, nft_bid, servers_bought = 0, 0, 0, 0
+    def recover_quest(user_id, step, quest_type):
+        user = User.query.get(user_id)
+        # Get the reward for the quest
+        user_rewards = UserQuestRewards.query.filter_by(user_id=user_id, step=step, quest_type=quest_type).first()
+        # If None, create with reward_claimed field as True
+        if user_rewards is None:
+            user_rewards = UserQuestRewards(user_id=user_id, step=step, quest_type=quest_type, reward_claimed=True)
+            db.session.add(user_rewards)
+        # If not None, set reward_claimed as True
+        else:
+            user_rewards.reward_claimed = True
 
-        # TODO
+        db.session.commit()
+
+        # Reward the user
+        print(f"User {user_id} has claimed the reward for quest {quest_type} step {step}")
+        reward_BTC = reward_factor*(step+1)
+        wallet_manager().receive_crypto(user, 'BTC-USD', reward_BTC)
+
+        return {"status": "success", "message": f"User {user_id} has claimed "
+                                                f"the reward for quest {quest_type} step {step}"}

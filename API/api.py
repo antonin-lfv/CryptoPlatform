@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from crypto_manager import CryptoDataManager
 from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
+from quests_manager import Quests_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
 from mining_server_manager import Mining_server_manager
@@ -20,6 +21,7 @@ BLP_api = Blueprint('BLP_api', __name__)
 # Wallet
 # Buy crypto
 # Notifications
+# Quests
 # General functions
 
 
@@ -162,17 +164,6 @@ def refresh_NFT_base():
     """
     refresh = NFT_manager().refresh_NFT_base(current_user.id)
     return jsonify(refresh)
-
-
-@BLP_api.route('/api/restart_NFT_base', methods=['GET', 'POST'])
-@login_required
-def restart_NFT_base():
-    """
-    ADMIN ONLY
-    Restart the NFT base
-    """
-    restart = NFT_manager().restart_NFT_base(current_user.id)
-    return jsonify(restart)
 
 
 @BLP_api.route('/api/get_NFT_marketplace', methods=['GET', 'POST'])
@@ -595,6 +586,22 @@ def send_notification_to_all_users():
     print(f"Sending notification to all users: {text}")
     Notification_manager().send_notification_to_all_users(text, 'user')
     return {'status': 'success'}
+
+
+# ================================
+# Quests
+# ================================
+
+@BLP_api.route('/api/recover_quest', methods=['GET', 'POST'])
+@login_required
+def recover_quest():
+    """
+    Recover the quest of the user
+    """
+    step = request.args.get('step')
+    quest_type = request.args.get('quest_type')
+    response = Quests_manager().recover_quest(current_user.id, step, quest_type)
+    return jsonify(response)
 
 
 # ================================

@@ -286,3 +286,14 @@ class UserQuestsStats(db.Model):
 
     def __repr__(self):
         return f'<UserQuestsStats {self.user_id} {self.date}>'
+
+
+class UserQuestRewards(db.Model):
+    """
+    Table to know the reward recovered by the user
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    quest_type = db.Column(db.String(50), nullable=False)  # 'nfts_bought', 'nfts_sold', 'bids_made', 'servers_bought'
+    step = db.Column(db.Integer, nullable=False)  # Step of the quest
+    reward_claimed = db.Column(db.Boolean, nullable=False, default=False)  # Has the reward been claimed?
