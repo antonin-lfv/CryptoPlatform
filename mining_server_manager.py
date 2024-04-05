@@ -18,7 +18,7 @@ class Mining_server_manager:
     @staticmethod
     def check_for_server_payment(user_id):
         """
-        Calculate and apply payment and earnings for all servers in one operation instead of daily iterations.
+        Calculate and apply payment and earnings for all servers in one operation.
         """
         print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id}")
 
@@ -101,7 +101,7 @@ class Mining_server_manager:
 
                 # Update the next earning date
                 server_instance.next_earning_date = tomorrow_date
-            print(f"earned {USD_amount_earned} {server_details.symbol} for server {server_instance.id}")
+                print(f"earned {total_earnings_USD} $ for server {server_instance.id}")
 
         for server_instance in user_server_instances:
             print(f"next earning date for server {server_instance.id}: {server_instance.next_earning_date}")
@@ -309,7 +309,7 @@ class Mining_server_manager:
             # If yes, update the user's wallet
             wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
                                              server_details.buy_amount * number_of_servers_to_buy)
-            # Create entry or update the user's server details, then add an invoice (the user will instantly earn)
+            # Create entry or update the user's server details, then add an invoice
             period = datetime.now().strftime("%B %Y")
             issuer = user.username
             tomorrow = datetime.strptime((datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
@@ -321,15 +321,12 @@ class Mining_server_manager:
                 db.session.add(new_server)
             else:
                 user_server_details.instances_number += number_of_servers_to_buy
+                user_server_details.next_earning_date = tomorrow
 
             today = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
 
             self.add_invoice(user_id, period, issuer, today, server_details.buy_amount * number_of_servers_to_buy,
                              server_id, 'buy', number_of_servers_to_buy)
-
-            # The user earns today
-            wallet_manager().receive_crypto(user, server_details.symbol + '-USD',
-                                            server_details.power * number_of_servers_to_buy)
 
             db.session.commit()
 

@@ -24,6 +24,12 @@
 
         <li><a href="{{ url_for('BLP_general.mining_place') }}"
                class="{{ 'active_navbar' if request.path == url_for('BLP_general.mining_place') else '' }}"><i
-                data-feather="server"></i>Mining</a></li>
+                data-feather="server"></i>Mining</a>
+        </li>
+
+        <li><a href="{{ url_for('BLP_general.player_quests') }}"
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.player_quests') else '' }}"><i
+                data-feather="server"></i>Quests</a>
+        </li>
     </ul>
 </nav>

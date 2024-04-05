@@ -133,6 +133,10 @@ def create_app():
         for user in users:
             mining_server_manager.check_for_server_payment(user.id)
 
+    # Start the first update
+    with app.app_context():
+        schedule_update()
+
     # Add the task to the scheduler
     if os.getenv('DEBUG_MODE') == 'True':
         print("Debug mode is on, update every hour")
@@ -146,10 +150,6 @@ def create_app():
         def cron_crypto_update():
             with app.app_context():
                 schedule_update()
-
-    # Start the first update
-    with app.app_context():
-        schedule_update()
 
     return app
 

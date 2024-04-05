@@ -385,3 +385,10 @@ def mining_server_invoices(server_name):
 
     return render_template('general/mining_server_invoices.html', user=current_user,
                            server_name=server_name, server_symbol=server_symbol)
+
+
+@BLP_general.route('/player_quests', methods=['GET', 'POST'])
+@login_required
+def player_quests():
+    return render_template('general/quests.html', user=current_user)
+
