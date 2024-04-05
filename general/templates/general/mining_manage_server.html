@@ -79,7 +79,8 @@
                                             <div class="box-body">
                                                 <h2 class="mt-10">Current power</h2>
                                                 <h4 class="text-bold" id="total_server_number"></h4>
-                                                <h2 class="text-bold text-warning mt-20 mb-20" id="total_power"></h2>
+                                                <h2 class="text-bold text-warning mt-20" id="total_power"></h2>
+                                                <h5 class="mb-5 text-warning">Bonus +{{ BONUS_FROM_BTC_WALLET*100 }}%</h5><br>
                                                 <a href="{{ url_for('BLP_general.mining_server_invoices', server_name=server_data.name) }}"
                                                    class="btn btn-warning mb-20">View invoices</a><br>
                                             </div>

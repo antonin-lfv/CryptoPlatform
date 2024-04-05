@@ -364,8 +364,19 @@ def mining_manage_server(server_name):
         'category': server.category,
     }
 
+    # Get the user
+    user = User.query.filter_by(id=current_user.id).first()
+    # Get the total BTC value of the user's wallet (NFTs and crypto)
+    w_manager = wallet_manager()
+    user_wallet = w_manager.get_user_balance(user)
+    user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
+    # Convert all balances to BTC
+    user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
+    # Get the bonus for the user
+    BONUS_FROM_BTC_WALLET = get_bonus_from_BTC_wallet(user_total_balance)
+
     return render_template('general/mining_manage_server.html', user=current_user,
-                           server_data=server_data)
+                           server_data=server_data, BONUS_FROM_BTC_WALLET=BONUS_FROM_BTC_WALLET)
 
 
 @BLP_general.route('/mining_server_invoices/<server_name>', methods=['GET', 'POST'])
