@@ -7,7 +7,9 @@ from user_manager import UserManager
 from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
 from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
-from models import MiningServer, User, CryptoWalletEvolution
+from utils import NFTs_sold_steps, NFTs_bought_steps, NFTs_bid_steps, Servers_bought_steps, reward_factor
+from utils import get_current_quest_step
+from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
 import os
@@ -151,7 +153,7 @@ def profile():
     user_total_balance = user_wallet['crypto_balance'] + user_wallet['web3_balance']
     # Convert all balances to BTC
     user_total_balance = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_total_balance), 2)
-    steps_bonus_list = [i*100 for i in steps_bonus]
+    steps_bonus_list = [i * 100 for i in steps_bonus]
     # Get the pourcentage of completion. The bar is full when the user has 2048 BTC (user_total_balance)
     # and 0 if the user has 0 BTC
     # The pourcentage is between 0 and 1200%
@@ -164,9 +166,9 @@ def profile():
                 print("add 100")
                 completion += 100
             else:
-                completion += 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1])
-                print("add", 100*(user_total_balance-steps[i-1])/(steps[i]-steps[i-1]))
-                print(f"steps[i-1]: {steps[i-1]}, steps[i]: {steps[i]}")
+                completion += 100 * (user_total_balance - steps[i - 1]) / (steps[i] - steps[i - 1])
+                print("add", 100 * (user_total_balance - steps[i - 1]) / (steps[i] - steps[i - 1]))
+                print(f"steps[i-1]: {steps[i - 1]}, steps[i]: {steps[i]}")
                 break
     else:
         completion = 100 * user_total_balance / (steps[0])
@@ -200,9 +202,12 @@ def leaderboard():
         user_dict['web3_balance'] = balance['web3_balance']
         user_dict['total_balance'] = balance['crypto_balance'] + balance['web3_balance']
         # Convert all balances to BTC
-        user_dict['crypto_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['crypto_balance']), 2)
-        user_dict['web3_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['web3_balance']), 2)
-        user_dict['total_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['total_balance']), 2)
+        user_dict['crypto_balance'] = round(
+            CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['crypto_balance']), 2)
+        user_dict['web3_balance'] = round(CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['web3_balance']),
+                                          2)
+        user_dict['total_balance'] = round(
+            CryptoDataManager().get_crypto_from_USD('BTC-USD', user_dict['total_balance']), 2)
         # Format the balances with comma between thousands
         user_dict['crypto_balance_format'] = "{:,}".format(user_dict['crypto_balance'])
         user_dict['web3_balance_format'] = "{:,}".format(user_dict['web3_balance'])
@@ -401,5 +406,26 @@ def mining_server_invoices(server_name):
 @BLP_general.route('/player_quests', methods=['GET', 'POST'])
 @login_required
 def player_quests():
-    return render_template('general/quests.html', user=current_user)
+    # Get the user quests stats
+    quests_stats = UserQuestsStats.query.filter_by(user_id=current_user.id).first()
+    if quests_stats is None:
+        index_nft_bougth, index_nft_sold, index_nft_bid, index_servers_bought = 0, 0, 0, 0
+    else:
+        # Get the current step of the quest
+        (index_nft_bougth, index_nft_sold,
+         index_nft_bid, index_servers_bought) = get_current_quest_step(quests_stats.nfts_bought,
+                                                                       quests_stats.nfts_sold,
+                                                                       quests_stats.bids_made,
+                                                                       quests_stats.servers_bought)
 
+    print("index_nft_bougth", index_nft_bougth)
+    print("index_nft_sold", index_nft_sold)
+    print("index_nft_bid", index_nft_bid)
+    print("index_servers_bought", index_servers_bought)
+
+    return render_template('general/quests.html', user=current_user,
+                           NFTs_bought_steps=NFTs_bought_steps, NFTs_sold_steps=NFTs_sold_steps,
+                           NFTs_bid_steps=NFTs_bid_steps, Servers_bought_steps=Servers_bought_steps,
+                           reward_factor=reward_factor,
+                           index_nft_bougth=index_nft_bougth, index_nft_sold=index_nft_sold,
+                           index_nft_bid=index_nft_bid, index_servers_bought=index_servers_bought)

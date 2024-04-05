@@ -280,13 +280,9 @@ class UserQuestsStats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
     nfts_bought = db.Column(db.Integer, nullable=False, default=0)  # Number of unique NFTs bought
-    nfts_bought_last_step_validated = db.Column(db.Integer, nullable=False, default=0)  # Last step validated
     nfts_sold = db.Column(db.Integer, nullable=False, default=0)  # Number of unique NFTs sold
-    nfts_sold_last_step_validated = db.Column(db.Integer, nullable=False, default=0)  # Last step validated
     bids_made = db.Column(db.Integer, nullable=False, default=0)  # Number of bids made
-    bids_made_last_step_validated = db.Column(db.Integer, nullable=False, default=0)  # Last step validated
     servers_bought = db.Column(db.Integer, nullable=False, default=0)  # Number of servers bought
-    servers_bought_last_step_validated = db.Column(db.Integer, nullable=False, default=0)  # Last step validated
 
     def __repr__(self):
         return f'<UserQuestsStats {self.user_id} {self.date}>'

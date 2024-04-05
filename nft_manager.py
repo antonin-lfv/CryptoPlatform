@@ -88,39 +88,6 @@ class NFT_manager:
         db.session.commit()
         return {"status": "success", "message": f"NFT base refreshed successfully - {n_NFT_refreshed} NFTs added"}
 
-    @staticmethod
-    def restart_NFT_base(user_id):
-        # Vérification de l'utilisateur admin
-        user = User.query.filter_by(id=user_id).first()
-        if user is None or user.role != 'ADMIN':
-            return {"status": "error", "message": "You are not an admin"}
-        # Empty the NFT table
-        NFT.query.delete()
-        # Empty NFT history
-        NFTPriceOwnerHistory.query.delete()
-        db.session.commit()
-        # Add the NFTs to the database
-        for collection in NFT_collections:
-            collection_path = core_url_NFT + collection.lower() + '/'
-            # Add as many NFTs as there is in the folder with the same name and _index (starting at 1)
-            # get the number of file in collection_path (just img files that end with .png or .jpg)
-            files_ = os.listdir('assets' + collection_path)
-            nb_files = len([f for f in files_ if f.endswith('.png') or f.endswith('.jpg')])
-
-            for i in range(1, nb_files + 1):
-                # Add NFT
-                name = f"{collection} #{i}"
-                path = f"{collection_path}{collection.lower()}_{i}.png"
-                price = round(random.uniform(collection_to_min_max_price[collection][0],
-                                             collection_to_min_max_price[collection][1]), 3)
-                nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
-                db.session.add(nft)
-                db.session.flush()
-
-            db.session.commit()
-
-        return {"status": "success", "message": "NFT base restarted successfully"}
-
     def get_NFTs(self, user_id, collection=None):
         """
         Get all NFTs from the marketplace

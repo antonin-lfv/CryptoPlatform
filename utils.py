@@ -119,9 +119,8 @@ NFTs_bought_steps = [1] + [i for i in range(5, 101, 5)] + [i for i in range(105,
 NFTs_sold_steps = [1] + [i for i in range(5, 101, 5)] + [i for i in range(105, 306, 20)]
 NFTs_bid_steps = [1] + [i for i in range(5, 101, 5)] + [i for i in range(105, 306, 20)]
 Servers_bought_steps = [1] + [i for i in range(5, 200, 15)] + [i for i in range(200, 740, 30)]
-
-
 # reward is 0.05 * index of the step BTC
+reward_factor = 0.05
 
 
 # ===== Functions
@@ -140,7 +139,7 @@ def get_current_quest_step(nft_bougth, nft_sold, nft_bid, servers_bought):
     /!\ each of the four quests categories has 32 steps
     To go to the next step, the user must have completed the current step and validate a button to get the reward
 
-    To get the number of BTC to be rewarded, the index of the step is used (0.05 * (index + 1)  of the step BTC)
+    To get the number of BTC to be rewarded, the index of the step is used (reward_factor * (index + 1)  of the step BTC)
     """
     index_nft_bougth = 31
     index_nft_sold = 31
