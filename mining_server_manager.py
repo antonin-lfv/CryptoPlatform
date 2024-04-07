@@ -1,4 +1,4 @@
-from models import MiningServer, UserServer, User, ServerInvoices
+from models import MiningServer, UserServer, User, ServerInvoices, UserQuestsStats
 from wallet_manager import wallet_manager
 from crypto_manager import CryptoDataManager
 from notification_manager import Notification_manager
@@ -327,6 +327,16 @@ class Mining_server_manager:
 
             self.add_invoice(user_id, period, issuer, today, server_details.buy_amount * number_of_servers_to_buy,
                              server_id, 'buy', number_of_servers_to_buy)
+
+            # Update user quests stats
+            user_quest_stats = UserQuestsStats.query.filter_by(user_id=user_id).first()
+            if user_quest_stats:
+                user_quest_stats.servers_bought += 1
+            else:
+                # Create the user quest stats
+                user_quest_stats = UserQuestsStats(user_id=user_id, nfts_bought=0, nfts_sold=0, bids_made=0,
+                                                   servers_bought=1)
+                db.session.add(user_quest_stats)
 
             db.session.commit()
 

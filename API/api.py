@@ -598,8 +598,8 @@ def recover_quest():
     """
     Recover the quest of the user
     """
-    step = request.args.get('step')
-    quest_type = request.args.get('quest_type')
+    step = int(request.form.get('step'))
+    quest_type = request.form.get('quest_type')
     response = Quests_manager().recover_quest(current_user.id, step, quest_type)
     return jsonify(response)
 

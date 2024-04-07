@@ -46,25 +46,36 @@
 				<div class="col-12 col-lg-6 mb-50">
 					<div class="box" id="buy_nft_quests">
 					<div class="box-header">
-						<h4 class="box-title">Buy NFTs</h4>
+						<h4 class="box-title">Buy NFTs &nbsp; (<span class="text-info">{{ quests_stats_nfts_bought }}</span>/{{ NFTs_bought_steps[-1] }})</h4>
 					</div>
 					<div class="box-body">
 						<div class="timeline timeline-line-dotted">
                             {% for step in NFTs_bought_steps %}
                                 <div class="timeline-item">
-                                    <div class="timeline-point timeline-point-{% if loop.index - 1 <= index_nft_bougth %}success{% else %}default{% endif %}">
-                                        <i class="fa fa-{% if loop.index - 1 <= index_nft_bougth %}check{% else %}lock{% endif %}"></i>
+                                    <div class="timeline-point timeline-point-{% if step <= step_nft_bought %}success{% else %}default{% endif %}">
+                                        <i class="fa fa-{% if step <= step_nft_bought %}check{% else %}lock{% endif %}"></i>
                                     </div>
                                     <div class="timeline-event">
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Buy {{ step }} NFT{% if step>1 %}s{% endif %}</h5>
                                         </div>
-                                        {% if loop.index - 1 <= index_nft_bougth and loop.index - 1 not in index_nft_bougth_recovered %}
-                                            <div class="timeline-body">
-                                                <button type="button" class="btn btn-success btn-xs"
-                                                        onclick="recover_reward({{ step }}, 'nfts_bought')"
-                                                id="nfts_bought_{{ step }}">Get reward</button>
-                                            </div>
+                                        {% if step <= step_nft_bought %}
+                                            <!-- if the quest is completed -->
+                                            {% if step not in step_nft_bought_recovered %}
+                                                <!-- if the reward is not recovered -->
+                                                <div class="timeline-body">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="recover_reward({{ step }}, 'nfts_bought')"
+                                                    id="nfts_bought_{{ step }}">Get reward</button>
+                                                </div>
+                                            {% else %}
+                                                <!-- if the reward is recovered -->
+                                                <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs" disabled>
+                                                    Reward recovered
+                                                </button>
+                                                </div>
+                                            {% endif %}
                                         {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
@@ -73,6 +84,11 @@
                                 </div>
                                 <span class="timeline-label"></span>
                             {% endfor %}
+                            <span class="timeline-label">
+                                <a href="#" class="btn btn-info" title="">
+                                    <i class="fa fa-fw fa-flag-checkered"></i>
+                                </a>
+                            </span>
 						</div>
 					</div>
 				</div>
@@ -80,25 +96,36 @@
                 <div class="col-12 col-lg-6 mb-50">
 					<div class="box" id="sold_nft_quests">
 					<div class="box-header">
-						<h4 class="box-title">Sold NFTs</h4>
+                        <h4 class="box-title">Sold NFTs &nbsp; (<span class="text-info">{{ quests_stats_nfts_sold }}</span>/{{ NFTs_sold_steps[-1] }})</h4>
 					</div>
 					<div class="box-body">
 						<div class="timeline timeline-line-dotted">
 							{% for step in NFTs_sold_steps %}
                                 <div class="timeline-item">
-                                    <div class="timeline-point timeline-point-{% if loop.index - 1 <= index_nft_sold %}success{% else %}default{% endif %}">
-                                        <i class="fa fa-{% if loop.index - 1 <= index_nft_bougth %}check{% else %}lock{% endif %}"></i>
+                                    <div class="timeline-point timeline-point-{% if step <= step_nft_sold %}success{% else %}default{% endif %}">
+                                        <i class="fa fa-{% if step <= step_nft_sold %}check{% else %}lock{% endif %}"></i>
                                     </div>
                                     <div class="timeline-event">
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Sold {{ step }} NFT{% if step>1 %}s{% endif %}</h5>
                                         </div>
-                                        {% if loop.index - 1 <= index_nft_sold and loop.index - 1 not in index_nft_sold_recovered %}
-                                            <div class="timeline-body">
-                                                <button type="button" class="btn btn-success btn-xs"
-                                                        onclick="recover_reward({{ step }}, 'nfts_sold')"
-                                                id="nfts_sold_{{ step }}">Get reward</button>
-                                            </div>
+                                        {% if step <= step_nft_sold %}
+                                            <!-- if the quest is completed -->
+                                            {% if step not in step_nft_sold_recovered %}
+                                                <!-- if the reward is not recovered -->
+                                                <div class="timeline-body">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="recover_reward({{ step }}, 'nfts_sold')"
+                                                    id="nfts_sold_{{ step }}">Get reward</button>
+                                                </div>
+                                            {% else %}
+                                                <!-- if the reward is recovered -->
+                                                <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs" disabled>
+                                                    Reward recovered
+                                                </button>
+                                                </div>
+                                            {% endif %}
                                         {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
@@ -107,6 +134,11 @@
                                 </div>
                                 <span class="timeline-label"></span>
                             {% endfor %}
+                            <span class="timeline-label">
+                                <a href="#" class="btn btn-info" title="">
+                                    <i class="fa fa-fw fa-flag-checkered"></i>
+                                </a>
+                            </span>
 						</div>
 					</div>
 				</div>
@@ -114,25 +146,36 @@
                 <div class="col-12 col-lg-6 mb-50">
 					<div class="box" id="bids_nft_quests">
 					<div class="box-header">
-						<h4 class="box-title">Place Bids</h4>
+                        <h4 class="box-title">Place Bids &nbsp; (<span class="text-info">{{ quests_stats_bids_made }}</span>/{{ NFTs_bid_steps[-1] }})</h4>
 					</div>
 					<div class="box-body">
 						<div class="timeline timeline-line-dotted">
 							{% for step in NFTs_bid_steps %}
                                 <div class="timeline-item">
-                                    <div class="timeline-point timeline-point-{% if loop.index - 1 <= index_nft_bid %}success{% else %}default{% endif %}">
-                                        <i class="fa fa-{% if loop.index - 1 <= index_nft_bougth %}check{% else %}lock{% endif %}"></i>
+                                    <div class="timeline-point timeline-point-{% if step <= step_nft_bid %}success{% else %}default{% endif %}">
+                                        <i class="fa fa-{% if step <= step_nft_bid %}check{% else %}lock{% endif %}"></i>
                                     </div>
                                     <div class="timeline-event">
                                         <div class="timeline-heading">
                                             <h5 class="timeline-title">Place {{ step }} Bid{% if step>1 %}s{% endif %}</h5>
                                         </div>
-                                        {% if loop.index - 1 <= index_nft_bid and loop.index - 1 not in index_nft_bid_recovered %}
-                                            <div class="timeline-body">
-                                                <button type="button" class="btn btn-success btn-xs"
-                                                        onclick="recover_reward({{ step }}, 'bids_made')"
-                                                id="bids_made_{{ step }}">Get reward</button>
-                                            </div>
+                                        {% if step <= step_nft_bid %}
+                                            <!-- if the quest is completed -->
+                                            {% if step not in step_bid_bought_recovered %}
+                                                <!-- if the reward is not recovered -->
+                                                <div class="timeline-body">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="recover_reward({{ step }}, 'bids_made')"
+                                                    id="nfts_bid_{{ step }}">Get reward</button>
+                                                </div>
+                                            {% else %}
+                                                <!-- if the reward is recovered -->
+                                                <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs" disabled>
+                                                    Reward recovered
+                                                </button>
+                                                </div>
+                                            {% endif %}
                                         {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
@@ -141,6 +184,11 @@
                                 </div>
                                 <span class="timeline-label"></span>
                             {% endfor %}
+                            <span class="timeline-label">
+                                <a href="#" class="btn btn-info" title="">
+                                    <i class="fa fa-fw fa-flag-checkered"></i>
+                                </a>
+                            </span>
 						</div>
 					</div>
 				</div>
@@ -148,25 +196,36 @@
                 <div class="col-12 col-lg-6 mb-50">
 					<div class="box" id="buy_servers_quests">
 					<div class="box-header">
-						<h4 class="box-title">Buy Servers</h4>
+                        <h4 class="box-title">Buy Servers &nbsp; (<span class="text-info">{{ quests_stats_servers_bought }}</span>/{{ Servers_bought_steps[-1] }})</h4>
 					</div>
 					<div class="box-body">
 						<div class="timeline timeline-line-dotted">
 							{% for step in Servers_bought_steps %}
                                 <div class="timeline-item">
-                                    <div class="timeline-point timeline-point-{% if loop.index - 1 <= index_servers_bought %}success{% else %}default{% endif %}">
-                                        <i class="fa fa-{% if loop.index - 1 <= index_nft_bougth %}check{% else %}lock{% endif %}"></i>
+                                    <div class="timeline-point timeline-point-{% if step <= step_servers_bought %}success{% else %}default{% endif %}">
+                                        <i class="fa fa-{% if step <= step_servers_bought %}check{% else %}lock{% endif %}"></i>
                                     </div>
                                     <div class="timeline-event">
                                         <div class="timeline-heading">
-                                            <h5 class="timeline-title">Buy {{ step }} Serveur{% if step>1 %}s{% endif %}</h5>
+                                            <h5 class="timeline-title">Buy {{ step }} Server{% if step>1 %}s{% endif %}</h5>
                                         </div>
-                                        {% if loop.index - 1 <= index_servers_bought and loop.index - 1 not in index_servers_bought_recovered %}
-                                            <div class="timeline-body">
-                                                <button type="button" class="btn btn-success btn-xs"
-                                                        onclick="recover_reward({{ step }}, 'servers_bought')"
-                                                id="servers_bought_{{ step }}">Get reward</button>
-                                            </div>
+                                        {% if step <= step_servers_bought %}
+                                            <!-- if the quest is completed -->
+                                            {% if step not in step_servers_bought_recovered %}
+                                                <!-- if the reward is not recovered -->
+                                                <div class="timeline-body">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="recover_reward({{ step }}, 'servers_bought')"
+                                                    id="servers_bought_{{ step }}">Get reward</button>
+                                                </div>
+                                            {% else %}
+                                                <!-- if the reward is recovered -->
+                                                <div class="timeline-body">
+                                                <button type="button" class="btn btn-success btn-xs" disabled>
+                                                    Reward recovered
+                                                </button>
+                                                </div>
+                                            {% endif %}
                                         {% endif %}
                                         <div class="timeline-footer">
                                             <p class="text-end">Reward: {{ reward_factor*step }} BTC</p>
@@ -175,6 +234,11 @@
                                 </div>
                                 <span class="timeline-label"></span>
                             {% endfor %}
+                            <span class="timeline-label">
+                                <a href="#" class="btn btn-info" title="">
+                                    <i class="fa fa-fw fa-flag-checkered"></i>
+                                </a>
+                            </span>
 						</div>
 					</div>
 				</div>
@@ -223,6 +287,10 @@ function recover_reward(step, type){
                 // disable button and change text to "reward recovered"
                 $('#'+type+'_'+step).attr('disabled', true);
                 $('#'+type+'_'+step).text('Reward recovered');
+        }
+            else {
+                swal("Error", data.message, "error")
+            }
         }
     });
 }

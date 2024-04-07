@@ -135,31 +135,51 @@ def get_bonus_from_BTC_wallet(BTC_wallet_value):
 
 def get_current_quest_step(nft_bougth, nft_sold, nft_bid, servers_bought):
     """
-    Return the current step of the quest (index of the list of steps)
+    Return the current step of the quest
     /!\ each of the four quests categories has 32 steps
     To go to the next step, the user must have completed the current step and validate a button to get the reward
 
     To get the number of BTC to be rewarded, the index of the step is used (reward_factor * (index + 1)  of the step BTC)
     """
-    index_nft_bougth = 31
-    index_nft_sold = 31
-    index_nft_bid = 31
-    index_servers_bought = 31
+
+    print(f"nft_bougth: {nft_bougth}, nft_sold: {nft_sold}, nft_bid: {nft_bid}, servers_bought: {servers_bought}")
+
+    index_nft_bougth = 0
+    index_nft_sold = 0
+    index_nft_bid = 0
+    index_servers_bought = 0
     for i, step in enumerate(NFTs_bought_steps):
         if nft_bougth < step:
-            index_nft_bougth = i - 1
+            index_nft_bougth = i-1
             break
     for i, step in enumerate(NFTs_sold_steps):
         if nft_sold < step:
-            index_nft_sold = i - 1
+            index_nft_sold = i-1
             break
     for i, step in enumerate(NFTs_bid_steps):
         if nft_bid < step:
-            index_nft_bid = i - 1
+            index_nft_bid = i-1
             break
     for i, step in enumerate(Servers_bought_steps):
         if servers_bought < step:
-            index_servers_bought = i - 1
+            index_servers_bought = i-1
             break
 
-    return index_nft_bougth, index_nft_sold, index_nft_bid, index_servers_bought
+    if index_nft_bougth < 0:
+        step_nft_bougth = -1
+    else:
+        step_nft_bougth = NFTs_bought_steps[index_nft_bougth]
+    if index_nft_sold < 0:
+        step_nft_sold = -1
+    else:
+        step_nft_sold = NFTs_sold_steps[index_nft_sold]
+    if index_nft_bid < 0:
+        step_nft_bid = -1
+    else:
+        step_nft_bid = NFTs_bid_steps[index_nft_bid]
+    if index_servers_bought < 0:
+        step_servers_bought = -1
+    else:
+        step_servers_bought = Servers_bought_steps[index_servers_bought]
+
+    return step_nft_bougth, step_nft_sold, step_nft_bid, step_servers_bought

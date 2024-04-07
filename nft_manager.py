@@ -1,4 +1,4 @@
-from models import NFT, UserLikedNFT, User, UserNFT, NFTBid, CryptoPrice, NFTPriceOwnerHistory
+from models import NFT, UserLikedNFT, User, UserNFT, NFTBid, CryptoPrice, NFTPriceOwnerHistory, UserQuestsStats
 from flask import url_for
 from app import db
 from wallet_manager import wallet_manager
@@ -443,12 +443,22 @@ class NFT_manager:
                                                    owner_id=user_id,
                                                    date=datetime.now())
                 db.session.add(history_nft)
-                # Commit the changes
-                db.session.commit()
                 # Buy the NFT with ETH
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
                 # Update crypto history
                 wallet.update_crypto_wallet_evolution(user)
+                # Update quests stats
+                user_quest_stats = UserQuestsStats.query.filter_by(user_id=user_id).first()
+                if user_quest_stats:
+                    user_quest_stats.nfts_bought += 1
+                else:
+                    # Create the user quest stats
+                    user_quest_stats = UserQuestsStats(user_id=user_id, nfts_bought=1, nfts_sold=0, bids_made=0,
+                                                       servers_bought=0)
+                    db.session.add(user_quest_stats)
+
+                # commit the changes
+                db.session.commit()
                 return {"status": "success", "message": "You bought the NFT successfully"}
         else:
             return {"status": "error", "message": "The NFT is not for sale", "refresh": True}
@@ -562,6 +572,16 @@ class NFT_manager:
                          bid_price_crypto=amount, bid_crypto_symbol='ETH')
         db.session.add(new_bid)
 
+        # Update user quest stats
+        user_quest_stats = UserQuestsStats.query.filter_by(user_id=user_id).first()
+        if user_quest_stats:
+            user_quest_stats.bids_made += 1
+        else:
+            # Create the user quest stats
+            user_quest_stats = UserQuestsStats(user_id=user_id, nfts_bought=0, nfts_sold=0, bids_made=1,
+                                               servers_bought=0)
+            db.session.add(user_quest_stats)
+
         # Delete the previous minimum bids if there are more than 5 bids
         if len(nft_bids) > 4:
             for bid in nft_bids:
@@ -673,6 +693,16 @@ class NFT_manager:
                                            owner_id=bid.user_id,
                                            date=datetime.now())
         db.session.add(history_nft)
+
+        # Update user quest stats
+        user_quest_stats = UserQuestsStats.query.filter_by(user_id=current_user_id).first()
+        if user_quest_stats:
+            user_quest_stats.nfts_sold += 1
+        else:
+            # Create the user quest stats
+            user_quest_stats = UserQuestsStats(user_id=current_user_id, nfts_bought=0, nfts_sold=1, bids_made=0,
+                                               servers_bought=0)
+            db.session.add(user_quest_stats)
 
         # Transfer the amount of the bid to the seller
         wallet = wallet_manager()

@@ -15,15 +15,18 @@ class Quests_manager:
         if user_rewards is None:
             user_rewards = UserQuestRewards(user_id=user_id, step=step, quest_type=quest_type, reward_claimed=True)
             db.session.add(user_rewards)
-        # If not None, set reward_claimed as True
+        # If not None, set reward_claimed as True if it is False else return an error
         else:
+            if user_rewards.reward_claimed:
+                return {"status": "error", "message": f"User {user_id} has already claimed the reward for "
+                                                      f"quest {quest_type} step {step}"}
             user_rewards.reward_claimed = True
 
         db.session.commit()
 
         # Reward the user
         print(f"User {user_id} has claimed the reward for quest {quest_type} step {step}")
-        reward_BTC = reward_factor*(step+1)
+        reward_BTC = reward_factor*step
         wallet_manager().receive_crypto(user, 'BTC-USD', reward_BTC)
 
         return {"status": "success", "message": f"User {user_id} has claimed "

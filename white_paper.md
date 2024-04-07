@@ -41,6 +41,11 @@ peuvent être revendus sur le marketplace. Les couts pour chaque serveur sont da
 Un système de niveaux récompense les utilisateurs en fonction de leur portefeuille total en cryptomonnaies et NFT (
 évalué en BTC), offrant comme avantage l'augmentation des gains des serveurs de minage.
 
+# Quêtes (disponible)
+
+Les utilisateurs peuvent accomplir des quêtes pour gagner des récompenses supplémentaires (des BTC). Ces quêtes sont
+variées et sont liées à l'achat de NFT, la vente de NFT, le placement d'enchères et l'achat de serveurs.
+
 # Leaderboard (disponible)
 
 Le leaderboard permet de suivre les meilleurs utilisateurs, et des récompenses sont distribuées
@@ -61,6 +66,7 @@ pertes, les niveaux, les récompenses, les mises à jour, les enchères, etc.
 - Minage : inventaire des serveurs, avec un système de filtres.
     - Chaque serveur a une page detail avec les couts et les revenus. On peut y acheter, vendre ou louer des serveurs.
     - Sur cette page de detail, on peut aussi voir les revenus et couts dans une liste de factures télécchargeables.
+- Quêtes : Liste des quêtes, avec des récompenses en BTC.
 - Profil : Répartition du wallet total, valeur en USD, et progression dans les niveaux et récompenses.
 - Crypto Wallet : Vue d'ensemble des cryptomonnaies, transactions, évolution du wallet, achat et conversion des
   cryptomonnaies.

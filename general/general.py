@@ -409,30 +409,37 @@ def player_quests():
     # Get the user quests stats
     quests_stats = UserQuestsStats.query.filter_by(user_id=current_user.id).first()
     if quests_stats is None:
-        index_nft_bougth, index_nft_sold, index_nft_bid, index_servers_bought = 0, 0, 0, 0
+        step_nft_bought, step_nft_sold, step_nft_bid, step_servers_bought = 0, 0, 0, 0
     else:
         # Get the current step of the quest
-        (index_nft_bougth, index_nft_sold,
-         index_nft_bid, index_servers_bought) = get_current_quest_step(quests_stats.nfts_bought,
-                                                                       quests_stats.nfts_sold,
-                                                                       quests_stats.bids_made,
-                                                                       quests_stats.servers_bought)
+        (step_nft_bought, step_nft_sold,
+         step_nft_bid, step_servers_bought) = get_current_quest_step(quests_stats.nfts_bought,
+                                                                     quests_stats.nfts_sold,
+                                                                     quests_stats.bids_made,
+                                                                     quests_stats.servers_bought)
+
+    print(f"step_nft_bought: {step_nft_bought}, step_nft_sold: {step_nft_sold}, "
+          f"step_nft_bid: {step_nft_bid}, step_servers_bought: {step_servers_bought}")
 
     # Get all recovered steps
     quest_rewards = UserQuestRewards.query.filter_by(user_id=current_user.id).all()
     # For each type of quest, get the steps that have been recovered
-    index_nft_bougth_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nft_bought']
-    index_nft_sold_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nft_sold']
-    index_nft_bid_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'bids_made']
-    index_servers_bought_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'servers_bought']
+    step_nft_bought_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nfts_bought']
+    step_nft_sold_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'nfts_sold']
+    step_nft_bid_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'bids_made']
+    step_servers_bought_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'servers_bought']
 
     return render_template('general/quests.html', user=current_user,
                            NFTs_bought_steps=NFTs_bought_steps, NFTs_sold_steps=NFTs_sold_steps,
                            NFTs_bid_steps=NFTs_bid_steps, Servers_bought_steps=Servers_bought_steps,
                            reward_factor=reward_factor,
-                           index_nft_bougth=index_nft_bougth, index_nft_sold=index_nft_sold,
-                           index_nft_bid=index_nft_bid, index_servers_bought=index_servers_bought,
-                           index_nft_bougth_recovered=index_nft_bougth_recovered,
-                           index_nft_sold_recovered=index_nft_sold_recovered,
-                           index_nft_bid_recovered=index_nft_bid_recovered,
-                           index_servers_bought_recovered=index_servers_bought_recovered)
+                           step_nft_bought=step_nft_bought, step_nft_sold=step_nft_sold,
+                           step_nft_bid=step_nft_bid, step_servers_bought=step_servers_bought,
+                           step_nft_bought_recovered=step_nft_bought_recovered,
+                           step_nft_sold_recovered=step_nft_sold_recovered,
+                           step_nft_bid_recovered=step_nft_bid_recovered,
+                           step_servers_bought_recovered=step_servers_bought_recovered,
+                           quests_stats_nfts_bought=quests_stats.nfts_bought,
+                           quests_stats_nfts_sold=quests_stats.nfts_sold,
+                           quests_stats_bids_made=quests_stats.bids_made,
+                           quests_stats_servers_bought=quests_stats.servers_bought)
