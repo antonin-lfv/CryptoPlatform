@@ -410,13 +410,19 @@ def player_quests():
     quests_stats = UserQuestsStats.query.filter_by(user_id=current_user.id).first()
     if quests_stats is None:
         step_nft_bought, step_nft_sold, step_nft_bid, step_servers_bought = 0, 0, 0, 0
+        user_nfts_bought = 0
+        user_nfts_sold = 0
+        user_bids_made = 0
+        user_servers_bought = 0
     else:
+        user_nfts_bought = quests_stats.nfts_bought
+        user_nfts_sold = quests_stats.nfts_sold
+        user_bids_made = quests_stats.bids_made
+        user_servers_bought = quests_stats.servers_bought
         # Get the current step of the quest
         (step_nft_bought, step_nft_sold,
-         step_nft_bid, step_servers_bought) = get_current_quest_step(quests_stats.nfts_bought,
-                                                                     quests_stats.nfts_sold,
-                                                                     quests_stats.bids_made,
-                                                                     quests_stats.servers_bought)
+         step_nft_bid, step_servers_bought) = get_current_quest_step(user_nfts_bought, user_nfts_sold,
+                                                                     user_bids_made, user_servers_bought)
 
     print(f"step_nft_bought: {step_nft_bought}, step_nft_sold: {step_nft_sold}, "
           f"step_nft_bid: {step_nft_bid}, step_servers_bought: {step_servers_bought}")
@@ -439,7 +445,7 @@ def player_quests():
                            step_nft_sold_recovered=step_nft_sold_recovered,
                            step_nft_bid_recovered=step_nft_bid_recovered,
                            step_servers_bought_recovered=step_servers_bought_recovered,
-                           quests_stats_nfts_bought=quests_stats.nfts_bought,
-                           quests_stats_nfts_sold=quests_stats.nfts_sold,
-                           quests_stats_bids_made=quests_stats.bids_made,
-                           quests_stats_servers_bought=quests_stats.servers_bought)
+                           quests_stats_nfts_bought=user_nfts_bought,
+                           quests_stats_nfts_sold=user_nfts_sold,
+                           quests_stats_bids_made=user_bids_made,
+                           quests_stats_servers_bought=user_servers_bought)
