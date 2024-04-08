@@ -103,11 +103,11 @@ class Mining_server_manager:
                 server_instance.next_earning_date = tomorrow_date
                 print(f"earned {total_earnings_USD} $ for server {server_instance.id}")
 
+                # Commit the changes
+                db.session.commit()
+
         for server_instance in user_server_instances:
             print(f"next earning date for server {server_instance.id}: {server_instance.next_earning_date}")
-
-        # Commit the changes
-        db.session.commit()
 
         # Update wallet evolution
         w_manager = wallet_manager()
@@ -117,7 +117,8 @@ class Mining_server_manager:
             print(f"Adding notification for user {user_id}")
             Notification_manager.add_notification(user_id,
                                                   f"You earned {round(USD_amount_earned, 3)} USD from mining "
-                                                  f"on {today_date.strftime('%Y-%m-%d')}.",
+                                                  f"on {today_date.strftime('%Y-%m-%d')}. "
+                                                  f"Hour of paiment : {datetime.now()}",
                                                   "shopping-cart")
 
     @staticmethod
