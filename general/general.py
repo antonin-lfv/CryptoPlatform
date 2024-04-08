@@ -449,3 +449,9 @@ def player_quests():
                            quests_stats_nfts_sold=user_nfts_sold,
                            quests_stats_bids_made=user_bids_made,
                            quests_stats_servers_bought=user_servers_bought)
+
+
+@BLP_general.route('/trading_place', methods=['GET', 'POST'])
+@login_required
+def trading_place():
+    return render_template('general/trading_place.html', user=current_user)

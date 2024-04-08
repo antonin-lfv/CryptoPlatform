@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include('includes/head_content.html') %}
+    <title>Blank</title>
+
+</head>
+<body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
+
+<div class="wrapper">
+	<div id="loader"></div>
+
+    <!-- Top navbar -->
+    {% include('includes/top_navbar.html') %}
+
+    <!-- Navbar -->
+    {% include('includes/navbar.html') %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	  <div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h3 class="page-title">Blank page</h3>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Sample Page</li>
+								<li class="breadcrumb-item active" aria-current="page">Blank page</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-xl-4 col-12">
+					<div class="box">
+						<div class="box-header with-border">
+						  <h4 class="box-title">Backest Conditions</h4>
+						</div>
+						<div class="box-body">
+							<form class="dash-form">
+								<div class="form-group">
+								  <select class="form-select">
+									<option>BTC/USD</option>
+									<option>BTC/EURO</option>
+									<option>BTC/GBP</option>
+								  </select>
+								</div>
+								<div class="row form-group">
+									<div class="col input-group date">
+									  <div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									  </div>
+									  <input type="text" class="form-control pull-right" id="datepicker">
+									</div>
+									<div class="col input-group date">
+									  <div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									  </div>
+									  <input type="text" class="form-control pull-right" id="datepicker2">
+									</div>
+								</div>
+								<div class="form-group">
+								  <select class="form-select">
+									<option>Smin</option>
+									<option>Dmin</option>
+									<option>Jmin</option>
+								  </select>
+								</div>
+								<div class="form-group">
+								  <select class="form-select">
+									<option>Competition 1</option>
+									<option>Competition 2</option>
+									<option>Competition 3</option>
+								  </select>
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<div class="form-group">
+										  <label class="form-label">Exchange Fee (%):</label>
+										  <input type="text" class="form-control" placeholder="0.025">
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="form-group">
+										  <label class="form-label">Open Balance (USD):</label>
+										  <input type="text" class="form-control" placeholder="10,000.00">
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="form-group">
+										  <label class="form-label">Stop Loss (%):</label>
+										  <input type="text" class="form-control">
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="form-group">
+										  <label class="form-label">Take Profit (%):</label>
+										  <input type="text" class="form-control">
+										</div>
+									</div>
+								</div>
+								<div class="d-flex justify-content-between">
+									<button type="submit" class="btn btn-success">Submit</button>
+									<button type="submit" class="btn btn-danger">Cancle</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+                <div class="col-xl-6 col-12">
+										<div class="d-flex justify-content-between mt-15">
+										  <h4>Buy IOTA</h4>
+										  <p class="mb-0">BTC Balance: 0.000000000</p>
+										</div>
+										<form class="dash-form">
+											<div class="input-group mb-10 mt-10">
+												<span class="input-group-addon">Price</span>
+												<input type="number" class="form-control" placeholder="Bitcoin per 1">
+											</div>
+											<div class="input-group mb-10">
+												<span class="input-group-addon">Amount</span>
+												<input type="number" class="form-control" placeholder="0 IOTA">
+											</div>
+											<div class="input-group mb-10">
+												<span class="input-group-addon">Total</span>
+												<input type="text" class="form-control" placeholder="0.00000000 BTC">
+											</div>
+											<button type="submit" class="btn w-p100 btn-success mt-20">Buy IOTA</button>
+										</form>
+									</div>
+                <div class="col-xl-4 col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<h4 class="box-title">Time & Sales</h4>
+						</div>
+						<div class="box-body pt-0">
+							<div class="table-responsive">
+								<table class="table mb-0">
+								  <thead>
+									<tr>
+									  <th scope="col">Time (UTC)</th>
+									  <th scope="col">Price</th>
+									  <th scope="col">Size</th>
+									</tr>
+								  </thead>
+								  <tbody>
+									<tr>
+									  <td>10:26:41.119</td>
+									  <td class="text-success">0.0000001234</td>
+									  <td>7845</td>
+									</tr>
+									<tr>
+									  <td>10:01:12.121</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>8459</td>
+									</tr>
+									<tr>
+									  <td>09:24:42.212</td>
+									  <td class="text-success">0.0000001234</td>
+									  <td>12459</td>
+									</tr>
+									<tr>
+									  <td>09:12:52.120</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>75496</td>
+									</tr>
+									<tr>
+									  <td>08:26:41.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>1235</td>
+									</tr>
+									<tr>
+									  <td>08:12:12.123</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>12596</td>
+									</tr>
+									<tr>
+									  <td>08:10:12.159</td>
+									  <td class="text-success">0.0000001234</td>
+									  <td>54269</td>
+									</tr>
+									<tr>
+									  <td>08:03:12.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>9653</td>
+									</tr>
+									<tr>
+									  <td>07:26:41.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>1235</td>
+									</tr>
+									<tr>
+									  <td>06:26:41.119</td>
+									  <td class="text-success">0.0000001234</td>
+									  <td>45216</td>
+									</tr>
+									<tr>
+									  <td>05:26:41.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>17000</td>
+									</tr>
+									<tr>
+									  <td>04:26:41.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>1200</td>
+									</tr>
+									<tr>
+									  <td>10:26:41.119</td>
+									  <td class="text-success">0.0000001234</td>
+									  <td>7845</td>
+									</tr>
+									<tr>
+									  <td>10:01:12.121</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>8459</td>
+									</tr>
+									<tr>
+									  <td>10:26:41.119</td>
+									  <td class="text-danger">0.00000009853</td>
+									  <td>1236</td>
+									</tr>
+								  </tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+                <div class="col-lg-12 col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h4 class="box-title">Stock Events</h4>
+                        </div>
+                        <div class="box-body">
+                            <div class="chart">
+                                <div id="chart_stock_events" class="h-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</section>
+		<!-- /.content -->
+
+	  </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+    <!-- Footer -->
+    {% include('includes/footer.html') %}
+
+</div>
+<!-- ./wrapper -->
+
+{% include('includes/javascript_include_dashboard.html') %}
+
+
+</body>
+</html>

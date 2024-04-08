@@ -27,6 +27,11 @@
                 data-feather="server"></i>Mining</a>
         </li>
 
+        <li><a href="{{ url_for('BLP_general.trading_place') }}"
+               class="{{ 'active_navbar' if request.path == url_for('BLP_general.trading_place') else '' }}"><i
+                data-feather="trending-up"></i>Trading</a>
+        </li>
+
         <li><a href="{{ url_for('BLP_general.player_quests') }}"
                class="{{ 'active_navbar' if request.path == url_for('BLP_general.player_quests') else '' }}"><i
                 data-feather="award"></i>Quests</a>

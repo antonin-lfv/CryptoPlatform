@@ -119,13 +119,15 @@ def create_app():
     from mining_server_manager import Mining_server_manager
     from nft_manager import NFT_manager
 
-    def schedule_update():
+    def schedule_update_crypto_NFT():
         # Update crypto data
         manager = CryptoDataManager()
         manager.update_crypto_data()
         # Update NFT prices if needed
         nft_manager = NFT_manager()
         nft_manager.update_NFT_price()
+
+    def schedule_update_mining_server():
         # Start payment process for servers
         users = User.query.all()
         mining_server_manager = Mining_server_manager()
@@ -134,7 +136,8 @@ def create_app():
 
     # Start the first update
     with app.app_context():
-        schedule_update()
+        schedule_update_crypto_NFT()
+        schedule_update_mining_server()
 
     # Add the task to the scheduler
     if os.getenv('DEBUG_MODE') == 'True':
@@ -143,12 +146,19 @@ def create_app():
         @scheduler.task('cron', id='crypto_update', hour='*')
         def cron_crypto_update():
             with app.app_context():
-                schedule_update()
+                schedule_update_crypto_NFT()
+                schedule_update_mining_server()
     else:
         @scheduler.task('cron', id='crypto_update', minute='*/5')
         def cron_crypto_update():
             with app.app_context():
-                schedule_update()
+                schedule_update_crypto_NFT()
+
+        # Update mining server every day at 3am
+        @scheduler.task('cron', id='mining_server_update', hour='3')
+        def cron_mining_server_update():
+            with app.app_context():
+                schedule_update_mining_server()
 
     return app
 
