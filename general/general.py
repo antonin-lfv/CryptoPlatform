@@ -454,4 +454,16 @@ def player_quests():
 @BLP_general.route('/trading_place', methods=['GET', 'POST'])
 @login_required
 def trading_place():
-    return render_template('general/trading_place.html', user=current_user)
+    # Get all crypto data
+    crypto_manager = CryptoDataManager()
+    market_data = crypto_manager.get_crypto_market_info()
+    return render_template('general/trading_place.html', user=current_user, market_data=market_data)
+
+
+@BLP_general.route('/trading_place/<symbol>', methods=['GET', 'POST'])
+@login_required
+def trading_one_crypto(symbol):
+    # Check if the symbol exists
+    if symbol not in top_cryptos_symbols:
+        abort(404)
+    return render_template('general/trading_one_crypto.html', user=current_user, symbol=symbol)

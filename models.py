@@ -93,7 +93,7 @@ class CryptoWalletEvolution(db.Model):
     quantity = db.Column(db.Float, nullable=False)  # USD value of the wallet at this date
 
     def __repr__(self):
-        return f'<WalletEvolution {self.wallet_id} {self.date} {self.quantity}>'
+        return f'<WalletEvolution {self.id} {self.date} {self.quantity}>'
 
 
 class Notification(db.Model):

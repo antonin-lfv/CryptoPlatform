@@ -75,6 +75,21 @@ class CryptoDataManager:
             'price': [d.price for d in data]
         }
 
+    @staticmethod
+    def get_price_for_last_week():
+        """
+        Get crypto data for all symbols for the last 7 days (last 7 entries)
+
+        Return:
+            dict with keys date and price as values (list)
+        """
+        res = {}
+        for symbol in top_cryptos_symbols:
+            data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(8).all()
+            res[symbol] = [d.price for d in data][::-1]
+
+        return res
+
     def get_USD_from_crypto(self, symbol, quantity):
         """
         Get the USD value of a quantity of a specific crypto.

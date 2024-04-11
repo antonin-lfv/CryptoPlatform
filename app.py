@@ -155,7 +155,7 @@ def create_app():
                 schedule_update_crypto_NFT()
 
         # Update mining server every day at 3am
-        @scheduler.task('cron', id='mining_server_update', hour='3')
+        @scheduler.task('cron', id='mining_server_update', hour='1')
         def cron_mining_server_update():
             with app.app_context():
                 schedule_update_mining_server()

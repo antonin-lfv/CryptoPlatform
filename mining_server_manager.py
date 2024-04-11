@@ -33,7 +33,7 @@ class Mining_server_manager:
         # If the user has no servers, return
         if not UserServer.query.filter_by(user_id=user_id).first():
             # Update wallet evolution
-            # print(f"[INFO]: No servers for user {user_id}")
+            print(f"[INFO]: No servers for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -85,7 +85,6 @@ class Mining_server_manager:
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
             # For each server instance, we compute the number of days since the last earning
-            # Convert next_earning_date to datetime
             if server_instance.next_earning_date <= today_date:
                 # Number of days since the last earning
                 number_of_days_since_last_earning = (today_date - server_instance.next_earning_date).days + 1

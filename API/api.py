@@ -151,6 +151,19 @@ def send_BTC_to_user(user_id):
     return jsonify(response)
 
 
+@BLP_api.route('/api/get_price_for_last_week', methods=['GET', 'POST'])
+@login_required
+def get_price_for_last_week():
+    """
+    Get crypto data for all symbols for the last 7 days (last 7 entries)
+
+    Return:
+        dict with keys date and price as values (list)
+    """
+    data = CryptoDataManager().get_price_for_last_week()
+    return jsonify(data)
+
+
 # ================================
 # NFT data
 # ================================

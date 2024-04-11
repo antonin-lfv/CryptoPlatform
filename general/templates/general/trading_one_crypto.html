@@ -23,13 +23,12 @@
 		<div class="content-header">
 			<div class="d-flex align-items-center">
 				<div class="me-auto">
-					<h3 class="page-title">Blank page</h3>
+					<h3 class="page-title">Trading <span id="crypto-name">{{ symbol }}</span></h3>
 					<div class="d-inline-block align-items-center">
 						<nav>
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a></li>
-								<li class="breadcrumb-item" aria-current="page">Sample Page</li>
-								<li class="breadcrumb-item active" aria-current="page">Blank page</li>
+								<li class="breadcrumb-item active" aria-current="page">Trading {{ symbol }}</li>
 							</ol>
 						</nav>
 					</div>
@@ -263,6 +262,18 @@
 
 {% include('includes/javascript_include_dashboard.html') %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var symbol = "{{ symbol }}";
+        var nameElement = document.getElementById('crypto-name');
+
+        if (symbol_to_name[symbol]) {
+            nameElement.textContent = symbol_to_name[symbol];
+        } else {
+            nameElement.textContent = symbol;
+        }
+    });
+</script>
 
 </body>
 </html>

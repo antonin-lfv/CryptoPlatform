@@ -195,12 +195,14 @@ class wallet_manager:
         Go through all wallets of the user and sum the USD value of each crypto
         If there is no wallet evolution for today, create one, else update the quantity
         """
+        print(f"Update wallet evolution for user {user.username}")
         # Get wallet evolution of user sorted by date
         crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
             CryptoWalletEvolution.date.desc()).all()
 
         # If user has no wallet evolution, create one with today's date and 0 quantity
         if not crypto_wallet_evolution:
+            print("No wallet evolution, creating one")
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
             new_evolution.date = datetime.utcnow().date()
@@ -211,11 +213,14 @@ class wallet_manager:
             crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
                 CryptoWalletEvolution.date.desc()).all()
 
+        print(f"CRYPTO WALLET EVOLUTION: {crypto_wallet_evolution}")
+
         # Get user wallets
         wallets = user.wallets
         # Loop over wallets
         quantity = 0
         for wallet in wallets:
+            print(f"Wallet: {wallet.symbol}, user_id: {wallet.user_id}")
             # Get latest price
             balance = self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
             # Add to total balance
@@ -224,11 +229,15 @@ class wallet_manager:
             quantity = round(quantity, 3)
 
         # Check if there is a wallet evolution for today
-        if crypto_wallet_evolution[0].date == datetime.utcnow().date():
+        today = datetime.utcnow().date()
+        print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
+        if crypto_wallet_evolution[0].date == today:
+            print(f"There is a wallet evolution for today : {today}")
             # If there is, update the quantity
             crypto_wallet_evolution[0].quantity = quantity
 
         else:
+            print("There is no wallet evolution for today, creating one")
             # If there is not, create one
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
