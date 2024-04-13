@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     {% include('includes/head_content.html') %}
-    <title>Blank</title>
+    <title>Trading {{ symbol }}</title>
 
 </head>
 <body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
 
 <div class="wrapper">
-	<div id="loader"></div>
+    <div id="loader"></div>
 
     <!-- Top navbar -->
     {% include('includes/top_navbar.html') %}
@@ -16,243 +16,221 @@
     <!-- Navbar -->
     {% include('includes/navbar.html') %}
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-	  <div class="container-full">
-		<!-- Content Header (Page header) -->
-		<div class="content-header">
-			<div class="d-flex align-items-center">
-				<div class="me-auto">
-					<h3 class="page-title">Trading <span id="crypto-name">{{ symbol }}</span></h3>
-					<div class="d-inline-block align-items-center">
-						<nav>
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i class="mdi mdi-home-outline"></i></a></li>
-								<li class="breadcrumb-item active" aria-current="page">Trading {{ symbol }}</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-		<!-- Main content -->
-		<section class="content">
-			<div class="row">
-				<div class="col-xl-4 col-12">
-					<div class="box">
-						<div class="box-header with-border">
-						  <h4 class="box-title">Backest Conditions</h4>
-						</div>
-						<div class="box-body">
-							<form class="dash-form">
-								<div class="form-group">
-								  <select class="form-select">
-									<option>BTC/USD</option>
-									<option>BTC/EURO</option>
-									<option>BTC/GBP</option>
-								  </select>
-								</div>
-								<div class="row form-group">
-									<div class="col input-group date">
-									  <div class="input-group-addon">
-										<i class="fa fa-calendar"></i>
-									  </div>
-									  <input type="text" class="form-control pull-right" id="datepicker">
-									</div>
-									<div class="col input-group date">
-									  <div class="input-group-addon">
-										<i class="fa fa-calendar"></i>
-									  </div>
-									  <input type="text" class="form-control pull-right" id="datepicker2">
-									</div>
-								</div>
-								<div class="form-group">
-								  <select class="form-select">
-									<option>Smin</option>
-									<option>Dmin</option>
-									<option>Jmin</option>
-								  </select>
-								</div>
-								<div class="form-group">
-								  <select class="form-select">
-									<option>Competition 1</option>
-									<option>Competition 2</option>
-									<option>Competition 3</option>
-								  </select>
-								</div>
-								<div class="row">
-									<div class="col-6">
-										<div class="form-group">
-										  <label class="form-label">Exchange Fee (%):</label>
-										  <input type="text" class="form-control" placeholder="0.025">
-										</div>
-									</div>
-									<div class="col-6">
-										<div class="form-group">
-										  <label class="form-label">Open Balance (USD):</label>
-										  <input type="text" class="form-control" placeholder="10,000.00">
-										</div>
-									</div>
-									<div class="col-6">
-										<div class="form-group">
-										  <label class="form-label">Stop Loss (%):</label>
-										  <input type="text" class="form-control">
-										</div>
-									</div>
-									<div class="col-6">
-										<div class="form-group">
-										  <label class="form-label">Take Profit (%):</label>
-										  <input type="text" class="form-control">
-										</div>
-									</div>
-								</div>
-								<div class="d-flex justify-content-between">
-									<button type="submit" class="btn btn-success">Submit</button>
-									<button type="submit" class="btn btn-danger">Cancle</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-                <div class="col-xl-6 col-12">
-										<div class="d-flex justify-content-between mt-15">
-										  <h4>Buy IOTA</h4>
-										  <p class="mb-0">BTC Balance: 0.000000000</p>
-										</div>
-										<form class="dash-form">
-											<div class="input-group mb-10 mt-10">
-												<span class="input-group-addon">Price</span>
-												<input type="number" class="form-control" placeholder="Bitcoin per 1">
-											</div>
-											<div class="input-group mb-10">
-												<span class="input-group-addon">Amount</span>
-												<input type="number" class="form-control" placeholder="0 IOTA">
-											</div>
-											<div class="input-group mb-10">
-												<span class="input-group-addon">Total</span>
-												<input type="text" class="form-control" placeholder="0.00000000 BTC">
-											</div>
-											<button type="submit" class="btn w-p100 btn-success mt-20">Buy IOTA</button>
-										</form>
-									</div>
-                <div class="col-xl-4 col-12">
-					<div class="box">
-						<div class="box-header with-border">
-							<h4 class="box-title">Time & Sales</h4>
-						</div>
-						<div class="box-body pt-0">
-							<div class="table-responsive">
-								<table class="table mb-0">
-								  <thead>
-									<tr>
-									  <th scope="col">Time (UTC)</th>
-									  <th scope="col">Price</th>
-									  <th scope="col">Size</th>
-									</tr>
-								  </thead>
-								  <tbody>
-									<tr>
-									  <td>10:26:41.119</td>
-									  <td class="text-success">0.0000001234</td>
-									  <td>7845</td>
-									</tr>
-									<tr>
-									  <td>10:01:12.121</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>8459</td>
-									</tr>
-									<tr>
-									  <td>09:24:42.212</td>
-									  <td class="text-success">0.0000001234</td>
-									  <td>12459</td>
-									</tr>
-									<tr>
-									  <td>09:12:52.120</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>75496</td>
-									</tr>
-									<tr>
-									  <td>08:26:41.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>1235</td>
-									</tr>
-									<tr>
-									  <td>08:12:12.123</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>12596</td>
-									</tr>
-									<tr>
-									  <td>08:10:12.159</td>
-									  <td class="text-success">0.0000001234</td>
-									  <td>54269</td>
-									</tr>
-									<tr>
-									  <td>08:03:12.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>9653</td>
-									</tr>
-									<tr>
-									  <td>07:26:41.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>1235</td>
-									</tr>
-									<tr>
-									  <td>06:26:41.119</td>
-									  <td class="text-success">0.0000001234</td>
-									  <td>45216</td>
-									</tr>
-									<tr>
-									  <td>05:26:41.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>17000</td>
-									</tr>
-									<tr>
-									  <td>04:26:41.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>1200</td>
-									</tr>
-									<tr>
-									  <td>10:26:41.119</td>
-									  <td class="text-success">0.0000001234</td>
-									  <td>7845</td>
-									</tr>
-									<tr>
-									  <td>10:01:12.121</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>8459</td>
-									</tr>
-									<tr>
-									  <td>10:26:41.119</td>
-									  <td class="text-danger">0.00000009853</td>
-									  <td>1236</td>
-									</tr>
-								  </tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-                <div class="col-lg-12 col-12">
-                    <div class="box">
-                        <div class="box-header with-border">
-                            <h4 class="box-title">Stock Events</h4>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <div class="container-full">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="d-flex align-items-center">
+                    <div class="me-auto">
+                        <h3 class="page-title">Trading <span id="crypto-name">{{ symbol }}</span></h3>
+                        <div class="d-inline-block align-items-center">
+                            <nav>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('BLP_general.home') }}"><i
+                                            class="mdi mdi-home-outline"></i></a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Trading {{ symbol }}</li>
+                                </ol>
+                            </nav>
                         </div>
-                        <div class="box-body">
-                            <div class="chart">
-                                <div id="chart_stock_events" class="h-500"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-xl-3 col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Start a position</h4>
+                                <p class="mb-0">{{ symbol.split('-')[0] }} Balance: <a id="crypto_amount_in_wallet"></a>
+                                </p>
+                            </div>
+                            <div class="box-body">
+                                <form class="dash-form">
+                                    <!-- Price Input -->
+                                    <div class="row form-group">
+                                        <div class="input-group mb-10 mt-10">
+                                            <span class="input-group-addon">Price ({{ symbol.split('-')[0] }})</span>
+                                            <input type="number" id="price_input" step="any" class="form-control"
+                                                   placeholder="1">
+                                        </div>
+                                        <span class="error-message" id="price_error"></span>
+                                        <span class="text-info" id="price_converted"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Leverage:</label>
+                                            <select class="form-select" id="leverage_select">
+                                                <option value="no_leverage"
+                                                >No leverage
+                                                </option>
+                                                <option value="1:2"
+                                                >1:2
+                                                </option>
+                                                <option value="1:5"
+                                                >1:5
+                                                </option>
+                                                <option value="1:10"
+                                                >1:10
+                                                </option>
+                                                <option value="1:20"
+                                                >1:20
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Stop Loss Inputs -->
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Stop Loss (%):</label>
+                                                <input type="text" id="stop_loss_percentage" class="form-control">
+                                                <span class="error-message" id="stop_loss_percentage_error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Stop Loss ($):</label>
+                                                <input type="text" id="stop_loss_value" class="form-control">
+                                                <span class="error-message" id="stop_loss_value_error"></span>
+                                            </div>
+                                        </div>
+                                        <!-- Take Profit Inputs -->
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Take Profit (%):</label>
+                                                <input type="text" id="take_profit_percentage" class="form-control">
+                                                <span class="error-message" id="take_profit_percentage_error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Take Profit ($):</label>
+                                                <input type="text" id="take_profit_value" class="form-control">
+                                                <span class="error-message" id="take_profit_value_error"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Trading Bot:</label>
+                                        <select class="form-select" id="bot_select">
+                                            <option value="no_bot"
+                                            >No Bot
+                                            </option>
+                                            <option value="bot1"
+                                            >Bot 1
+                                            </option>
+                                            <option value="bot2"
+                                            >Bot 2
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="submit" class="btn btn-success">Start</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Stock Events</h4>
+                            </div>
+                            <div class="box-body">
+                                <div class="chart">
+                                    <div id="chart_stock_events" class="h-500"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Time & Sales</h4>
+                            </div>
+                            <div class="box-body pt-0">
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Time (UTC)</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Size</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>10:26:41.119</td>
+                                            <td class="text-success">0.0000001234</td>
+                                            <td>7845</td>
+                                        </tr>
+                                        <tr>
+                                            <td>10:01:12.121</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>8459</td>
+                                        </tr>
+                                        <tr>
+                                            <td>09:24:42.212</td>
+                                            <td class="text-success">0.0000001234</td>
+                                            <td>12459</td>
+                                        </tr>
+                                        <tr>
+                                            <td>09:12:52.120</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>75496</td>
+                                        </tr>
+                                        <tr>
+                                            <td>08:26:41.119</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>1235</td>
+                                        </tr>
+                                        <tr>
+                                            <td>08:12:12.123</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>12596</td>
+                                        </tr>
+                                        <tr>
+                                            <td>08:10:12.159</td>
+                                            <td class="text-success">0.0000001234</td>
+                                            <td>54269</td>
+                                        </tr>
+                                        <tr>
+                                            <td>08:03:12.119</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>9653</td>
+                                        </tr>
+                                        <tr>
+                                            <td>10:26:41.119</td>
+                                            <td class="text-danger">0.00000009853</td>
+                                            <td>1236</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Your positions</h4>
+                            </div>
+                            <div class="box-body pt-0">
+
                             </div>
                         </div>
                     </div>
                 </div>
-			</div>
-		</section>
-		<!-- /.content -->
+            </section>
+            <!-- /.content -->
 
-	  </div>
-  </div>
-  <!-- /.content-wrapper -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
 
     <!-- Footer -->
     {% include('includes/footer.html') %}
@@ -263,7 +241,209 @@
 {% include('includes/javascript_include_dashboard.html') %}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    var chartData = [];
+    fetchData().then(() => {
+        createChart();
+        chart.addListener("dataUpdated", zoomChart);
+    });
+
+    function fetchData() {
+        // Récupération des données
+        return fetch('/api/get_specific_crypto_data/{{ symbol }}')
+            .then(response => response.json())
+            .then(data => {
+                generateChartData(data);
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données:', error));
+    }
+
+    function generateChartData(data) {
+        if (!data) {
+            console.error('Les données reçues sont undefined.');
+            return;
+        }
+
+        if (!Array.isArray(data.date) || !Array.isArray(data.price)) {
+            console.error('Les données reçues ne contiennent pas de tableaux valides pour "date" et "price".');
+            return;
+        }
+
+        for (let i = 0; i < data.date.length; i++) {
+            var date = new Date(data.date[i]);
+            var value = data.price[i];
+
+            chartData.push({
+                "date": date,
+                "value": value,
+            });
+        }
+    }
+
+    function createChart() {
+        // Configuration et création du graphique AmCharts ici
+        chart = AmCharts.makeChart("chart_stock_events", {
+            "type": "stock",
+            "theme": "light",
+            "dataSets": [{
+                "color": "#fbae1c",
+                "fieldMappings": [{
+                    "fromField": "value",
+                    "toField": "value"
+                }, {
+                    "fromField": "volume",
+                    "toField": "volume"
+                }],
+                "dataProvider": chartData,
+                "categoryField": "date",
+                // EVENTS
+                /*
+              "stockEvents": [ {
+                "date": new Date( 2020, 8, 19 ),
+                "type": "sign",
+                "backgroundColor": "#fc00ff",
+                "graph": "g1",
+                "text": "S",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2020, 10, 19 ),
+                "type": "flag",
+                "backgroundColor": "#FFFFFF",
+                "backgroundAlpha": 0.5,
+                "graph": "g1",
+                "text": "F",
+                "description": "Some longer\ntext can also\n be added"
+              }, {
+                "date": new Date( 2020, 11, 10 ),
+                "showOnAxis": true,
+                "backgroundColor": "#85CDE6",
+                "type": "pin",
+                "text": "X",
+                "graph": "g1",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2020, 11, 26 ),
+                "showOnAxis": true,
+                "backgroundColor": "#85CDE6",
+                "type": "pin",
+                "text": "Z",
+                "graph": "g1",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 0, 3 ),
+                "type": "sign",
+                "backgroundColor": "#85CDE6",
+                "graph": "g1",
+                "text": "U",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 1, 6 ),
+                "type": "sign",
+                "graph": "g1",
+                "text": "D",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 3, 5 ),
+                "type": "sign",
+                "graph": "g1",
+                "text": "L",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 3, 5 ),
+                "type": "sign",
+                "graph": "g1",
+                "text": "R",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 5, 15 ),
+                "type": "arrowUp",
+                "backgroundColor": "#00CC00",
+                "graph": "g1",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 6, 25 ),
+                "type": "arrowDown",
+                "backgroundColor": "#CC0000",
+                "graph": "g1",
+                "description": "This is description of an event"
+              }, {
+                "date": new Date( 2021, 8, 1 ),
+                "type": "text",
+                "graph": "g1",
+                "text": "Longer text can\nalso be displayed",
+                "description": "This is description of an event"
+              } ]*/
+            }],
+
+
+            "panels": [{
+                "title": "Value",
+                "stockGraphs": [{
+                    "id": "g1",
+                    "valueField": "value"
+                }],
+                "stockLegend": {
+                    "valueTextRegular": " ",
+                    "markerType": "none"
+                }
+            }],
+
+            "chartScrollbarSettings": {
+                "graph": "g1"
+            },
+
+            "chartCursorSettings": {
+                "valueBalloonsEnabled": true,
+                "graphBulletSize": 1,
+                "valueLineBalloonEnabled": true,
+                "valueLineEnabled": true,
+                "valueLineAlpha": 0.5
+            },
+
+            "periodSelector": {
+                "periods": [{
+                    "period": "DD",
+                    "count": 10,
+                    "label": "10 days"
+                }, {
+                    "period": "MM",
+                    "count": 1,
+                    "label": "1 month"
+                }, {
+                    "period": "YYYY",
+                    "count": 1,
+                    "label": "1 year"
+                }, {
+                    "period": "YTD",
+                    "label": "YTD"
+                }, {
+                    "period": "MAX",
+                    "label": "MAX"
+                }]
+            },
+
+
+            "panelsSettings": {
+                "usePrefixes": true
+            },
+            "export": {
+                "enabled": true
+            }
+        });
+    }
+
+    function zoomChart() {
+        if (chartData && chartData.length > 1) {
+            var firstDate = chartData[0].date;
+            // lastDate is the 30% of the chartData length
+            var lastDate = chartData[Math.round(chartData.length * 0.3)].date;
+            chart.zoomToDates(firstDate, lastDate);
+        }
+    }
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         var symbol = "{{ symbol }}";
         var nameElement = document.getElementById('crypto-name');
 
@@ -273,6 +453,171 @@
             nameElement.textContent = symbol;
         }
     });
+
+    // call /api/get_user_specific_balance/<symbol> to get the amount of the specific crypto in the wallet
+    function updateCryptoAmountInWallet() {
+        fetch('/api/get_user_specific_balance/{{ symbol }}')
+            .then(response => response.json())
+            .then(data => {
+                var cryptoAmountInWalletElement = document.getElementById('crypto_amount_in_wallet');
+                cryptoAmountInWalletElement.textContent = data.tokens;
+            })
+            .catch(error => alert('Erreur lors de la récupération des données:', error));
+    }
+
+    updateCryptoAmountInWallet();
+
+</script>
+
+<script>
+
+    // onchange on the price field to convert the price to USD
+    document.getElementById('price_input').addEventListener('input', function () {
+        var price = parseFloat(this.value);
+        if (isNaN(price) || price <= 0) {
+            document.getElementById('price_converted').textContent = '';
+            return;
+        }
+
+        // use /api/get_USD_from_crypto/<symbol>/<quantity> to convert the price to USD
+        fetch('/api/get_USD_from_crypto/{{ symbol }}/' + price)
+            .then(response => response.json())
+            .then(data => {
+                // display the converted price
+                let price_converted = document.getElementById('price_converted');
+                price_converted.textContent = `~ $${data.toFixed(2)}`;
+                // hide the error message if it was displayed
+                document.getElementById('price_error').style.display = 'none';
+            })
+            .catch(error => alert('Erreur lors de la récupération des données:' + error));
+    });
+
+
+    document.querySelector('.dash-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let isValid = true;
+
+        // Récupération des valeurs et initialisation de la visibilité des messages d'erreur
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+        let price = parseFloat(document.getElementById('price_input').value);
+        let stopLossPercentage = parseFloat(document.getElementById('stop_loss_percentage').value);
+        let stopLossValue = parseFloat(document.getElementById('stop_loss_value').value);
+        let takeProfitPercentage = parseFloat(document.getElementById('take_profit_percentage').value);
+        let takeProfitValue = parseFloat(document.getElementById('take_profit_value').value);
+
+        // Get bot value
+        let bot = document.getElementById('bot_select').value;
+        // Get leverage value
+        let leverage = document.getElementById('leverage_select').value;
+
+        // Validation de la balance disponible
+        fetch(`/api/get_user_specific_balance/{{ symbol }}`)
+            .then(response => response.json())
+            .then(data => {
+                let balance = parseFloat(data.USD);
+                let balance_token = parseFloat(data.tokens);
+
+                // Validation du prix
+                if (price <= 0) {
+                    document.getElementById('price_error').textContent = "Price must be greater than 0.";
+                    document.getElementById('price_error').style.display = 'block';
+                    isValid = false;
+                }
+                else if (price > balance_token) {
+                    document.getElementById('price_error').textContent = "You don't have enough balance to place this position.";
+                    document.getElementById('price_error').style.display = 'block';
+                    isValid = false;
+                }
+                else if (isNaN(price)) {
+                    document.getElementById('price_error').textContent = "Price must be a number.";
+                    document.getElementById('price_error').style.display = 'block';
+                    isValid = false;
+                }
+
+                // Validation du stop loss
+                if (!isNaN(stopLossPercentage) && !isNaN(stopLossValue)) {
+                    document.getElementById('stop_loss_percentage_error').textContent = "Please provide either the percentage or the value of the stop loss, but not both.";
+                    document.getElementById('stop_loss_percentage_error').style.display = 'block';
+                    document.getElementById('stop_loss_value_error').textContent = "Please provide either the percentage or the value of the stop loss, but not both.";
+                    document.getElementById('stop_loss_value_error').style.display = 'block';
+                    isValid = false;
+                } else if (!isNaN(stopLossPercentage)) {
+                    if (stopLossPercentage < 1 || stopLossPercentage > 100) {
+                        document.getElementById('stop_loss_percentage_error').textContent = "The stop loss percentage must be between 1% and 100%.";
+                        document.getElementById('stop_loss_percentage_error').style.display = 'block';
+                        isValid = false;
+                    }
+                } else if (!isNaN(stopLossValue)) {
+                    if (stopLossValue > balance) {
+                        document.getElementById('stop_loss_value_error').textContent = "The stop loss value must be less than the price.";
+                        document.getElementById('stop_loss_value_error').style.display = 'block';
+                        isValid = false;
+                    }
+                } else if (isNaN(stopLossPercentage) && isNaN(stopLossValue)) {
+                    document.getElementById('stop_loss_percentage_error').textContent = "Please provide either the percentage or the value of the stop loss.";
+                    document.getElementById('stop_loss_percentage_error').style.display = 'block';
+                    document.getElementById('stop_loss_value_error').textContent = "Please provide either the percentage or the value of the stop loss.";
+                    document.getElementById('stop_loss_value_error').style.display = 'block';
+                    isValid = false;
+                }
+
+                // Validation du take profit
+                if (!isNaN(takeProfitPercentage) && !isNaN(takeProfitValue)) {
+                    document.getElementById('take_profit_percentage_error').textContent = "Please provide either the percentage or the value of the take profit, but not both.";
+                    document.getElementById('take_profit_percentage_error').style.display = 'block';
+                    document.getElementById('take_profit_value_error').textContent = "Please provide either the percentage or the value of the take profit, but not both.";
+                    document.getElementById('take_profit_value_error').style.display = 'block';
+                    isValid = false;
+                } else if (!isNaN(takeProfitPercentage)) {
+                    if (takeProfitPercentage < 1 || takeProfitPercentage > 500) {
+                        document.getElementById('take_profit_percentage_error').textContent = "Le take profit doit être compris entre 1% et 500%.";
+                        document.getElementById('take_profit_percentage_error').style.display = 'block';
+                        isValid = false;
+                    }
+                } else if (!isNaN(takeProfitValue)) {
+                    if (takeProfitValue < 10 || takeProfitValue > 1000000) {
+                        document.getElementById('take_profit_value_error').textContent = "The take profit value must be between 10$ and 1,000,000$.";
+                        document.getElementById('take_profit_value_error').style.display = 'block';
+                        isValid = false;
+                    }
+                } else if (isNaN(takeProfitPercentage) && isNaN(takeProfitValue)) {
+                    document.getElementById('take_profit_percentage_error').textContent = "Please provide either the percentage or the value of the take profit.";
+                    document.getElementById('take_profit_percentage_error').style.display = 'block';
+                    document.getElementById('take_profit_value_error').textContent = "Please provide either the percentage or the value of the take profit.";
+                    document.getElementById('take_profit_value_error').style.display = 'block';
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, '{{ symbol }}');
+                    // start swal
+                    swal({
+                        title: "Position placed!",
+                        text: "Your position has been placed successfully.",
+                        icon: "success",
+                        button: "OK",
+                    });
+                    // empty the form
+                    document.querySelector('.dash-form').reset();
+                }
+            })
+            .catch(error => alert('Erreur lors de la récupération des données:' + error));
+    });
+
+    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, symbol) {
+        // Implémentez la logique pour placer la position dans la base
+        alert('Position placée, vos paramètres: \n' +
+            'Price: ' + price + '\n' +
+            'Leverage: ' + leverage + '\n' +
+            'Stop Loss Percentage: ' + stopLossPercentage + '\n' +
+            'Stop Loss Value: ' + stopLossValue + '\n' +
+            'Take Profit Percentage: ' + takeProfitPercentage + '\n' +
+            'Take Profit Value: ' + takeProfitValue + '\n' +
+            'Bot: ' + bot + '\n' +
+            'Symbol: ' + symbol );
+    }
+
 </script>
 
 </body>

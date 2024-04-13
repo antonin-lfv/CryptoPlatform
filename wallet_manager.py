@@ -97,7 +97,7 @@ class wallet_manager:
             if wallet.symbol == symbol:
                 user_balance["tokens"] += wallet.quantity
                 user_balance["USD"] += self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
-        user_balance["tokens"] = round(user_balance["tokens"], 2)
+        user_balance["tokens"] = round(user_balance["tokens"], 4)
         user_balance["tokens_format"] = "{:,}".format(user_balance["tokens"])
         return user_balance
 

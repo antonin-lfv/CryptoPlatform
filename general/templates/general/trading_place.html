@@ -60,7 +60,7 @@
                                             <div class="flexbox align-items-center mt-5">
                                                 <div>
                                                     <p class="no-margin fw-600"><span
-                                                            class="text-info">${{ crypto_data.price }}</span></p>
+                                                            class="">${{ crypto_data.price }}</span></p>
                                                 </div>
                                                 <div class="text-end">
                                                     <p class="no-margin fw-600"><span
@@ -111,7 +111,7 @@
                     var dasChartjs = document.getElementById('chartjs_' + symbol).getContext('2d');
 
                     // color of the line : success if the price increased, danger if the price decreased
-                    var color = prices[0] < prices[6] ? '#75D5B2' : '#FC3C52';
+                    var color = prices[0] < prices[7] ? 'rgba(117,213,178,0.65)' : 'rgba(252,60,82,0.65)';
 
                     var blue_trans_gradient = dasChartjs.createLinearGradient(0, 0, 0, 100);
                     blue_trans_gradient.addColorStop(0, color);
@@ -148,7 +148,7 @@
                     };
 
                     var DASMonthData = {
-                        labels: ["J-7", "J-6", "J-5", "J-4", "J-3", "J-2", "J-1"],
+                        labels: ["J-7", "J-6", "J-5", "J-4", "J-3", "J-2", "J-1", 'J'],
                         datasets: [{
                             label: "abc",
                             data: prices,

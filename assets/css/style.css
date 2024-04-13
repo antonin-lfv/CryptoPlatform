@@ -169,6 +169,12 @@ body {
     font-size: 2em; /* Ou la taille de police souhaitée */
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    display: none; /* Cachez par défaut les messages d'erreur */
+}
+
 
 /*---basic---*/
 a {
