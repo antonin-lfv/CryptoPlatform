@@ -523,13 +523,11 @@
                     document.getElementById('price_error').textContent = "Price must be greater than 0.";
                     document.getElementById('price_error').style.display = 'block';
                     isValid = false;
-                }
-                else if (price > balance_token) {
+                } else if (price > balance_token) {
                     document.getElementById('price_error').textContent = "You don't have enough balance to place this position.";
                     document.getElementById('price_error').style.display = 'block';
                     isValid = false;
-                }
-                else if (isNaN(price)) {
+                } else if (isNaN(price)) {
                     document.getElementById('price_error').textContent = "Price must be a number.";
                     document.getElementById('price_error').style.display = 'block';
                     isValid = false;
@@ -591,6 +589,36 @@
 
                 if (isValid) {
                     placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, '{{ symbol }}');
+                }
+            })
+            .catch(error => alert('Erreur lors de la récupération des données:' + error));
+    });
+
+    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, symbol) {
+        // send all the data to the server
+        // on /api/place_position
+        fetch('/api/place_position', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                price: price,
+                leverage: leverage,
+                stopLossPercentage: stopLossPercentage,
+                stopLossValue: stopLossValue,
+                takeProfitPercentage: takeProfitPercentage,
+                takeProfitValue: takeProfitValue,
+                bot: bot,
+                symbol: symbol
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // if the position was placed successfully
+                    // update the amount of the specific crypto in the wallet
+                    updateCryptoAmountInWallet();
                     // start swal
                     swal({
                         title: "Position placed!",
@@ -600,22 +628,23 @@
                     });
                     // empty the form
                     document.querySelector('.dash-form').reset();
+                    // restart the chart
+                    fetchData().then(() => {
+                        createChart();
+                        chart.addListener("dataUpdated", zoomChart);
+                    });
+                } else {
+                    // if the position was not placed successfully
+                    // display an error message
+                    swal({
+                        title: "Error!",
+                        text: data.message,
+                        icon: "error",
+                        button: "OK",
+                    });
                 }
             })
-            .catch(error => alert('Erreur lors de la récupération des données:' + error));
-    });
-
-    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, symbol) {
-        // Implémentez la logique pour placer la position dans la base
-        alert('Position placée, vos paramètres: \n' +
-            'Price: ' + price + '\n' +
-            'Leverage: ' + leverage + '\n' +
-            'Stop Loss Percentage: ' + stopLossPercentage + '\n' +
-            'Stop Loss Value: ' + stopLossValue + '\n' +
-            'Take Profit Percentage: ' + takeProfitPercentage + '\n' +
-            'Take Profit Value: ' + takeProfitValue + '\n' +
-            'Bot: ' + bot + '\n' +
-            'Symbol: ' + symbol );
+            .catch(error => console.log('Erreur lors de la récupération des données:' + error));
     }
 
 </script>

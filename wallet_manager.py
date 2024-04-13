@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from utils import top_cryptos_symbols, top_cryptos_names
 from models import (CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot,
-                    CryptoWalletEvolution, UserNFT, NFT)
+                    CryptoWalletEvolution, UserNFT, NFT, Position)
 from app import db
 from crypto_manager import CryptoDataManager
 
@@ -610,3 +610,84 @@ class wallet_manager:
         transaction.date = datetime.utcnow()
         db.session.add(transaction)
         db.session.commit()
+
+    @staticmethod
+    def place_position(user_id, position_json):
+        """ Place a position in the trading table.
+        The user can't have more than 5 positions at the same time (5 in total)
+        and more than 1 position per day for the same symbol.
+        In total (for all symbol) the user can't have more than 20 positions at the same time.
+
+        position_json is like :
+            {
+                price: price in crypto (BTC, ETH, ...)
+                leverage: leverage to use (no_leverage, 1:2, 1:5, 1:10, 1:20)
+                stopLossPercentage: stop loss percentage
+                stopLossValue: stop loss value (in USD)
+                takeProfitPercentage: take profit percentage
+                takeProfitValue: take profit value (in USD)
+                bot: bot to use (no_bot, bot1, bot2)
+                symbol: symbol like 'BTC-USD'
+            }
+
+        model is like :
+            id = db.Column(db.Integer, primary_key=True)
+            symbol = db.Column(db.String(20), nullable=False)
+            price = db.Column(db.Float, nullable=False)
+            leverage = db.Column(db.String(10))
+            stop_loss_percentage = db.Column(db.Float)
+            stop_loss_value = db.Column(db.Float)
+            take_profit_percentage = db.Column(db.Float)
+            take_profit_value = db.Column(db.Float)
+            bot = db.Column(db.String(50))
+            status = db.Column(db.String(20), nullable=False)  # open, closed
+            created_at = db.Column(db.DateTime, default=datetime.utcnow)  # date of creation
+            updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # date of last update
+
+        """
+
+        # Test if the user has already 5 positions for the same symbol
+        positions = Position.query.filter_by(user_id=user_id, symbol=position_json['symbol']).all()
+        if len(positions) >= 5:
+            return {'message': 'You can\'t have more than 5 positions for the same symbol', 'success': False}
+        # Test if the user has already 1 position for the same symbol today
+        today = datetime.utcnow().date()
+        for position in positions:
+            if position.created_at.date() == today:
+                return {'message': 'You can\'t have more than 1 position for the same symbol today', 'success': False}
+
+        # Test if the user has already 20 positions in total
+        positions = Position.query.filter_by(user_id=user_id).all()
+        if len(positions) >= 20:
+            return {'message': 'You can\'t have more than 20 positions in total', 'success': False}
+
+        # remove the amount of the position from the user wallet
+        # get the user wallet for the crypto and check if the user has enough crypto
+        # if yes, update the wallet and return success
+        # if not, return an error
+        user_wallet = CryptoWallet.query.filter_by(user_id=user_id, symbol=position_json['symbol']).first()
+        if not user_wallet:
+            return {'error': 'You do not have this crypto', 'success': False}
+        if user_wallet.quantity >= position_json['price']:
+            # use max to avoid negative quantity with approximations
+            user_wallet.quantity = max(user_wallet.quantity - position_json['price'], 0)
+            db.session.commit()
+        else:
+            return {'error': 'Not enough crypto in wallet', 'success': False}
+
+        # Create the position
+        new_position = Position()
+        new_position.user_id = user_id
+        new_position.symbol = position_json['symbol']
+        new_position.price = position_json['price']
+        new_position.leverage = position_json['leverage']
+        new_position.stop_loss_percentage = position_json['stopLossPercentage']
+        new_position.stop_loss_value = position_json['stopLossValue']
+        new_position.take_profit_percentage = position_json['takeProfitPercentage']
+        new_position.take_profit_value = position_json['takeProfitValue']
+        new_position.bot = position_json['bot']
+        new_position.status = 'open'
+        db.session.add(new_position)
+        db.session.commit()
+
+        return {'message': 'Position placed', 'success': True}

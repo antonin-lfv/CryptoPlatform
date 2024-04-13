@@ -618,6 +618,18 @@ def recover_quest():
 
 
 # ================================
+# Trading
+# ================================
+
+@BLP_api.route('/api/place_position', methods=['POST'])
+def place_position():
+    position_json = request.get_json()
+    print(position_json)
+    response = wallet_manager().place_position(current_user.id, position_json)
+    return jsonify(response)
+
+
+# ================================
 # General functions
 # ================================
 

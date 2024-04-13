@@ -297,3 +297,22 @@ class UserQuestRewards(db.Model):
     quest_type = db.Column(db.String(50), nullable=False)  # 'nfts_bought', 'nfts_sold', 'bids_made', 'servers_bought'
     step = db.Column(db.Integer, nullable=False)  # Step of the quest
     reward_claimed = db.Column(db.Boolean, nullable=False, default=False)  # Has the reward been claimed?
+
+
+class Position(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    symbol = db.Column(db.String(20), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    leverage = db.Column(db.String(10))
+    stop_loss_percentage = db.Column(db.Float)
+    stop_loss_value = db.Column(db.Float)
+    take_profit_percentage = db.Column(db.Float)
+    take_profit_value = db.Column(db.Float)
+    bot = db.Column(db.String(50))
+    status = db.Column(db.String(20), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Position on {self.symbol}>'
