@@ -12,8 +12,8 @@ Yahoo Finance.
 
 # Trading (à venir)
 
-Les utilisateurs peuvent 'miser' leurs tokens en utilisant un système de levier pour spéculer sur la hausse ou la baisse 
-des valeurs. Les tokens misés sont séparés du wallet principal. Les opérations de trading sont visualisées à travers un 
+Les utilisateurs peuvent 'miser' leurs tokens en utilisant un système de levier pour spéculer sur la hausse des valeurs. 
+Les tokens misés sont séparés du wallet principal. Les opérations de trading sont visualisées à travers un 
 graphique interactif, affichant les mouvements de l'utilisateur, tels que les points d'entrée et de sortie, ainsi que 
 les gains en temps réel. Des options telles que le stop loss et le stop win sont disponibles. Les utilisateurs peuvent 
 trader manuellement ou s'appuyer sur des modèles prédictifs.
