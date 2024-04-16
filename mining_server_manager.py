@@ -20,7 +20,7 @@ class Mining_server_manager:
         """
         Calculate and apply payment and earnings for all servers in one operation.
         """
-        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id}")
+        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id} at {datetime.now()}")
 
         # Get the user
         user = User.query.filter_by(id=user_id).first()

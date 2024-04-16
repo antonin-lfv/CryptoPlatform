@@ -2,6 +2,7 @@ import json
 import os
 import random
 import time
+from datetime import datetime
 
 from flask import Flask, render_template
 from flask_login import LoginManager
@@ -151,12 +152,14 @@ def create_app():
     else:
         @scheduler.task('cron', id='crypto_update', minute='*/5')
         def cron_crypto_update():
+            print(f"Updating crypto data at {datetime.now()}")
             with app.app_context():
                 schedule_update_crypto_NFT()
 
-        # Update mining server every day at 3am
+        # Update mining server every day at 1am
         @scheduler.task('cron', id='mining_server_update', hour='1')
         def cron_mining_server_update():
+            print(f"Updating mining server at {datetime.now()}")
             with app.app_context():
                 schedule_update_mining_server()
 
