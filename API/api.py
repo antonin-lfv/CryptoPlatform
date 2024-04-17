@@ -624,9 +624,14 @@ def recover_quest():
 @BLP_api.route('/api/place_position', methods=['POST'])
 def place_position():
     position_json = request.get_json()
-    print(position_json)
     response = wallet_manager().place_position(current_user.id, position_json)
     return jsonify(response)
+
+
+@BLP_api.route('/api/get_positions/<symbol>', methods=['GET', 'POST'])
+def get_positions(symbol):
+    response = wallet_manager().get_opened_positions(current_user.id, symbol=symbol)
+    return jsonify({'positions': response})
 
 
 # ================================

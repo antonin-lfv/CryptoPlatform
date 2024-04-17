@@ -628,6 +628,7 @@ class wallet_manager:
                 takeProfitPercentage: take profit percentage
                 takeProfitValue: take profit value (in USD)
                 bot: bot to use (no_bot, bot1, bot2)
+                prediction: low or high, prediction of the user
                 symbol: symbol like 'BTC-USD'
             }
 
@@ -641,6 +642,7 @@ class wallet_manager:
             take_profit_percentage = db.Column(db.Float)
             take_profit_value = db.Column(db.Float)
             bot = db.Column(db.String(50))
+            prediction = db.Column(db.String(10))  # low, high
             status = db.Column(db.String(20), nullable=False)  # open, closed
             created_at = db.Column(db.DateTime, default=datetime.now)  # date of creation
             updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)  # date of last update
@@ -686,9 +688,34 @@ class wallet_manager:
         new_position.stop_loss_value = position_json['stopLossValue']
         new_position.take_profit_percentage = position_json['takeProfitPercentage']
         new_position.take_profit_value = position_json['takeProfitValue']
+        new_position.prediction = position_json['prediction']
         new_position.bot = position_json['bot']
         new_position.status = 'open'
         db.session.add(new_position)
         db.session.commit()
 
         return {'message': 'Position placed', 'success': True}
+
+    @staticmethod
+    def get_opened_positions(user_id, symbol):
+        """ Get all the opened positions of the user """
+        positions = Position.query.filter_by(user_id=user_id, status='open', symbol=symbol).all()
+        positions_json = []
+        for position in positions:
+            positions_json.append({
+                'id': position.id,
+                'price': position.price,
+                'price_format': f"{position.price} {symbol.split('-')[0]}",
+                'leverage': position.leverage,
+                'stop_loss_format': f"{position.stop_loss_value}$" if position.stop_loss_value else f"{position.stop_loss_percentage}%",
+                'take_profit_format': f"{position.take_profit_value}$" if position.take_profit_value else f"{position.take_profit_percentage}%",
+                'stop_loss_percentage': position.stop_loss_percentage,
+                'stop_loss_value': position.stop_loss_value,
+                'take_profit_percentage': position.take_profit_percentage,
+                'take_profit_value': position.take_profit_value,
+                'bot': position.bot,
+                'prediction': position.prediction,
+                'status': position.status,
+                'created_at': position.created_at
+            })
+        return positions_json

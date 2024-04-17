@@ -114,19 +114,36 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Trading Bot:</label>
-                                        <select class="form-select" id="bot_select">
-                                            <option value="no_bot"
-                                            >No Bot
-                                            </option>
-                                            <option value="bot1"
-                                            >Bot 1
-                                            </option>
-                                            <option value="bot2"
-                                            >Bot 2
-                                            </option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Trading Bot:</label>
+                                                <select class="form-select" id="bot_select">
+                                                    <option value="no_bot"
+                                                    >No Bot
+                                                    </option>
+                                                    <option value="bot1"
+                                                    >Bot 1
+                                                    </option>
+                                                    <option value="bot2"
+                                                    >Bot 2
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <!-- Choose between predict the high or the low of the next candle -->
+                                                <label class="form-label"> Prediction:</label>
+                                                <select class="form-select" id="prediction_select">
+                                                    <option value="high" selected
+                                                    >High
+                                                    </option>
+                                                    <option value="low"
+                                                    >Low
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <button type="submit" class="btn btn-success">Start</button>
@@ -217,7 +234,26 @@
                     <div class="col-xl-9 col-12">
                         <div class="box">
                             <div class="box-header with-border">
-                                <h4 class="box-title">Your positions</h4>
+                                <h4 class="box-title">Your opened positions</h4>
+                                <!-- Table with positions -->
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Entry price</th>
+                                            <th scope="col">Leverage</th>
+                                            <th scope="col">Stop Loss</th>
+                                            <th scope="col">Take Profit</th>
+                                            <th scope="col">Bot</th>
+                                            <th scope="col">Prediction</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="positions_table">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="box-body pt-0">
 
@@ -510,6 +546,8 @@
         let bot = document.getElementById('bot_select').value;
         // Get leverage value
         let leverage = document.getElementById('leverage_select').value;
+        // Get prediction value
+        let prediction = document.getElementById('prediction_select').value;
 
         // Validation de la balance disponible
         fetch(`/api/get_user_specific_balance/{{ symbol }}`)
@@ -588,13 +626,13 @@
                 }
 
                 if (isValid) {
-                    placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, '{{ symbol }}');
+                    placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, prediction, '{{ symbol }}');
                 }
             })
             .catch(error => alert('Erreur lors de la récupération des données:' + error));
     });
 
-    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, symbol) {
+    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, prediction, symbol) {
         // send all the data to the server
         // on /api/place_position
         fetch('/api/place_position', {
@@ -610,6 +648,7 @@
                 takeProfitPercentage: takeProfitPercentage,
                 takeProfitValue: takeProfitValue,
                 bot: bot,
+                prediction: prediction,
                 symbol: symbol
             })
         })
@@ -619,6 +658,7 @@
                     // if the position was placed successfully
                     // update the amount of the specific crypto in the wallet
                     updateCryptoAmountInWallet();
+                    updatePositionsTable();
                     // start swal
                     swal({
                         title: "Position placed!",
@@ -647,6 +687,54 @@
             .catch(error => console.log('Erreur lors de la récupération des données:' + error));
     }
 
+</script>
+
+<script>
+    // call /api/get_positions/<symbol> to get the positions of the specific crypto
+    // and fill the table with the positions
+    function updatePositionsTable() {
+        fetch('/api/get_positions/{{ symbol }}')
+            .then(response => response.json())
+            .then(data => {
+                let positionsTable = document.getElementById('positions_table');
+                positionsTable.innerHTML = '';
+
+                data.positions.forEach(position => {
+                    let row = document.createElement('tr');
+                    let date = document.createElement('td');
+                    let entryPrice = document.createElement('td');
+                    let leverage = document.createElement('td');
+                    let stopLoss = document.createElement('td');
+                    let takeProfit = document.createElement('td');
+                    let bot = document.createElement('td');
+                    let prediction = document.createElement('td');
+                    let closePosition = document.createElement('td');
+
+                    date.textContent = position.created_at;
+                    entryPrice.textContent = position.price_format;
+                    leverage.textContent = position.leverage;
+                    stopLoss.textContent = position.stop_loss_format;
+                    takeProfit.textContent = position.take_profit_format;
+                    bot.textContent = position.bot;
+                    prediction.textContent = position.prediction;
+                    closePosition.innerHTML = `<a class="btn btn-danger btn-xs">Close</a>`;
+
+                    row.appendChild(date);
+                    row.appendChild(entryPrice);
+                    row.appendChild(leverage);
+                    row.appendChild(stopLoss);
+                    row.appendChild(takeProfit);
+                    row.appendChild(bot);
+                    row.appendChild(prediction);
+                    row.appendChild(closePosition);
+
+                    positionsTable.appendChild(row);
+                });
+            })
+            .catch(error => alert('Erreur lors de la récupération des données:' + error));
+    }
+
+    updatePositionsTable();
 </script>
 
 </body>

@@ -309,6 +309,7 @@ class Position(db.Model):
     stop_loss_value = db.Column(db.Float)
     take_profit_percentage = db.Column(db.Float)
     take_profit_value = db.Column(db.Float)
+    prediction = db.Column(db.String(10))  # low, high
     bot = db.Column(db.String(50))
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
