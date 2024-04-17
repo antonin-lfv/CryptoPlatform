@@ -121,6 +121,7 @@ def create_app():
     from nft_manager import NFT_manager
 
     def schedule_update():
+        print(f"Updating data at {datetime.now()}")
         # Update crypto data
         manager = CryptoDataManager()
         manager.update_crypto_data()
@@ -150,7 +151,6 @@ def create_app():
         # update every 5 minutes
         @scheduler.task('cron', id='crypto_update', minute='*/5')
         def cron_crypto_update():
-            print(f"Updating crypto data at {datetime.now()}")
             with app.app_context():
                 schedule_update()
 
