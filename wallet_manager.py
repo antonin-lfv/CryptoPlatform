@@ -210,8 +210,7 @@ class wallet_manager:
             db.session.add(new_evolution)
             db.session.commit()
             # Get wallet evolution of user sorted by date
-            crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
-                CryptoWalletEvolution.date.desc()).all()
+            crypto_wallet_evolution = [new_evolution]
 
         print(f"CRYPTO WALLET EVOLUTION: {[c.date for c in crypto_wallet_evolution]}")
 
@@ -232,6 +231,7 @@ class wallet_manager:
         today = datetime.now().date()
         print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
         print(f"Today: {today}")
+        print(f"crypto_wallet_evolution[0].date == today: {crypto_wallet_evolution[0].date == today}")
         if crypto_wallet_evolution[0].date == today:
             print(f"There is a wallet evolution for today : {today}")
             # If there is, update the quantity
