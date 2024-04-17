@@ -43,7 +43,7 @@ class Notification_manager:
             user_id=user_id,
             message=message,
             icon=icon,
-            date=datetime.utcnow()
+            date=datetime.now()
         )
         db.session.add(new_notification)
         db.session.commit()
@@ -65,7 +65,7 @@ class Notification_manager:
         """
         notifications = Notification.query.filter_by(user_id=current_user.id).all()
         for notification in notifications:
-            if notification.date < datetime.utcnow() - timedelta(days=7):
+            if notification.date < datetime.now() - timedelta(days=7):
                 db.session.delete(notification)
         db.session.commit()
 

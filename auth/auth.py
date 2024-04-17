@@ -18,7 +18,7 @@ def login():
     # Check if the user is already logged in
     if current_user.is_authenticated:
         user = User.query.filter_by(email=current_user.email).first()
-        user.last_login = datetime.utcnow()
+        user.last_login = datetime.now()
         db.session.commit()
         return redirect(url_for('BLP_general.home'))
     if request.method == "POST":
@@ -27,7 +27,7 @@ def login():
             # if user doesn't exist or wrong password
             if not user or not check_password_hash(user.password, password):
                 return render_template('auth/auth_login.html', wrong_credentials=True)
-            user.last_login = datetime.utcnow()
+            user.last_login = datetime.now()
             db.session.commit()
             login_user(user)
             return redirect(url_for('BLP_general.home'))
@@ -58,7 +58,7 @@ def register():
             # Create the first wallet daily snapshot
             wallet_daily_snapshot = CryptoWalletDailySnapshot()
             wallet_daily_snapshot.user_id = User.query.filter_by(email=email).first().id
-            wallet_daily_snapshot.date = datetime.utcnow()
+            wallet_daily_snapshot.date = datetime.now()
             wallet_daily_snapshot.quantity = 0
             db.session.add(wallet_daily_snapshot)
             # Add a notification to welcome the user

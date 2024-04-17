@@ -568,7 +568,7 @@ class NFT_manager:
         # Take the amount of the bid from the user
         wallet.buy_with_crypto(user, 'ETH-USD', amount)
         # Add the bid to the database and delete the previous minimum bids to only keep 5 bids
-        new_bid = NFTBid(user_id=user_id, nft_id=nft_id, bid_date=datetime.utcnow(),
+        new_bid = NFTBid(user_id=user_id, nft_id=nft_id, bid_date=datetime.now(),
                          bid_price_crypto=amount, bid_crypto_symbol='ETH')
         db.session.add(new_bid)
 

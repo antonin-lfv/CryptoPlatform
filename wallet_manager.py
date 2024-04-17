@@ -133,12 +133,12 @@ class wallet_manager:
         if col bank_wallet_last_update is older than 2 days, set bank_wallet to 10000
         """
         game_wallet = user.game_wallet[0]
-        if game_wallet.mini_wallet_last_update < datetime.utcnow() - timedelta(days=1):
+        if game_wallet.mini_wallet_last_update < datetime.now() - timedelta(days=1):
             game_wallet.mini_wallet = 1000
-            game_wallet.mini_wallet_last_update = datetime.utcnow()
-        if game_wallet.bank_wallet_last_update < datetime.utcnow() - timedelta(days=2):
+            game_wallet.mini_wallet_last_update = datetime.now()
+        if game_wallet.bank_wallet_last_update < datetime.now() - timedelta(days=2):
             game_wallet.bank_wallet = 10000
-            game_wallet.bank_wallet_last_update = datetime.utcnow()
+            game_wallet.bank_wallet_last_update = datetime.now()
         db.session.commit()
 
     @staticmethod
@@ -166,7 +166,7 @@ class wallet_manager:
         if not crypto_wallet_evolution:
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
-            new_evolution.date = datetime.utcnow().date()
+            new_evolution.date = datetime.now().date()
             new_evolution.quantity = 0
             db.session.add(new_evolution)
             db.session.commit()
@@ -205,7 +205,7 @@ class wallet_manager:
             print("No wallet evolution, creating one")
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
-            new_evolution.date = datetime.utcnow().date()
+            new_evolution.date = datetime.now().date()
             new_evolution.quantity = 0
             db.session.add(new_evolution)
             db.session.commit()
@@ -213,7 +213,7 @@ class wallet_manager:
             crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
                 CryptoWalletEvolution.date.desc()).all()
 
-        print(f"CRYPTO WALLET EVOLUTION: {crypto_wallet_evolution}")
+        print(f"CRYPTO WALLET EVOLUTION: {[c.date for c in crypto_wallet_evolution]}")
 
         # Get user wallets
         wallets = user.wallets
@@ -229,8 +229,9 @@ class wallet_manager:
             quantity = round(quantity, 3)
 
         # Check if there is a wallet evolution for today
-        today = datetime.utcnow().date()
+        today = datetime.now().date()
         print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
+        print(f"Today: {today}")
         if crypto_wallet_evolution[0].date == today:
             print(f"There is a wallet evolution for today : {today}")
             # If there is, update the quantity
@@ -241,7 +242,7 @@ class wallet_manager:
             # If there is not, create one
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
-            new_evolution.date = datetime.utcnow().date()
+            new_evolution.date = datetime.now().date()
             new_evolution.quantity = quantity
             db.session.add(new_evolution)
 
@@ -260,10 +261,10 @@ class wallet_manager:
         latest_snapshot = CryptoWalletDailySnapshot.query.filter_by(user_id=user.id).order_by(
             CryptoWalletDailySnapshot.date.desc()).first()
         # If latest snapshot is not today, add new snapshot
-        if not latest_snapshot or latest_snapshot.date != datetime.utcnow().date():
+        if not latest_snapshot or latest_snapshot.date != datetime.now().date():
             new_snapshot = CryptoWalletDailySnapshot()
             new_snapshot.user_id = user.id
-            new_snapshot.date = datetime.utcnow().date()
+            new_snapshot.date = datetime.now().date()
             new_snapshot.quantity = quantity
             db.session.add(new_snapshot)
             db.session.commit()
@@ -338,7 +339,7 @@ class wallet_manager:
             # If user has no wallet daily snapshot, create one with today's date and 0 quantity
             new_snapshot = CryptoWalletDailySnapshot()
             new_snapshot.user_id = user.id
-            new_snapshot.date = datetime.utcnow().date()
+            new_snapshot.date = datetime.now().date()
             new_snapshot.quantity = 0
             db.session.add(new_snapshot)
             db.session.commit()
@@ -358,11 +359,11 @@ class wallet_manager:
                 wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i - 1]["value"]
 
         # fill missing dates between first and today
-        if wallet_daily_snapshot[0]["date"] != datetime.utcnow().date():
+        if wallet_daily_snapshot[0]["date"] != datetime.now().date():
             # get first date
             first_date = wallet_daily_snapshot[0]["date"]
             # get today's date
-            today = datetime.utcnow().date()
+            today = datetime.now().date()
             # loop over dates between first and today
             for i in range((today - first_date).days + 1):
                 # get date
@@ -418,13 +419,13 @@ class wallet_manager:
         # Update game wallet
         if From == 'mini_wallet':
             game_wallet.mini_wallet -= quantity_USD
-            game_wallet.mini_wallet_last_update = datetime.utcnow()
+            game_wallet.mini_wallet_last_update = datetime.now()
             # test if mini_wallet is negative, and return an error if it is
             if game_wallet.mini_wallet < 0:
                 return {'error': 'Not enough money in wallet'}
         else:
             game_wallet.bank_wallet -= quantity_USD
-            game_wallet.bank_wallet_last_update = datetime.utcnow()
+            game_wallet.bank_wallet_last_update = datetime.now()
             # test if bank_wallet is negative, and return an error if it is
             if game_wallet.bank_wallet < 0:
                 return {'error': 'Not enough money in bank'}
@@ -607,7 +608,7 @@ class wallet_manager:
         transaction.transaction_type = transaction_type
         transaction.quantity = quantity
         transaction.symbol = wallet.symbol
-        transaction.date = datetime.utcnow()
+        transaction.date = datetime.now()
         db.session.add(transaction)
         db.session.commit()
 
@@ -641,8 +642,8 @@ class wallet_manager:
             take_profit_value = db.Column(db.Float)
             bot = db.Column(db.String(50))
             status = db.Column(db.String(20), nullable=False)  # open, closed
-            created_at = db.Column(db.DateTime, default=datetime.utcnow)  # date of creation
-            updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # date of last update
+            created_at = db.Column(db.DateTime, default=datetime.now)  # date of creation
+            updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)  # date of last update
 
         """
 
@@ -651,7 +652,7 @@ class wallet_manager:
         if len(positions) >= 5:
             return {'message': 'You can\'t have more than 5 positions for the same symbol', 'success': False}
         # Test if the user has already 1 position for the same symbol today
-        today = datetime.utcnow().date()
+        today = datetime.now().date()
         for position in positions:
             if position.created_at.date() == today:
                 return {'message': 'You can\'t have more than 1 position for the same symbol today', 'success': False}
