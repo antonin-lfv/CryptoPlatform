@@ -14,3 +14,6 @@ general/__pycache__
 /configuration/merge.md
 __pycache__/
 *.pyc
+
+*.py[cod]
+*$py.class

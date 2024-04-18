@@ -237,7 +237,7 @@ class wallet_manager:
             crypto_wallet_evolution[0].quantity = quantity
 
         else:
-            print("There is no wallet evolution for today, creating one")
+            print(f"There is no wallet evolution for today, creating one with date : {today} and quantity : {quantity}")
             # If there is not, create one
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
