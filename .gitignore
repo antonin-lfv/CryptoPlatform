@@ -16,4 +16,4 @@ __pycache__/
 *.pyc
 
 *.py[cod]
-*$py.class
+*$py.class*.pyc
