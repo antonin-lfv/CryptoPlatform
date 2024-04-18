@@ -171,8 +171,7 @@ class wallet_manager:
             db.session.add(new_evolution)
             db.session.commit()
             # Get wallet evolution of user sorted by date
-            crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
-                CryptoWalletEvolution.date.desc()).all()
+            crypto_wallet_evolution = [new_evolution]
 
         for evolution in crypto_wallet_evolution:
             wallet_evolution.append({
@@ -196,6 +195,7 @@ class wallet_manager:
         If there is no wallet evolution for today, create one, else update the quantity
         """
         print(f"Update wallet evolution for user {user.username}")
+        today = datetime.now().date()
         # Get wallet evolution of user sorted by date
         crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
             CryptoWalletEvolution.date.desc()).all()
@@ -205,7 +205,7 @@ class wallet_manager:
             print("No wallet evolution, creating one")
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
-            new_evolution.date = datetime.now().date()
+            new_evolution.date = today
             new_evolution.quantity = 0
             db.session.add(new_evolution)
             db.session.commit()
@@ -228,7 +228,6 @@ class wallet_manager:
             quantity = round(quantity, 3)
 
         # Check if there is a wallet evolution for today
-        today = datetime.now().date()
         print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
         print(f"Today: {today}")
         print(f"crypto_wallet_evolution[0].date == today: {crypto_wallet_evolution[0].date == today}")
@@ -242,7 +241,7 @@ class wallet_manager:
             # If there is not, create one
             new_evolution = CryptoWalletEvolution()
             new_evolution.user_id = user.id
-            new_evolution.date = datetime.now().date()
+            new_evolution.date = today
             new_evolution.quantity = quantity
             db.session.add(new_evolution)
 
