@@ -168,8 +168,6 @@ class wallet_manager:
             new_evolution.user_id = user.id
             new_evolution.date = datetime.now().date()
             new_evolution.quantity = 0
-            db.session.add(new_evolution)
-            db.session.commit()
             # Get wallet evolution of user sorted by date
             crypto_wallet_evolution = [new_evolution]
 
@@ -207,6 +205,7 @@ class wallet_manager:
             new_evolution.user_id = user.id
             new_evolution.date = today
             new_evolution.quantity = 0
+            print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
             db.session.add(new_evolution)
             db.session.commit()
             # Get wallet evolution of user sorted by date
@@ -231,6 +230,9 @@ class wallet_manager:
         print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
         print(f"Today: {today}")
         print(f"crypto_wallet_evolution[0].date == today: {crypto_wallet_evolution[0].date == today}")
+        if today in [c.date for c in crypto_wallet_evolution]:
+            print(f"BY CHECKNG ALL DATES: There is a wallet evolution for today : {today}")
+        print(f"THERE IS {len([c.date for c in crypto_wallet_evolution if c.date == today])} wallet evolution for {today}")
         if crypto_wallet_evolution[0].date == today:
             print(f"There is a wallet evolution for today : {today}")
             # If there is, update the quantity
@@ -243,6 +245,7 @@ class wallet_manager:
             new_evolution.user_id = user.id
             new_evolution.date = today
             new_evolution.quantity = quantity
+            print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
             db.session.add(new_evolution)
 
         db.session.commit()
@@ -537,8 +540,8 @@ class wallet_manager:
 
         return {'success': 'Transaction successful'}
 
-    @staticmethod
-    def buy_with_crypto(user, symbol, quantity):
+
+    def buy_with_crypto(self, user, symbol, quantity):
         """
         Buy a service or a product with crypto like:
         - Mining server
@@ -557,15 +560,14 @@ class wallet_manager:
             db.session.commit()
 
             # Update wallet evolution
-            w_manager = wallet_manager()
-            w_manager.update_crypto_wallet_evolution(user)
+            self.update_crypto_wallet_evolution(user)
 
             return {'success': 'Transaction successful'}
         else:
             return {'error': 'Not enough crypto in wallet'}
 
-    @staticmethod
-    def receive_crypto(user, symbol, quantity):
+
+    def receive_crypto(self, user, symbol, quantity):
         """
         Receive crypto from another user
         """
@@ -587,8 +589,7 @@ class wallet_manager:
         db.session.commit()
 
         # Update wallet evolution
-        w_manager = wallet_manager()
-        w_manager.update_crypto_wallet_evolution(user)
+        self.update_crypto_wallet_evolution(user)
 
         return {'success': 'Transaction successful'}
 
