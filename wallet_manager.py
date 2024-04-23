@@ -195,30 +195,23 @@ class wallet_manager:
         print(f"Update wallet evolution for user {user.username}")
         today = datetime.now().date()
         # Get wallet evolution of user sorted by date
-        crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).order_by(
-            CryptoWalletEvolution.date.desc()).all()
+        crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).all()
 
-        # If user has no wallet evolution, create one with today's date and 0 quantity
-        if not crypto_wallet_evolution:
-            print("No wallet evolution, creating one")
-            new_evolution = CryptoWalletEvolution()
-            new_evolution.user_id = user.id
-            new_evolution.date = today
-            new_evolution.quantity = 0
-            print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
-            db.session.add(new_evolution)
-            db.session.commit()
-            # Get wallet evolution of user sorted by date
-            crypto_wallet_evolution = [new_evolution]
+        n = 0
+        # Delete all wallet evolution for today
+        for c in crypto_wallet_evolution:
+            if c.date == today:
+                n += 1
+                db.session.delete(c)
 
-        print(f"CRYPTO WALLET EVOLUTION: {[c.date for c in crypto_wallet_evolution]}")
+        print(f"Deleted {n} wallet evolution for today")
+        db.session.commit()
 
         # Get user wallets
         wallets = user.wallets
         # Loop over wallets
         quantity = 0
         for wallet in wallets:
-            print(f"Wallet: {wallet.symbol}, user_id: {wallet.user_id}")
             # Get latest price
             balance = self.crypto_manager.get_USD_from_crypto(wallet.symbol, wallet.quantity)
             # Add to total balance
@@ -226,28 +219,13 @@ class wallet_manager:
             # Round balance to 2 decimals
             quantity = round(quantity, 3)
 
-        # Check if there is a wallet evolution for today
-        print(f"First date of wallet evolution: {crypto_wallet_evolution[0].date}")
-        print(f"Today: {today}")
-        print(f"crypto_wallet_evolution[0].date == today: {crypto_wallet_evolution[0].date == today}")
-        if today in [c.date for c in crypto_wallet_evolution]:
-            print(f"BY CHECKNG ALL DATES: There is a wallet evolution for today : {today}")
-        print(f"THERE IS {len([c.date for c in crypto_wallet_evolution if c.date == today])} wallet evolution for {today}")
-        if crypto_wallet_evolution[0].date == today:
-            print(f"There is a wallet evolution for today : {today}")
-            # If there is, update the quantity
-            crypto_wallet_evolution[0].quantity = quantity
-
-        else:
-            print(f"There is no wallet evolution for today, creating one with date : {today} and quantity : {quantity}")
-            # If there is not, create one
-            new_evolution = CryptoWalletEvolution()
-            new_evolution.user_id = user.id
-            new_evolution.date = today
-            new_evolution.quantity = quantity
-            print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
-            db.session.add(new_evolution)
-
+        # Update wallet evolution with the total balance for today
+        new_evolution = CryptoWalletEvolution()
+        new_evolution.user_id = user.id
+        new_evolution.date = today
+        new_evolution.quantity = quantity
+        print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
+        db.session.add(new_evolution)
         db.session.commit()
 
     @staticmethod
@@ -540,7 +518,6 @@ class wallet_manager:
 
         return {'success': 'Transaction successful'}
 
-
     def buy_with_crypto(self, user, symbol, quantity):
         """
         Buy a service or a product with crypto like:
@@ -565,7 +542,6 @@ class wallet_manager:
             return {'success': 'Transaction successful'}
         else:
             return {'error': 'Not enough crypto in wallet'}
-
 
     def receive_crypto(self, user, symbol, quantity):
         """
