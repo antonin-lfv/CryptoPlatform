@@ -128,7 +128,9 @@ def create_app():
         # Update NFT prices if needed
         nft_manager = NFT_manager()
         nft_manager.update_NFT_price()
-        # Start payment process for servers
+
+    def server_payment_process():
+        print(f"Starting server payment process at {datetime.now()}")
         users = User.query.all()
         mining_server_manager = Mining_server_manager()
         for user in users:
@@ -138,21 +140,30 @@ def create_app():
     with app.app_context():
         schedule_update()
 
-    # Add the task to the scheduler
-    if os.getenv('DEBUG_MODE') == 'True':
-        print("Debug mode is on, update every hour")
+    # Clean all cron tasks before adding them to avoid duplicates
+    scheduler.remove_all_jobs()
 
-        @scheduler.task('cron', id='crypto_update', hour='*')
-        def cron_crypto_update():
+    # Add the task to the scheduler based on the DEBUG_MODE environment variable
+    if os.getenv('DEBUG_MODE') == 'True':
+        print("Debug mode is on, updating every hour")
+
+        @scheduler.task('cron', id='debug_crypto_update', hour='*')
+        def cron_debug_crypto_update():
             with app.app_context():
                 schedule_update()
-
+                server_payment_process()
     else:
-        # update every 5 minutes
+        print("Regular mode, updating every 5 minutes and payment process at 1 AM")
+
         @scheduler.task('cron', id='crypto_update', minute='*/5')
         def cron_crypto_update():
             with app.app_context():
                 schedule_update()
+
+        @scheduler.task('cron', id='server_payment', hour='1', minute='0')
+        def cron_server_payment():
+            with app.app_context():
+                server_payment_process()
 
     return app
 
