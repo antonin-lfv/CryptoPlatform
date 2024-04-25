@@ -31,7 +31,7 @@ def init_admin():
     # Create the first wallet daily snapshot
     wallet_daily_snapshot = CryptoWalletDailySnapshot()
     wallet_daily_snapshot.user_id = User.query.filter_by(email=email).first().id
-    wallet_daily_snapshot.date = datetime.now()
+    wallet_daily_snapshot.date = datetime.utcnow()
     wallet_daily_snapshot.quantity = 0
     db.session.add(wallet_daily_snapshot)
     # Add a notification to welcome the user

@@ -20,12 +20,12 @@ class Mining_server_manager:
         """
         Calculate and apply payment and earnings for all servers in one operation.
         """
-        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id} at {datetime.now()}")
+        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id} at {datetime.utcnow()}")
 
         # Get the user
         user = User.query.filter_by(id=user_id).first()
 
-        today_date = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
+        today_date = datetime.strptime(datetime.utcnow().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
         tomorrow_date = today_date + timedelta(days=1)
 
         print(f"today date: {today_date}, tomorrow date: {tomorrow_date}")
@@ -117,7 +117,7 @@ class Mining_server_manager:
             Notification_manager.add_notification(user_id,
                                                   f"You earned {round(USD_amount_earned, 3)} USD from mining "
                                                   f"on {today_date.strftime('%Y-%m-%d')}. "
-                                                  f"Hour of paiment : {datetime.now()}",
+                                                  f"Hour of paiment : {datetime.utcnow()}",
                                                   "shopping-cart")
 
     @staticmethod
@@ -310,9 +310,9 @@ class Mining_server_manager:
             wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
                                              server_details.buy_amount * number_of_servers_to_buy)
             # Create entry or update the user's server details, then add an invoice
-            period = datetime.now().strftime("%B %Y")
+            period = datetime.utcnow().strftime("%B %Y")
             issuer = user.username
-            tomorrow = datetime.strptime((datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            tomorrow = datetime.strptime((datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d"),
                                          "%Y-%m-%d").date()
             if user_server_details is None:
                 new_server = UserServer(user_id=user_id, server_id=server_id,
@@ -323,7 +323,7 @@ class Mining_server_manager:
                 user_server_details.instances_number += number_of_servers_to_buy
                 user_server_details.next_earning_date = tomorrow
 
-            today = datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
+            today = datetime.strptime(datetime.utcnow().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
 
             self.add_invoice(user_id, period, issuer, today, server_details.buy_amount * number_of_servers_to_buy,
                              server_id, 'buy', number_of_servers_to_buy)

@@ -441,7 +441,7 @@ class NFT_manager:
                 # Update the NFT history
                 history_nft = NFTPriceOwnerHistory(nft_id=nft_id, price=nft_price,
                                                    owner_id=user_id,
-                                                   date=datetime.now())
+                                                   date=datetime.utcnow())
                 db.session.add(history_nft)
                 # Buy the NFT with ETH
                 wallet.buy_with_crypto(user, 'ETH-USD', nft_price)
@@ -568,7 +568,7 @@ class NFT_manager:
         # Take the amount of the bid from the user
         wallet.buy_with_crypto(user, 'ETH-USD', amount)
         # Add the bid to the database and delete the previous minimum bids to only keep 5 bids
-        new_bid = NFTBid(user_id=user_id, nft_id=nft_id, bid_date=datetime.now(),
+        new_bid = NFTBid(user_id=user_id, nft_id=nft_id, bid_date=datetime.utcnow(),
                          bid_price_crypto=amount, bid_crypto_symbol='ETH')
         db.session.add(new_bid)
 
@@ -691,7 +691,7 @@ class NFT_manager:
         # Update the NFT history
         history_nft = NFTPriceOwnerHistory(nft_id=nft.id, price=bid.bid_price_crypto,
                                            owner_id=bid.user_id,
-                                           date=datetime.now())
+                                           date=datetime.utcnow())
         db.session.add(history_nft)
 
         # Update user quest stats

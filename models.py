@@ -40,8 +40,8 @@ class GameWallet(db.Model):
     mini_wallet = db.Column(db.Float(200), nullable=False)  # Amount of money available in the game (refill every day)
     bank_wallet = db.Column(db.Float(10000), nullable=False)  # Amount of money available in the bank (refill every
     # week)
-    mini_wallet_last_update = db.Column(db.DateTime, default=datetime.now)  # Last update of the mini wallet
-    bank_wallet_last_update = db.Column(db.DateTime, default=datetime.now)  # Last update of the bank wallet
+    mini_wallet_last_update = db.Column(db.DateTime, default=datetime.utcnow)  # Last update of the mini wallet
+    bank_wallet_last_update = db.Column(db.DateTime, default=datetime.utcnow)  # Last update of the bank wallet
 
 
 class CryptoTransactionHistory(db.Model):
@@ -53,7 +53,7 @@ class CryptoTransactionHistory(db.Model):
     transaction_type = db.Column(db.String(10), nullable=False)  # 'buy' ou 'sell'
     quantity = db.Column(db.Float, nullable=False)  # Quantity of crypto bought/sold
     symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, ex. BTC
-    date = db.Column(db.DateTime, default=datetime.now)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class CryptoWalletDailySnapshot(db.Model):
@@ -75,7 +75,7 @@ class CryptoPrice(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(10), nullable=False)  # Symbole de la cryptomonnaie, par ex. BTC
-    date = db.Column(db.Date, default=datetime.now)  # Date de la valeur du prix
+    date = db.Column(db.Date, default=datetime.utcnow)  # Date de la valeur du prix
     price = db.Column(db.Float)  # Prix d'ouverture
     volume = db.Column(db.Integer)  # Volume de transactions
 
@@ -115,7 +115,7 @@ class Notification(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User id
-    date = db.Column(db.DateTime, default=datetime.now)  # Date of the notification
+    date = db.Column(db.DateTime, default=datetime.utcnow)  # Date of the notification
     message = db.Column(db.String(1000), nullable=False)  # Message of the notification
     icon = db.Column(db.String(1000), nullable=False)  # Icon of the notification
 
@@ -222,7 +222,7 @@ class UserNFT(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)
-    purchase_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    purchase_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     purchase_price_usd = db.Column(db.Float, nullable=False)
     purchase_price_crypto = db.Column(db.Float, nullable=False)
     purchase_crypto_symbol = db.Column(db.String(10), nullable=False)
@@ -241,7 +241,7 @@ class NFTBid(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)
-    bid_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    bid_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     bid_price_crypto = db.Column(db.Float, nullable=False)
     bid_crypto_symbol = db.Column(db.String(10), nullable=False)
 
@@ -258,7 +258,7 @@ class NFTPriceOwnerHistory(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     nft_id = db.Column(db.Integer, db.ForeignKey('nft.id'), nullable=False)  # NFT id
-    date = db.Column(db.DateTime, default=datetime.now, nullable=False)  # Date of the transaction
+    date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # Date of the transaction
     price = db.Column(db.Float, nullable=False)  # Price of purchase in ETH
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Owner of the NFT
 
@@ -312,8 +312,8 @@ class Position(db.Model):
     prediction = db.Column(db.String(10))  # low, high
     bot = db.Column(db.String(50))
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
-    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f'<Position on {self.symbol}>'
