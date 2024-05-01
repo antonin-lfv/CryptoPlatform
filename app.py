@@ -23,7 +23,6 @@ def create_app():
     # Initialisation de l'APScheduler
     scheduler = APScheduler()
     scheduler.init_app(app)
-    scheduler.start()
 
     # ===== Blueprint
     from auth.auth import BLP_auth
@@ -143,27 +142,32 @@ def create_app():
     # Clean all cron tasks before adding them to avoid duplicates
     scheduler.remove_all_jobs()
 
+    def cron_debug_crypto_update():
+        with app.app_context():
+            schedule_update()
+            server_payment_process()
+
+    def cron_crypto_update():
+        with app.app_context():
+            schedule_update()
+
+    def cron_server_payment():
+        with app.app_context():
+            server_payment_process()
+
     # Add the task to the scheduler based on the DEBUG_MODE environment variable
     if os.getenv('DEBUG_MODE') == 'True':
         print("Debug mode is on, updating every hour")
-
-        @scheduler.task('cron', id='debug_crypto_update', hour='*')
-        def cron_debug_crypto_update():
-            with app.app_context():
-                schedule_update()
-                server_payment_process()
+        scheduler.add_job(func=cron_debug_crypto_update, trigger='cron', hour='*', id='debug_crypto_update')
     else:
         print("Regular mode, updating every 5 minutes and payment process at 1 AM")
 
-        @scheduler.task('cron', id='crypto_update', minute='*/5')
-        def cron_crypto_update():
-            with app.app_context():
-                schedule_update()
+        scheduler.add_job(func=cron_crypto_update, trigger='cron', minute='*/5', id='crypto_update')
+        scheduler.add_job(func=cron_server_payment, trigger='cron', hour='1', minute='0', id='server_payment')
 
-        @scheduler.task('cron', id='server_payment', hour='1', minute='0')
-        def cron_server_payment():
-            with app.app_context():
-                server_payment_process()
+    # Check if scheduler is not already running before starting
+    if not scheduler.running:
+        scheduler.start()
 
     return app
 
