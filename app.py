@@ -155,15 +155,20 @@ def create_app():
         with app.app_context():
             server_payment_process()
 
+    frequency_crypto_update = os.getenv('FREQUENCY_UPDATE_CRYPTO_MINUTES')
+
     # Add the task to the scheduler based on the DEBUG_MODE environment variable
     if os.getenv('DEBUG_MODE') == 'True':
         print("Debug mode is on, updating every hour")
-        scheduler.add_job(func=cron_debug_crypto_update, trigger='cron', hour='*', id='debug_crypto_update')
+        scheduler.add_job(func=cron_debug_crypto_update, trigger='cron',
+                          hour='*', id='debug_crypto_update')
     else:
-        print("Regular mode, updating every 5 minutes and payment process at 1 AM")
+        print(f"Regular mode, updating every {frequency_crypto_update} minutes and payment process at 1 AM")
 
-        scheduler.add_job(func=cron_crypto_update, trigger='cron', minute='*/5', id='crypto_update')
-        scheduler.add_job(func=cron_server_payment, trigger='cron', hour='1', minute='0', id='server_payment')
+        scheduler.add_job(func=cron_crypto_update, trigger='cron',
+                          minute=f'*/{frequency_crypto_update}', id='crypto_update')
+        scheduler.add_job(func=cron_server_payment, trigger='cron',
+                          hour='1', minute='0', id='server_payment')
 
     # Check if scheduler is not already running before starting
     if not scheduler.running:
