@@ -101,7 +101,8 @@ After=network.target
 User=debian
 Group=www-data
 WorkingDirectory=/home/debian/CryptoPlatform
-ExecStart=/home/debian/.pyenv/shims/gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
+ExecStart=/home/debian/.pyenv/shims/gunicorn --workers 1 --bind 0.0.0.0:8000 app:app --access-logfile /home/debian/CryptoPlatform/access.log --error-logfile /home/debian/CryptoPlatform/error.>
+EnvironmentFile=/home/debian/CryptoPlatform/.env
 
 [Install]
 WantedBy=multi-user.target
