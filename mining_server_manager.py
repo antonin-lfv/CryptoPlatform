@@ -20,20 +20,15 @@ class Mining_server_manager:
         """
         Calculate and apply payment and earnings for all servers in one operation.
         """
-        print(f"[INFO]: FIRST : --------------- Checking for server payment for user {user_id} at {datetime.utcnow()}")
-
         # Get the user
         user = User.query.filter_by(id=user_id).first()
 
         today_date = datetime.strptime(datetime.utcnow().strftime("%Y-%m-%d"), "%Y-%m-%d").date()
         tomorrow_date = today_date + timedelta(days=1)
 
-        print(f"today date: {today_date}, tomorrow date: {tomorrow_date}")
-
         # If the user has no servers, return
         if not UserServer.query.filter_by(user_id=user_id).first():
             # Update wallet evolution
-            print(f"[INFO]: No servers for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -42,12 +37,9 @@ class Mining_server_manager:
         closest_next_earning_date = UserServer.query.filter_by(user_id=user_id).order_by(
             UserServer.next_earning_date).first().next_earning_date
 
-        print(f"[INFO]: Next earning date for user {user_id}: {closest_next_earning_date}")
-
         # If the closest next_earning_date is in the future, return
         if closest_next_earning_date > today_date:
             # Update wallet evolution
-            print(f"[INFO]: Next earning date is in the future for user {user_id}")
             w_manager = wallet_manager()
             w_manager.update_crypto_wallet_evolution(user)
             return
@@ -74,13 +66,7 @@ class Mining_server_manager:
 
         USD_amount_earned = 0
 
-        print(f"[INFO]: Checking for server payment for user {user_id}")
-        print(f"[INFO]: Today's date: {today_date}")
-        print(f"[INFO]: Number of server types: {len(user_server_instances)}")
-
         for server_instance in user_server_instances:
-            print(f"Loop for server instance {server_instance.id}, where next earning date is "
-                  f"{server_instance.next_earning_date}")
             # === Calculate total earnings
             # Get the server details
             server_details = mining_servers[server_instance.server_id]
@@ -100,20 +86,15 @@ class Mining_server_manager:
 
                 # Update the next earning date
                 server_instance.next_earning_date = tomorrow_date
-                print(f"earned {total_earnings_USD} $ for server {server_instance.id}")
 
                 # Commit the changes
                 db.session.commit()
-
-        for server_instance in user_server_instances:
-            print(f"next earning date for server {server_instance.id}: {server_instance.next_earning_date}")
 
         # Update wallet evolution
         w_manager = wallet_manager()
         w_manager.update_crypto_wallet_evolution(user)
 
         if USD_amount_earned > 0:
-            print(f"Adding notification for user {user_id}")
             Notification_manager.add_notification(user_id,
                                                   f"You earned {round(USD_amount_earned, 3)} USD from mining "
                                                   f"on {today_date.strftime('%Y-%m-%d')}. "
@@ -180,7 +161,6 @@ class Mining_server_manager:
         """
         Add an invoice to the database
         """
-        print(f"[INFO]: Adding invoice for server_id {server_id}")
         invoice = ServerInvoices(period=period, issuer=issuer, purchase_date=purchase_date, amount=amount,
                                  server_id=server_id, type_payment=type_payment, user_id=user_id,
                                  instances_number=instances_number)

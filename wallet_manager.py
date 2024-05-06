@@ -339,31 +339,35 @@ class wallet_manager:
             if i > 0:
                 wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i - 1]["value"]
 
-        # fill missing dates between first and today
-        if wallet_daily_snapshot[0]["date"] != today:
-            # get first date
-            first_date = wallet_daily_snapshot[0]["date"]
-            # get today's date
-            # loop over dates between first and today
-            for i in range((today - first_date).days + 1):
-                # get date
-                date = first_date + timedelta(days=i)
-                print(f"{date=}")
-                # check if date is in wallet daily snapshot
-                if date not in [snapshot["date"] for snapshot in wallet_daily_snapshot]:
-                    # if not, add it with the value of the previous day
-                    wallet_daily_snapshot.append({
-                        "date": date,
-                        "value": wallet_daily_snapshot[-1]["value"]
-                    })
-
-        # Format date to look like this: "2021-10-01"
-        for snapshot in wallet_daily_snapshot:
-            snapshot["date"] = snapshot["date"].isoformat()
-
         print(f"{wallet_daily_snapshot=}")
 
-        return wallet_daily_snapshot
+        # Convert wallet_daily_snapshot to a dictionary with date as key
+        wallet_dict = {entry['date']: entry['value'] for entry in wallet_daily_snapshot}
+
+        # Date de début et date de fin (aujourd'hui)
+        start_date = wallet_daily_snapshot[0]['date']
+        end_date = datetime.utcnow().date()
+
+        # Fill the gaps in the wallet daily snapshot
+        current_value = None
+        filled_wallet_snapshot = []
+        dates_to_get = CryptoWalletEvolution.query.filter_by(user_id=user.id).all()
+        # create a list with date field only
+        dates_to_get = [date.date for date in dates_to_get]
+
+        for single_date in dates_to_get:
+            if single_date in wallet_dict:
+                current_value = wallet_dict[single_date]
+            if current_value is not None:
+                filled_wallet_snapshot.append({'date': single_date, 'value': current_value})
+
+        # Format date to look like this: "2021-10-01"
+        for snapshot in filled_wallet_snapshot:
+            snapshot["date"] = snapshot["date"].isoformat()
+
+        print(f"{filled_wallet_snapshot=}")
+
+        return filled_wallet_snapshot
 
     def buy_crypto_with_USD(self, user, symbol, From, quantity_crypto=None, quantity_USD=None):
         """

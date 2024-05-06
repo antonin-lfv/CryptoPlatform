@@ -120,7 +120,6 @@ def create_app():
     from nft_manager import NFT_manager
 
     def schedule_update():
-        print(f"Updating data at {datetime.utcnow()}")
         # Update crypto data
         manager = CryptoDataManager()
         manager.update_crypto_data()
@@ -129,7 +128,6 @@ def create_app():
         nft_manager.update_NFT_price()
 
     def server_payment_process():
-        print(f"Starting server payment process at {datetime.utcnow()}")
         users = User.query.all()
         mining_server_manager = Mining_server_manager()
         for user in users:

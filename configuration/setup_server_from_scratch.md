@@ -90,7 +90,7 @@ sudo ufw allow 'Nginx Full'
 
 # Use systemd to manage the Gunicorn process
 sudo nano /etc/systemd/system/CryptoPlatform.service
-# Add the following lines
+# Add the following lines (CAREFUL TO THE NUMBER OF WORKERS)
 # (Gunicorn found by the command : which gunicorn)
 ```
 [Unit]

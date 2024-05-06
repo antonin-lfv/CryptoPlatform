@@ -3,7 +3,7 @@
 <head>
     {% include('includes/head_content.html') %}
 
-    <title>Profile</title>
+    <title>Crypto platform</title>
 
 </head>
 <body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
@@ -144,7 +144,7 @@
 
                     <!-- NFT grid -->
                     <div class="col-xl-12 col-12 mt-20">
-                        <h1 class="text-center">My NFTs collection</h1>
+                        <h1 class="text-center" id="user_NFT_div_title">My NFTs collection</h1>
                     </div>
                     <div class="row" id="user_NFT_div" style="margin: 0 auto"></div>
 
@@ -355,6 +355,13 @@ $.ajax({
             </div>`;
             marketplaceDiv.append(nftHTML);  // Append the new HTML
         });
+
+        // Update the title of the div (show if there are NFTs, else hide)
+        if (NFTs.length > 0) {
+            $('#user_NFT_div_title').show();
+        } else {
+            $('#user_NFT_div_title').hide();
+        }
 
     },
     error: function(error) {

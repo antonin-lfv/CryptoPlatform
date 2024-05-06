@@ -3,7 +3,7 @@
 <head>
     {% include('includes/head_content.html') %}
 
-    <title>Mining marketplace</title>
+    <title>Crypto platform</title>
 
 </head>
 
@@ -135,10 +135,12 @@
                                         <a href="${urlDetails}">
                                             <h3 class="no-margin text-bold">${server.name}</h3>
                                         </a>
+                                        Buy price: <span class="text-danger">${server.buy_amount}</span> ${server.symbol}
+                                        <small class="fs-11 mb-0 text-uppercase text-mute">($${server.buy_amount_USD})</small>
+                                        <br>
                                         Power: <span class="text-success">${server.power}</span> ${server.symbol}/day
                                         <small class="fs-11 mb-0 text-uppercase text-mute">($${server.power_USD})</small>
                                         <br>
-                                        Buy price: <span class="text-danger">${server.buy_amount}</span> ${server.symbol} <small class="fs-11 mb-0 text-uppercase text-mute">($${server.buy_amount_USD})</small><br>
                                         ${BONUS_FROM_BTC_WALLET > 0 ? 'Bonus: + <span class="text-info">'+ BONUS_FROM_BTC_WALLET*100 + '% </span>' :''}
                                     </div>
                                 </div>

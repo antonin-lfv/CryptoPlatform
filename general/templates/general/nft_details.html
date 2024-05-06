@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% include('includes/head_content.html') %}
-    <title>NFT marketplace</title>
+    <title>Crypto platform</title>
 
 </head>
 <body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
@@ -57,7 +57,7 @@
                                     <h2 class="box-title"><b>{{ nft_data['name'] }}</b></h2>
                                     <H5 id="owned_status"></H5>&nbsp;
                                     <h5 id="set_as_profile_picture"></h5>
-
+                                    <br>
                                     <h6>Current price</h6>
                                     <h3><a id="NFT_price"></a>&nbsp;<a id="NFT_symbol">ETH</a>&nbsp;<small class="fs-11 mb-0 text-uppercase text-mute">($<a id="NFT_price_USD"></a>)</small><small><span class="d-block text-{% if nft_data['price_change_24h']<0 %}danger{% else %}success{% endif %}"> ${{ nft_data['price_change_24h'] }}<i
                                                     class="fa fa-arrow-{% if nft_data['price_change_24h']<0 %}down{% else %}up{% endif %}"></i></span></small></h3>

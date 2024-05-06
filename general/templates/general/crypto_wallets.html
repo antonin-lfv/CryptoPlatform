@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% include('includes/head_content.html') %}
-    <title>Wallet</title>
+    <title>Crypto platform</title>
 
 </head>
 <body class="layout-top-nav {% if session['theme'] == 'dark' %}dark-skin{% else %}light-skin{% endif %} theme-primary fixed">
@@ -255,7 +255,7 @@
             var data1 = ['wallet value']; // Wallet value in USD
             var data2 = ['USD spent']; // USD spent to buy crypto
 
-            console.log(data1, data2, dates);
+            // console.log(data1, data2, dates);
 
             data[0].forEach(function (item) {
                 dates.push(item.date);
@@ -267,7 +267,7 @@
                 data2.push(item.value);
             });
 
-            console.log(data1, data2, dates);
+            // console.log(data1, data2, dates);
 
             // Créer le graphique avec les données transformées
             c3.generate({
