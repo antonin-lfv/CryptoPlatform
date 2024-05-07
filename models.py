@@ -302,15 +302,19 @@ class UserQuestRewards(db.Model):
 class Position(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    symbol = db.Column(db.String(20), nullable=False)
+    symbol = db.Column(db.String(20), nullable=False)  # BTC-USD, ETH-USD, LTC-USD, etc.
     price = db.Column(db.Float, nullable=False)
-    leverage = db.Column(db.String(10))
+    usd_entry_price = db.Column(db.Float, nullable=False)
+    token_entry_price = db.Column(db.Float, nullable=False)  # price for 1 token at the entry
+    current_usd_price = db.Column(db.Float, nullable=False)
+    current_pourcentage_profit = db.Column(db.Float, nullable=False)
+    current_usd_profit = db.Column(db.Float, nullable=False)
+    leverage = db.Column(db.String(10))  # no_leverage, 1:2, 1:5, 1:10
     stop_loss_percentage = db.Column(db.Float)
     stop_loss_value = db.Column(db.Float)
     take_profit_percentage = db.Column(db.Float)
     take_profit_value = db.Column(db.Float)
-    prediction = db.Column(db.String(10))  # low, high
-    bot = db.Column(db.String(50))
+    prediction = db.Column(db.String(10))  # low or high
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

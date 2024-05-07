@@ -596,7 +596,6 @@ def send_notification_to_all_users():
     Send a notification to all users
     """
     text = request.args.get('text', '')
-    print(f"Sending notification to all users: {text}")
     Notification_manager().send_notification_to_all_users(text, 'user')
     return {'status': 'success'}
 
@@ -628,9 +627,21 @@ def place_position():
     return jsonify(response)
 
 
-@BLP_api.route('/api/get_positions/<symbol>', methods=['GET', 'POST'])
-def get_positions(symbol):
+@BLP_api.route('/api/close_position/<position_id>', methods=['GET', 'POST'])
+def close_position(position_id):
+    response = wallet_manager().close_position(current_user.id, position_id)
+    return jsonify(response)
+
+
+@BLP_api.route('/api/get_opened_positions/<symbol>', methods=['GET', 'POST'])
+def get_opened_positions(symbol):
     response = wallet_manager().get_opened_positions(current_user.id, symbol=symbol)
+    return jsonify({'positions': response})
+
+
+@BLP_api.route('/api/get_last_closed_positions/<symbol>', methods=['GET', 'POST'])
+def get_last_closed_positions(symbol):
+    response = wallet_manager().get_last_closed_positions(current_user.id, symbol=symbol)
     return jsonify({'positions': response})
 
 

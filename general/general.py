@@ -130,6 +130,13 @@ def home():
     number_of_NFTs = nft_manager.get_number_of_NFTs_user(current_user.id)
     number_of_bids = nft_manager.get_number_of_bids_user(current_user.id)
 
+    # ===== Number of opened positions =====
+    # Get the number of opened positions
+    w_manager = wallet_manager()
+    number_of_opened_positions = w_manager.get_number_of_opened_positions(current_user.id)
+
+    print(f"number_of_opened_positions: {number_of_opened_positions}")
+
     # ===== Classement =====
     # Get the ranking of the user in the platform (show the leaderboard with 1 person after and before)
     user_ranking = UserManager().get_user_in_leaderboard(current_user.id)
@@ -141,7 +148,8 @@ def home():
                            web3_balance_BTC=web3_balance_BTC, total_balance_BTC=total_balance_BTC,
                            top_cryptos=top_cryptos, number_of_bids=number_of_bids, number_of_NFTs=number_of_NFTs,
                            user_ranking=user_ranking, number_most_valuable_cryptos=number_most_valuable_cryptos,
-                           crypto_wallet_evolution_percent=crypto_wallet_evolution_percent)
+                           crypto_wallet_evolution_percent=crypto_wallet_evolution_percent,
+                           number_of_opened_positions=number_of_opened_positions)
 
 
 @BLP_general.route('/profile', methods=['GET', 'POST'])

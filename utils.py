@@ -142,8 +142,6 @@ def get_current_quest_step(nft_bougth, nft_sold, nft_bid, servers_bought):
     To get the number of BTC to be rewarded, the index of the step is used (reward_factor * (index + 1)  of the step BTC)
     """
 
-    print(f"nft_bougth: {nft_bougth}, nft_sold: {nft_sold}, nft_bid: {nft_bid}, servers_bought: {servers_bought}")
-
     index_nft_bougth = 0
     index_nft_sold = 0
     index_nft_bid = 0

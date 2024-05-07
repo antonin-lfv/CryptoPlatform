@@ -18,10 +18,9 @@ class CryptoDataManager:
         Only if OFFLINE is False in config.py
 
         """
-        print(f"[INFO] Updating crypto data")
 
         if os.getenv('MAINTENANCE_MODE') == 'True':
-            print("You are in offline mode. No data will be updated.")
+            print("[INFO] You are in offline mode. No data will be updated.")
             return
         else:
             for symbol in self.top_cryptos:
@@ -56,10 +55,10 @@ class CryptoDataManager:
                         db.session.commit()
 
                 except KeyError as e:
-                    print(f"Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
+                    print(f"[ERROR] Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
 
                 except Exception as e:
-                    print(f"Une erreur inattendue est survenue: {e}.")
+                    print(f"[ERROR] Une erreur inattendue est survenue: {e}.")
 
     @staticmethod
     def get_specific_crypto_data(symbol):

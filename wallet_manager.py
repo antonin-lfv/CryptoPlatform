@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from utils import top_cryptos_symbols, top_cryptos_names
 from models import (CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySnapshot,
-                    CryptoWalletEvolution, UserNFT, NFT, Position)
+                    CryptoWalletEvolution, UserNFT, NFT, Position, User)
+from notification_manager import Notification_manager
 from app import db
 from crypto_manager import CryptoDataManager
 
@@ -192,7 +193,6 @@ class wallet_manager:
         Go through all wallets of the user and sum the USD value of each crypto
         If there is no wallet evolution for today, create one, else update the quantity
         """
-        print(f"Update wallet evolution for user {user.username}")
         today = datetime.utcnow().date()
         # Get wallet evolution of user sorted by date
         crypto_wallet_evolution = CryptoWalletEvolution.query.filter_by(user_id=user.id).all()
@@ -204,7 +204,6 @@ class wallet_manager:
                 n += 1
                 db.session.delete(c)
 
-        print(f"Deleted {n} wallet evolution for today")
         db.session.commit()
 
         # Get user wallets
@@ -224,7 +223,6 @@ class wallet_manager:
         new_evolution.user_id = user.id
         new_evolution.date = today
         new_evolution.quantity = quantity
-        print(f"ADDING NEW EVOLUTION: {new_evolution.date} {new_evolution.quantity}")
         db.session.add(new_evolution)
         db.session.commit()
 
@@ -339,8 +337,6 @@ class wallet_manager:
             if i > 0:
                 wallet_daily_snapshot[i]["value"] += wallet_daily_snapshot[i - 1]["value"]
 
-        print(f"{wallet_daily_snapshot=}")
-
         # Convert wallet_daily_snapshot to a dictionary with date as key
         wallet_dict = {entry['date']: entry['value'] for entry in wallet_daily_snapshot}
 
@@ -364,8 +360,6 @@ class wallet_manager:
         # Format date to look like this: "2021-10-01"
         for snapshot in filled_wallet_snapshot:
             snapshot["date"] = snapshot["date"].isoformat()
-
-        print(f"{filled_wallet_snapshot=}")
 
         return filled_wallet_snapshot
 
@@ -592,12 +586,10 @@ class wallet_manager:
         db.session.add(transaction)
         db.session.commit()
 
-    @staticmethod
-    def place_position(user_id, position_json):
+    def place_position(self, user_id, position_json):
         """ Place a position in the trading table.
-        The user can't have more than 5 positions at the same time (5 in total)
-        and more than 1 position per day for the same symbol.
-        In total (for all symbol) the user can't have more than 20 positions at the same time.
+        The user can't have more than 5 positions at the same time
+        and more than 1 position per day for the same symbol (opened one).
 
         position_json is like :
             {
@@ -607,42 +599,21 @@ class wallet_manager:
                 stopLossValue: stop loss value (in USD)
                 takeProfitPercentage: take profit percentage
                 takeProfitValue: take profit value (in USD)
-                bot: bot to use (no_bot, bot1, bot2)
                 prediction: low or high, prediction of the user
                 symbol: symbol like 'BTC-USD'
             }
-
-        model is like :
-            id = db.Column(db.Integer, primary_key=True)
-            symbol = db.Column(db.String(20), nullable=False)
-            price = db.Column(db.Float, nullable=False)
-            leverage = db.Column(db.String(10))
-            stop_loss_percentage = db.Column(db.Float)
-            stop_loss_value = db.Column(db.Float)
-            take_profit_percentage = db.Column(db.Float)
-            take_profit_value = db.Column(db.Float)
-            bot = db.Column(db.String(50))
-            prediction = db.Column(db.String(10))  # low, high
-            status = db.Column(db.String(20), nullable=False)  # open, closed
-            created_at = db.Column(db.DateTime, default=datetime.utcnow)  # date of creation
-            updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # date of last update
-
         """
 
         # Test if the user has already 5 positions for the same symbol
         positions = Position.query.filter_by(user_id=user_id, symbol=position_json['symbol']).all()
         if len(positions) >= 5:
             return {'message': 'You can\'t have more than 5 positions for the same symbol', 'success': False}
-        # Test if the user has already 1 position for the same symbol today
+        # Test if the user has already 1 position for the same symbol today (opened one)
         today = datetime.utcnow().date()
         for position in positions:
-            if position.created_at.date() == today:
-                return {'message': 'You can\'t have more than 1 position for the same symbol today', 'success': False}
-
-        # Test if the user has already 20 positions in total
-        positions = Position.query.filter_by(user_id=user_id).all()
-        if len(positions) >= 20:
-            return {'message': 'You can\'t have more than 20 positions in total', 'success': False}
+            if position.created_at.date() == today and position.status == 'open':
+                return {'message': 'You can\'t have more than 1 opened position for the same symbol today',
+                        'success': False}
 
         # remove the amount of the position from the user wallet
         # get the user wallet for the crypto and check if the user has enough crypto
@@ -653,7 +624,8 @@ class wallet_manager:
             return {'error': 'You do not have this crypto', 'success': False}
         if user_wallet.quantity >= position_json['price']:
             # use max to avoid negative quantity with approximations
-            user_wallet.quantity = max(user_wallet.quantity - position_json['price'], 0)
+            user = User.query.filter_by(id=user_id).first()
+            self.buy_with_crypto(user, position_json['symbol'], position_json['price'])
             db.session.commit()
         else:
             return {'error': 'Not enough crypto in wallet', 'success': False}
@@ -663,18 +635,45 @@ class wallet_manager:
         new_position.user_id = user_id
         new_position.symbol = position_json['symbol']
         new_position.price = position_json['price']
+        new_position.current_usd_price = self.crypto_manager.get_USD_from_crypto(position_json['symbol'],
+                                                                                 position_json['price'])
+        new_position.usd_entry_price = new_position.current_usd_price
+        new_position.token_entry_price = self.crypto_manager.get_USD_from_crypto(position_json['symbol'], 1)
+        new_position.current_pourcentage_profit = 0
+        new_position.current_usd_profit = 0
         new_position.leverage = position_json['leverage']
         new_position.stop_loss_percentage = position_json['stopLossPercentage']
         new_position.stop_loss_value = position_json['stopLossValue']
         new_position.take_profit_percentage = position_json['takeProfitPercentage']
         new_position.take_profit_value = position_json['takeProfitValue']
         new_position.prediction = position_json['prediction']
-        new_position.bot = position_json['bot']
         new_position.status = 'open'
         db.session.add(new_position)
         db.session.commit()
 
         return {'message': 'Position placed', 'success': True}
+
+    def close_position(self, user_id, position_id):
+        """ Close a position in the trading table """
+        position = Position.query.filter_by(id=position_id).first()
+        if position.user_id != user_id:
+            return {'message': 'You can\'t close this position', 'success': False}
+
+        if position:
+            position.status = 'closed'
+            position.updated_at = datetime.utcnow()
+            user = User.query.filter_by(id=user_id).first()
+            self.receive_crypto(user, position.symbol, self.crypto_manager.get_crypto_from_USD(position.symbol,
+                                                                                               position.usd_entry_price) * position.current_pourcentage_profit)
+            # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
+            Notification_manager().add_notification(position.user_id,
+                                                    f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"}'
+                                                    f'{abs(position.current_usd_profit)}$ of {position.symbol}',
+                                                    'warning')
+            db.session.commit()
+            return {'message': 'Position closed', 'success': True}
+        else:
+            return {'message': 'Position not found', 'success': False}
 
     @staticmethod
     def get_opened_positions(user_id, symbol):
@@ -684,6 +683,7 @@ class wallet_manager:
         for position in positions:
             positions_json.append({
                 'id': position.id,
+                'symbol': position.symbol,
                 'price': position.price,
                 'price_format': f"{position.price} {symbol.split('-')[0]}",
                 'leverage': position.leverage,
@@ -693,9 +693,113 @@ class wallet_manager:
                 'stop_loss_value': position.stop_loss_value,
                 'take_profit_percentage': position.take_profit_percentage,
                 'take_profit_value': position.take_profit_value,
-                'bot': position.bot,
                 'prediction': position.prediction,
                 'status': position.status,
-                'created_at': position.created_at
+                'created_at': position.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'current_usd_price': position.current_usd_price,
+                'current_pourcentage_profit': position.current_pourcentage_profit,
+                'current_usd_profit': position.current_usd_profit,
+                'usd_entry_price': round(position.usd_entry_price, 3),  # price set by the user in USD
+                'token_entry_price': round(position.token_entry_price, 3)  # price of 1 token in USD
             })
         return positions_json
+
+    @staticmethod
+    def get_last_closed_positions(user_id, symbol):
+        """ Get last 15 closed positions of the user """
+        positions = Position.query.filter_by(user_id=user_id, status='closed', symbol=symbol).order_by(
+            Position.updated_at.desc()).limit(15).all()
+        positions_json = []
+        for position in positions:
+            positions_json.append({
+                'start_date': position.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'end_date': position.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'token_entry_price': round(position.token_entry_price, 3),  # price of 1 token in USD
+                'position_token': f"{position.price} {symbol.split('-')[0]}",
+                'symbol': position.symbol,
+                'leverage': position.leverage,
+                'prediction': position.prediction,
+                'current_pourcentage_profit': position.current_pourcentage_profit,
+                'current_usd_profit': position.current_usd_profit,
+                'color': 'success' if position.current_usd_profit > 0 else 'danger'
+            })
+        return positions_json
+
+    def update_positions(self, user_id):
+        """
+        ~This method is called each time the data is updated on the server~
+
+        Update all opened positions of the user.
+
+        We go through all the positions of the user and update them.
+        We calculate the current price of the crypto.
+        Depending on the prediction of the user, we calculate the profit (in $ and %) using the leverage.
+        If the stop loss or take profit is reached, we close the position and
+        send or not a notification to the user.
+        In any case, the user get the amount of the position back in his wallet.
+        If the position still open, we just update updated_at field.
+        """
+        positions = Position.query.filter_by(user_id=user_id, status='open').all()
+        for position in positions:
+            # get the current price of the crypto
+            current_price = self.crypto_manager.get_USD_from_crypto(position.symbol, position.price)
+            position.current_usd_price = current_price
+            # calculat the leverage
+            if position.leverage == 'no_leverage':
+                position.leverage = 1
+            else:
+                position.leverage = int(position.leverage.split(':')[-1])
+            # user prediction
+            user_prediction = position.prediction
+
+            if user_prediction == 'high':
+                if current_price > position.usd_entry_price:
+                    position.current_usd_profit = (current_price - position.usd_entry_price) * position.leverage
+                    position.current_pourcentage_profit = (
+                                                                      current_price / position.usd_entry_price - 1) * 100 * position.leverage
+                else:
+                    position.current_usd_profit = (position.usd_entry_price - current_price) * position.leverage * -1
+                    position.current_pourcentage_profit = (
+                                                                      1 - current_price / position.usd_entry_price) * 100 * position.leverage * -1
+            else:  # user_prediction == 'low'
+                if current_price < position.usd_entry_price:
+                    position.current_usd_profit = (position.usd_entry_price - current_price) * position.leverage
+                    position.current_pourcentage_profit = (
+                                                                      1 - current_price / position.usd_entry_price) * 100 * position.leverage
+                else:
+                    position.current_usd_profit = (current_price - position.usd_entry_price) * position.leverage * -1
+                    position.current_pourcentage_profit = (
+                                                                      current_price / position.usd_entry_price - 1) * 100 * position.leverage * -1
+
+            # round to 3 decimals
+            position.current_usd_profit = round(position.current_usd_profit, 2)
+            position.current_pourcentage_profit = round(position.current_pourcentage_profit, 2)
+
+            if position.stop_loss_percentage is not None and position.current_pourcentage_profit <= -position.stop_loss_percentage:
+                position.status = 'closed'
+            elif position.take_profit_percentage is not None and position.current_pourcentage_profit >= position.take_profit_percentage:
+                position.status = 'closed'
+            elif position.stop_loss_value is not None and position.current_usd_profit <= -position.stop_loss_value:
+                position.status = 'closed'
+            elif position.take_profit_value is not None and position.current_usd_profit >= position.take_profit_value:
+                position.status = 'closed'
+
+            position.updated_at = datetime.utcnow()
+
+            if position.status == 'closed':
+                # Envoyer les tokens à l'utilisateur uniquement si la position est fermée
+                user = User.query.filter_by(id=user_id).first()
+                self.receive_crypto(user, position.symbol, self.crypto_manager.get_crypto_from_USD(position.symbol,
+                                                                                                   position.usd_entry_price) * position.current_pourcentage_profit)
+                # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
+                Notification_manager().add_notification(user_id,
+                                                        f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"}'
+                                                        f'{abs(position.current_usd_profit)}$ of {position.symbol}',
+                                                        'warning')
+
+            db.session.commit()
+
+    @staticmethod
+    def get_number_of_opened_positions(user_id):
+        """ Get the number of opened positions of the user """
+        return len(Position.query.filter_by(user_id=user_id, status='open').all())

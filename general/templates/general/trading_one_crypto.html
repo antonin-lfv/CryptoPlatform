@@ -76,9 +76,6 @@
                                                 <option value="1:10"
                                                 >1:10
                                                 </option>
-                                                <option value="1:20"
-                                                >1:20
-                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -117,22 +114,6 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label class="form-label">Trading Bot:</label>
-                                                <select class="form-select" id="bot_select">
-                                                    <option value="no_bot"
-                                                    >No Bot
-                                                    </option>
-                                                    <option value="bot1"
-                                                    >Bot 1
-                                                    </option>
-                                                    <option value="bot2"
-                                                    >Bot 2
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="form-group">
                                                 <!-- Choose between predict the high or the low of the next candle -->
                                                 <label class="form-label"> Prediction:</label>
                                                 <select class="form-select" id="prediction_select">
@@ -164,74 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-12">
-                        <div class="box">
-                            <div class="box-header with-border">
-                                <h4 class="box-title">Time & Sales</h4>
-                            </div>
-                            <div class="box-body pt-0">
-                                <div class="table-responsive">
-                                    <table class="table mb-0">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Time (UTC)</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Size</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>10:26:41.119</td>
-                                            <td class="text-success">0.0000001234</td>
-                                            <td>7845</td>
-                                        </tr>
-                                        <tr>
-                                            <td>10:01:12.121</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>8459</td>
-                                        </tr>
-                                        <tr>
-                                            <td>09:24:42.212</td>
-                                            <td class="text-success">0.0000001234</td>
-                                            <td>12459</td>
-                                        </tr>
-                                        <tr>
-                                            <td>09:12:52.120</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>75496</td>
-                                        </tr>
-                                        <tr>
-                                            <td>08:26:41.119</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>1235</td>
-                                        </tr>
-                                        <tr>
-                                            <td>08:12:12.123</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>12596</td>
-                                        </tr>
-                                        <tr>
-                                            <td>08:10:12.159</td>
-                                            <td class="text-success">0.0000001234</td>
-                                            <td>54269</td>
-                                        </tr>
-                                        <tr>
-                                            <td>08:03:12.119</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>9653</td>
-                                        </tr>
-                                        <tr>
-                                            <td>10:26:41.119</td>
-                                            <td class="text-danger">0.00000009853</td>
-                                            <td>1236</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-9 col-12">
+                    <div class="col-12" id="div_opened_positions_table">
                         <div class="box">
                             <div class="box-header with-border">
                                 <h4 class="box-title">Your opened positions</h4>
@@ -245,18 +159,43 @@
                                             <th scope="col">Leverage</th>
                                             <th scope="col">Stop Loss</th>
                                             <th scope="col">Take Profit</th>
-                                            <th scope="col">Bot</th>
                                             <th scope="col">Prediction</th>
+                                            <th scope="col">Current profit (%)</th>
+                                            <th scope="col">Current profit ($)</th>
                                             <th scope="col"></th>
                                         </tr>
                                         </thead>
-                                        <tbody id="positions_table">
+                                        <tbody id="opened_positions_table">
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-12" id="div_last_positions_table">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h4 class="box-title">Last 15 positions</h4>
+                            </div>
                             <div class="box-body pt-0">
-
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Start date</th>
+                                            <th scope="col">End date</th>
+                                            <th scope="col">Entry price</th>
+                                            <th scope="col">Position token</th>
+                                            <th scope="col">Leverage</th>
+                                            <th scope="col">Prediction</th>
+                                            <th scope="col">Profit ($)</th>
+                                            <th scope="col">Profit (%)</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="last_positions_table">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -280,7 +219,6 @@
     var chartData = [];
     fetchData().then(() => {
         createChart();
-        chart.addListener("dataUpdated", zoomChart);
     });
 
     function fetchData() {
@@ -289,6 +227,60 @@
             .then(response => response.json())
             .then(data => {
                 generateChartData(data);
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données:', error));
+    }
+
+    function fetchPositionsData() {
+        // this function will be used to fetch the positions data (opened positions)
+        // and build the list of jsons for the Am charts
+        // thus list looks like this:
+        // [
+        //     {
+        //        "date": new Date( 2020, 10, 19 ),
+        //        "type": "flag",
+        //        "backgroundColor": "#FFFFFF",
+        //        "backgroundAlpha": 0.5,
+        //        "graph": "g1",
+        //        "text": "+",
+        //        "description": "Position opened at 0.0000001234"
+        //      }, ...
+        // ]
+        // url : /api/get_opened_positions/<symbol>
+        // Return a list of json with the following keys:
+        //{
+        //       'id': position.id,
+        //        'price': position.price,
+        //        'price_format': f"{position.price} {symbol.split('-')[0]}",
+        //        'leverage': position.leverage,
+        //        'stop_loss_format': f"{position.stop_loss_value}$" if position.stop_loss_value else f"{position.stop_loss_percentage}%",
+        //        'take_profit_format': f"{position.take_profit_value}$" if position.take_profit_value else f"{position.take_profit_percentage}%",
+        //       'stop_loss_percentage': position.stop_loss_percentage,
+        //       'stop_loss_value': position.stop_loss_value,
+        //       'take_profit_percentage': position.take_profit_percentage,
+        //       'take_profit_value': position.take_profit_value,
+        //        'prediction': position.prediction,
+        //        'status': position.status,
+        //        'created_at': position.created_at,
+        //        'current_usd_price': position.current_usd_price,
+        //        'current_pourcentage_profit': position.current_pourcentage_profit,
+        //       'current_usd_profit': position.current_usd_profit,
+        //}
+
+        return fetch('/api/get_opened_positions/{{ symbol }}')
+            .then(response => response.json())
+            .then(data => {
+                return data.positions.map(position => {
+                    let date = new Date(position.created_at);
+                    // green : #00CC00
+                    return {
+                        "date": date,
+                        "type": "arrowUp",
+                        "backgroundColor": "#00CC00",
+                        "graph": "g1",
+                        "description": `Buy ${position.usd_entry_price}${position.symbol.split("-")[0]} at ${position.token_entry_price}$`,
+                    };
+                });
             })
             .catch(error => console.error('Erreur lors de la récupération des données:', error));
     }
@@ -315,165 +307,86 @@
         }
     }
 
+
     function createChart() {
         // Configuration et création du graphique AmCharts ici
-        chart = AmCharts.makeChart("chart_stock_events", {
-            "type": "stock",
-            "theme": "light",
-            "dataSets": [{
-                "color": "#fbae1c",
-                "fieldMappings": [{
-                    "fromField": "value",
-                    "toField": "value"
-                }, {
-                    "fromField": "volume",
-                    "toField": "volume"
+        fetchPositionsData().then(stockEvents => {
+            AmCharts.makeChart("chart_stock_events", {
+                "type": "stock",
+                "theme": "light",
+                "dataSets": [{
+                    "color": "#fbae1c",
+                    "fieldMappings": [{
+                        "fromField": "value",
+                        "toField": "value"
+                    }, {
+                        "fromField": "volume",
+                        "toField": "volume"
+                    }],
+                    "dataProvider": chartData,
+                    "categoryField": "date",
+                    // EVENTS
+                    "stockEvents": stockEvents,
                 }],
-                "dataProvider": chartData,
-                "categoryField": "date",
-                // EVENTS
-                /*
-              "stockEvents": [ {
-                "date": new Date( 2020, 8, 19 ),
-                "type": "sign",
-                "backgroundColor": "#fc00ff",
-                "graph": "g1",
-                "text": "S",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2020, 10, 19 ),
-                "type": "flag",
-                "backgroundColor": "#FFFFFF",
-                "backgroundAlpha": 0.5,
-                "graph": "g1",
-                "text": "F",
-                "description": "Some longer\ntext can also\n be added"
-              }, {
-                "date": new Date( 2020, 11, 10 ),
-                "showOnAxis": true,
-                "backgroundColor": "#85CDE6",
-                "type": "pin",
-                "text": "X",
-                "graph": "g1",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2020, 11, 26 ),
-                "showOnAxis": true,
-                "backgroundColor": "#85CDE6",
-                "type": "pin",
-                "text": "Z",
-                "graph": "g1",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 0, 3 ),
-                "type": "sign",
-                "backgroundColor": "#85CDE6",
-                "graph": "g1",
-                "text": "U",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 1, 6 ),
-                "type": "sign",
-                "graph": "g1",
-                "text": "D",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 3, 5 ),
-                "type": "sign",
-                "graph": "g1",
-                "text": "L",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 3, 5 ),
-                "type": "sign",
-                "graph": "g1",
-                "text": "R",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 5, 15 ),
-                "type": "arrowUp",
-                "backgroundColor": "#00CC00",
-                "graph": "g1",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 6, 25 ),
-                "type": "arrowDown",
-                "backgroundColor": "#CC0000",
-                "graph": "g1",
-                "description": "This is description of an event"
-              }, {
-                "date": new Date( 2021, 8, 1 ),
-                "type": "text",
-                "graph": "g1",
-                "text": "Longer text can\nalso be displayed",
-                "description": "This is description of an event"
-              } ]*/
-            }],
 
 
-            "panels": [{
-                "title": "Value",
-                "stockGraphs": [{
-                    "id": "g1",
-                    "valueField": "value"
+                "panels": [{
+                    "title": "Value",
+                    "stockGraphs": [{
+                        "id": "g1",
+                        "valueField": "value"
+                    }],
+                    "stockLegend": {
+                        "valueTextRegular": " ",
+                        "markerType": "none"
+                    }
                 }],
-                "stockLegend": {
-                    "valueTextRegular": " ",
-                    "markerType": "none"
+
+                "chartScrollbarSettings": {
+                    "graph": "g1"
+                },
+
+                "chartCursorSettings": {
+                    "valueBalloonsEnabled": true,
+                    "graphBulletSize": 1,
+                    "valueLineBalloonEnabled": true,
+                    "valueLineEnabled": true,
+                    "valueLineAlpha": 0.5
+                },
+
+                "periodSelector": {
+                    // set YTD by default
+                    "periods": [{
+                        "period": "DD",
+                        "count": 10,
+                        "label": "10 days"
+                    }, {
+                        "period": "MM",
+                        "count": 1,
+                        "label": "1 month"
+                    }, {
+                        "period": "YYYY",
+                        "count": 1,
+                        "label": "1 year"
+                    }, {
+                        "period": "YTD",
+                        "label": "YTD",
+                        "selected": true
+                    }, {
+                        "period": "MAX",
+                        "label": "MAX"
+                    }]
+                },
+
+
+                "panelsSettings": {
+                    "usePrefixes": true
+                },
+                "export": {
+                    "enabled": true
                 }
-            }],
-
-            "chartScrollbarSettings": {
-                "graph": "g1"
-            },
-
-            "chartCursorSettings": {
-                "valueBalloonsEnabled": true,
-                "graphBulletSize": 1,
-                "valueLineBalloonEnabled": true,
-                "valueLineEnabled": true,
-                "valueLineAlpha": 0.5
-            },
-
-            "periodSelector": {
-                "periods": [{
-                    "period": "DD",
-                    "count": 10,
-                    "label": "10 days"
-                }, {
-                    "period": "MM",
-                    "count": 1,
-                    "label": "1 month"
-                }, {
-                    "period": "YYYY",
-                    "count": 1,
-                    "label": "1 year"
-                }, {
-                    "period": "YTD",
-                    "label": "YTD"
-                }, {
-                    "period": "MAX",
-                    "label": "MAX"
-                }]
-            },
-
-
-            "panelsSettings": {
-                "usePrefixes": true
-            },
-            "export": {
-                "enabled": true
-            }
+            })
         });
-    }
-
-    function zoomChart() {
-        if (chartData && chartData.length > 1) {
-            var firstDate = chartData[0].date;
-            // lastDate is the 30% of the chartData length
-            var lastDate = chartData[Math.round(chartData.length * 0.3)].date;
-            chart.zoomToDates(firstDate, lastDate);
-        }
     }
 
 </script>
@@ -542,8 +455,6 @@
         let takeProfitPercentage = parseFloat(document.getElementById('take_profit_percentage').value);
         let takeProfitValue = parseFloat(document.getElementById('take_profit_value').value);
 
-        // Get bot value
-        let bot = document.getElementById('bot_select').value;
         // Get leverage value
         let leverage = document.getElementById('leverage_select').value;
         // Get prediction value
@@ -626,13 +537,13 @@
                 }
 
                 if (isValid) {
-                    placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, prediction, '{{ symbol }}');
+                    placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, prediction, '{{ symbol }}');
                 }
             })
             .catch(error => alert('Erreur lors de la récupération des données:' + error));
     });
 
-    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, bot, prediction, symbol) {
+    function placePosition(price, leverage, stopLossPercentage, stopLossValue, takeProfitPercentage, takeProfitValue, prediction, symbol) {
         // send all the data to the server
         // on /api/place_position
         fetch('/api/place_position', {
@@ -647,7 +558,6 @@
                 stopLossValue: stopLossValue,
                 takeProfitPercentage: takeProfitPercentage,
                 takeProfitValue: takeProfitValue,
-                bot: bot,
                 prediction: prediction,
                 symbol: symbol
             })
@@ -671,7 +581,6 @@
                     // restart the chart
                     fetchData().then(() => {
                         createChart();
-                        chart.addListener("dataUpdated", zoomChart);
                     });
                 } else {
                     // if the position was not placed successfully
@@ -690,14 +599,22 @@
 </script>
 
 <script>
-    // call /api/get_positions/<symbol> to get the positions of the specific crypto
+    // call /api/get_opened_positions/<symbol> to get the positions of the specific crypto
     // and fill the table with the positions
     function updatePositionsTable() {
-        fetch('/api/get_positions/{{ symbol }}')
+        // opened positions table
+        fetch('/api/get_opened_positions/{{ symbol }}')
             .then(response => response.json())
             .then(data => {
-                let positionsTable = document.getElementById('positions_table');
+                let positionsTable = document.getElementById('opened_positions_table');
                 positionsTable.innerHTML = '';
+
+                // if data is empty, hide the div
+                if (data.positions.length === 0) {
+                    document.getElementById('div_opened_positions_table').style.display = 'none';
+                } else {
+                    document.getElementById('div_opened_positions_table').style.display = 'block';
+                }
 
                 data.positions.forEach(position => {
                     let row = document.createElement('tr');
@@ -706,8 +623,9 @@
                     let leverage = document.createElement('td');
                     let stopLoss = document.createElement('td');
                     let takeProfit = document.createElement('td');
-                    let bot = document.createElement('td');
                     let prediction = document.createElement('td');
+                    let currentProfitPercentage = document.createElement('td');
+                    let currentProfitValue = document.createElement('td');
                     let closePosition = document.createElement('td');
 
                     date.textContent = position.created_at;
@@ -715,23 +633,114 @@
                     leverage.textContent = position.leverage;
                     stopLoss.textContent = position.stop_loss_format;
                     takeProfit.textContent = position.take_profit_format;
-                    bot.textContent = position.bot;
                     prediction.textContent = position.prediction;
-                    closePosition.innerHTML = `<a class="btn btn-danger btn-xs">Close</a>`;
+                    currentProfitPercentage.textContent = position.current_pourcentage_profit;
+                    currentProfitValue.textContent = position.current_usd_profit;
+                    closePosition.innerHTML = `<a class="btn btn-danger btn-xs" onclick=close_position(${position.id})>Close</a>`;
 
                     row.appendChild(date);
                     row.appendChild(entryPrice);
                     row.appendChild(leverage);
                     row.appendChild(stopLoss);
                     row.appendChild(takeProfit);
-                    row.appendChild(bot);
                     row.appendChild(prediction);
+                    row.appendChild(currentProfitPercentage);
+                    row.appendChild(currentProfitValue);
                     row.appendChild(closePosition);
 
                     positionsTable.appendChild(row);
                 });
             })
-            .catch(error => alert('Erreur lors de la récupération des données:' + error));
+            .catch(error => alert('Erreur lors de la récupération des données (opened positions):' + error));
+
+        // last 15 positions table
+        fetch('/api/get_last_closed_positions/{{ symbol }}')
+            .then(response => response.json())
+            .then(data => {
+                let positionsTable = document.getElementById('last_positions_table');
+                positionsTable.innerHTML = '';
+
+                // if data is empty, hide the div
+                if (data.positions.length === 0) {
+                    document.getElementById('div_last_positions_table').style.display = 'none';
+                } else {
+                    document.getElementById('div_last_positions_table').style.display = 'block';
+                }
+
+                data.positions.forEach(position => {
+                    let row = document.createElement('tr');
+                    let startDate = document.createElement('td');
+                    let endDate = document.createElement('td');
+                    let entryPrice = document.createElement('td');
+                    let positionToken = document.createElement('td');
+                    let leverage = document.createElement('td');
+                    let prediction = document.createElement('td');
+                    let profitValue = document.createElement('td');
+                    let profitPercentage = document.createElement('td');
+
+                    startDate.textContent = position.start_date;
+                    endDate.textContent = position.end_date;
+                    entryPrice.textContent = position.token_entry_price;
+                    positionToken.textContent = position.position_token;
+                    leverage.textContent = position.leverage;
+                    prediction.textContent = position.prediction;
+                    profitValue.textContent = position.current_usd_profit;
+                    profitPercentage.textContent = position.current_pourcentage_profit;
+
+                    // text of profit percentage : value is in position.color : style="text-'+position.color+'"
+                    profitValue.classList.add('text-'+position.color);
+                    profitPercentage.classList.add('text-'+position.color);
+
+                    row.appendChild(startDate);
+                    row.appendChild(endDate);
+                    row.appendChild(entryPrice);
+                    row.appendChild(positionToken);
+                    row.appendChild(leverage);
+                    row.appendChild(prediction);
+                    row.appendChild(profitValue);
+                    row.appendChild(profitPercentage);
+
+                    positionsTable.appendChild(row);
+                });
+            })
+            .catch(error => alert('Erreur lors de la récupération des données (last positions):' + error));
+
+    }
+
+    // function to handle close position
+    function close_position(position_id) {
+        // call /api/close_position with position_id in the url
+        fetch('/api/close_position/' + position_id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // if the position was closed successfully
+                    // update the amount of the specific crypto in the wallet
+                    updateCryptoAmountInWallet();
+                    updatePositionsTable();
+                    // start swal
+                    swal({
+                        title: "Position closed!",
+                        text: data.message,
+                        icon: "success",
+                        button: "OK",
+                    });
+                    // restart the chart
+                    fetchData().then(() => {
+                        createChart();
+                    });
+                } else {
+                    // if the position was not closed successfully
+                    // display an error message
+                    swal({
+                        title: "Error!",
+                        text: data.message,
+                        icon: "error",
+                        button: "OK",
+                    });
+                }
+            })
+            .catch(error => console.log('Erreur lors de la récupération des données:' + error));
     }
 
     updatePositionsTable();

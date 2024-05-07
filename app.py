@@ -54,7 +54,7 @@ def create_app():
             # add the collection name
             # add the image path
             from models import NFT, NFTPriceOwnerHistory
-            print("Adding NFTs to the database")
+            print("[INFO] Adding NFTs to the database")
 
             for collection in NFT_collections:
                 collection_path = core_url_NFT + collection.lower() + '/'
@@ -118,6 +118,7 @@ def create_app():
     from crypto_manager import CryptoDataManager
     from mining_server_manager import Mining_server_manager
     from nft_manager import NFT_manager
+    from wallet_manager import wallet_manager
 
     def schedule_update():
         # Update crypto data
@@ -126,6 +127,10 @@ def create_app():
         # Update NFT prices if needed
         nft_manager = NFT_manager()
         nft_manager.update_NFT_price()
+        # Update trading data (positions, etc)
+        users = User.query.all()
+        for user in users:
+            wallet_manager().update_positions(user.id)
 
     def server_payment_process():
         users = User.query.all()

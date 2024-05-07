@@ -20,7 +20,7 @@ def init_admin():
     new_user.username = username
     new_user.password = generate_password_hash(password, method='scrypt')
     new_user.role = "ADMIN"
-    print(f"Creating admin user with email: {email} and username: {username}")
+    print(f"[INFO] Creating admin user with email: {email} and username: {username}")
     db.session.add(new_user)
     # init game wallet
     game_wallet = GameWallet()

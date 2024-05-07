@@ -25,7 +25,6 @@ class Quests_manager:
         db.session.commit()
 
         # Reward the user
-        print(f"User {user_id} has claimed the reward for quest {quest_type} step {step}")
         reward_BTC = reward_factor*step
         wallet_manager().receive_crypto(user, 'BTC-USD', reward_BTC)
 
