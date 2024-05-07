@@ -9,7 +9,7 @@ from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, numbe
 from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from utils import NFTs_sold_steps, NFTs_bought_steps, NFTs_bid_steps, Servers_bought_steps, reward_factor
 from utils import get_current_quest_step
-from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats, UserQuestRewards
+from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats, UserQuestRewards, NFT
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
 import os
@@ -244,8 +244,17 @@ def leaderboard():
 def public_profile(user_id):
     user_profile = User.query.filter_by(id=user_id).first()
     current_user_obj = User.query.filter_by(id=current_user.id).first()
+    # Get the id of the nft set as profile picture
+    nft_img_path = current_user.profile_img_path
+    # Get the id of the NFT where image_path is the image path
+    nft = NFT.query.filter_by(image_path=nft_img_path).first()
+    if nft:
+        # The user has an NFT as profile picture
+        nft_id = nft.id
+    else:
+        nft_id = None
     return render_template('general/public_profile.html', user_profile=user_profile,
-                           user=current_user_obj)
+                           user=current_user_obj, nft_id=nft_id)
 
 
 @BLP_general.route('/settings', methods=['GET', 'POST'])

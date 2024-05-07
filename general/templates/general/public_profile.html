@@ -48,9 +48,11 @@
                         <!-- Profile Image -->
                         <div class="box bg-transparent no-border">
                             <div class="box-body box-profile">
+                                <a {% if nft_id %}href="{{ url_for('BLP_general.nft_details', nft_id=nft_id) }}"{% endif %}>
                                 <img class="rounded img-fluid mx-auto d-block max-w-150"
                                      src="{{ url_for('static', filename=user_profile.profile_img_path) }}"
                                      alt="User profile picture">
+                                     </a>
 
                                 <h3 class="profile-username text-center mb-0">{{ user_profile.username }}</h3>
 
