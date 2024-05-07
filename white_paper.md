@@ -7,16 +7,19 @@ Crypto Platforme est une plateforme qui simule un écosystème complet de crypto
 La plateforme offre aux utilisateurs un wallet USD virtuel, mis à jour régulièrement avec des fonds en USD, permettant
 l'achat de Bitcoin (BTC). Ces BTC peuvent ensuite être convertis en d'autres cryptomonnaies, y compris une stablecoin,
 facilitant ainsi la gestion du portefeuille numérique. La plateforme propose divers widgets pour surveiller
-l'évolution du wallet en temps réel. Le prix des cryptomonnaies est actualisé toutes les 5 minutes via l'API 
+l'évolution du wallet en temps réel. Le prix des cryptomonnaies est actualisé toutes les 3 minutes via l'API 
 Yahoo Finance.
 
-# Trading (à venir)
+# Trading (disponible)
 
-Les utilisateurs peuvent 'miser' leurs tokens en utilisant un système de levier pour spéculer sur la hausse des valeurs. 
-Les tokens misés sont séparés du wallet principal. Les opérations de trading sont visualisées à travers un 
-graphique interactif, affichant les mouvements de l'utilisateur, tels que les points d'entrée et de sortie, ainsi que 
-les gains en temps réel. Des options telles que le stop loss et le stop win sont disponibles. Les utilisateurs peuvent 
-trader manuellement ou s'appuyer sur des modèles prédictifs.
+Les utilisateurs peuvent 'miser' leurs tokens en utilisant un système de levier pour spéculer sur la hausse ou la baisse
+des valeurs. Les tokens misés sont séparés du wallet principal. Les opérations de trading sont visualisées à travers un 
+graphique interactif, affichant les mouvements de l'utilisateur, tels que les points d'entrée, ainsi que les gains en 
+temps réel. Des options telles que le stop loss et le stop win sont disponibles. Les utilisateurs peuvent ouvrir une 
+position à la fois sur chaque cryptomonnaie par jour, pour cumuler au maximum 5 positions ouvertes simultanément par
+token. Les gains sont automatiquement transférés vers le wallet principal quand une condition de stop est atteinte.
+La position peut-être fermée manuellement à tout moment. Les utilisateurs peuvent également consulter l'historique de
+leurs transactions (les 15 dernières) et les gains associés.
 
 # NFT (disponible)
 
@@ -35,6 +38,7 @@ Les serveurs sont classés par catégories, avec un coût et un rendement croiss
 cryptomonnaie minée par le serveur, et sont automatiquement transférés vers le wallet de l'utilisateur. Une interface 
 intuitive permet de gérer les serveurs, de suivre leur état, les revenus associés ainsi que les coûts. Les serveurs 
 peuvent être revendus sur le marketplace. Les couts pour chaque serveur sont dans la cryptomonnaie minée par le serveur.
+Les paiments pour les serveurs sont effectués tous les jours à 1 heure du matin (UTC).
 
 # Récompenses (disponible)
 
@@ -60,7 +64,7 @@ pertes, les niveaux, les récompenses, les mises à jour, les enchères, etc.
 
 - Dashboard : Vue d'ensemble des revenus de chaque wallet (Crypto, NFT, Minage) et navigation rapide.
 - Crypto : Deux sous-pages pour suivre les cours et trader.
-    - Cours : Cours des cryptomonnaies, avec l'évolution des prix sur des périodes différentes.
+    - Cours : Cours des cryptomonnaies, avec l'évolution des prix sur 7 jours et le nombre de positions ouvertes.
     - Trading : Graphique interactif pour trader, avec des options de levier, stop loss, stop win, etc.
 - NFT Marketplace : Le marché des NFT, avec un système de filtres.
 - Minage : inventaire des serveurs, avec un système de filtres.

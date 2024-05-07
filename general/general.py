@@ -465,7 +465,11 @@ def trading_place():
     # Get all crypto data
     crypto_manager = CryptoDataManager()
     market_data = crypto_manager.get_crypto_market_info()
-    return render_template('general/trading_place.html', user=current_user, market_data=market_data)
+    # Get the number of opened positions per symbol
+    w_manager = wallet_manager()
+    opened_positions = w_manager.get_number_of_opened_positions_per_symbol(current_user.id)
+    return render_template('general/trading_place.html', user=current_user, market_data=market_data,
+                           opened_positions=opened_positions)
 
 
 @BLP_general.route('/trading_place/<symbol>', methods=['GET', 'POST'])

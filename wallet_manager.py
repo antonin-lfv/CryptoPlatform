@@ -5,6 +5,7 @@ from models import (CryptoWallet, CryptoTransactionHistory, CryptoWalletDailySna
 from notification_manager import Notification_manager
 from app import db
 from crypto_manager import CryptoDataManager
+from sqlalchemy import func
 
 
 class wallet_manager:
@@ -664,7 +665,9 @@ class wallet_manager:
             position.updated_at = datetime.utcnow()
             user = User.query.filter_by(id=user_id).first()
             self.receive_crypto(user, position.symbol, self.crypto_manager.get_crypto_from_USD(position.symbol,
-                                                                                               position.usd_entry_price) * position.current_pourcentage_profit)
+                                                                                               position.usd_entry_price) *
+                                (position.current_pourcentage_profit + 100) / 100
+                                )
             # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
             Notification_manager().add_notification(position.user_id,
                                                     f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"}'
@@ -756,20 +759,20 @@ class wallet_manager:
                 if current_price > position.usd_entry_price:
                     position.current_usd_profit = (current_price - position.usd_entry_price) * position.leverage
                     position.current_pourcentage_profit = (
-                                                                      current_price / position.usd_entry_price - 1) * 100 * position.leverage
+                                                                  current_price / position.usd_entry_price - 1) * 100 * position.leverage
                 else:
                     position.current_usd_profit = (position.usd_entry_price - current_price) * position.leverage * -1
                     position.current_pourcentage_profit = (
-                                                                      1 - current_price / position.usd_entry_price) * 100 * position.leverage * -1
+                                                                  1 - current_price / position.usd_entry_price) * 100 * position.leverage * -1
             else:  # user_prediction == 'low'
                 if current_price < position.usd_entry_price:
                     position.current_usd_profit = (position.usd_entry_price - current_price) * position.leverage
                     position.current_pourcentage_profit = (
-                                                                      1 - current_price / position.usd_entry_price) * 100 * position.leverage
+                                                                  1 - current_price / position.usd_entry_price) * 100 * position.leverage
                 else:
                     position.current_usd_profit = (current_price - position.usd_entry_price) * position.leverage * -1
                     position.current_pourcentage_profit = (
-                                                                      current_price / position.usd_entry_price - 1) * 100 * position.leverage * -1
+                                                                  current_price / position.usd_entry_price - 1) * 100 * position.leverage * -1
 
             # round to 3 decimals
             position.current_usd_profit = round(position.current_usd_profit, 2)
@@ -784,18 +787,31 @@ class wallet_manager:
             elif position.take_profit_value is not None and position.current_usd_profit >= position.take_profit_value:
                 position.status = 'closed'
 
+            # if loss is more than 100% of the initial investment, close the position
+            if position.current_usd_profit < -position.usd_entry_price:
+                position.status = 'closed'
+
             position.updated_at = datetime.utcnow()
 
             if position.status == 'closed':
                 # Envoyer les tokens à l'utilisateur uniquement si la position est fermée
+                to_return = max(0, self.crypto_manager.get_crypto_from_USD(position.symbol, position.usd_entry_price) *
+                                (position.current_pourcentage_profit + 100) / 100)
                 user = User.query.filter_by(id=user_id).first()
-                self.receive_crypto(user, position.symbol, self.crypto_manager.get_crypto_from_USD(position.symbol,
-                                                                                                   position.usd_entry_price) * position.current_pourcentage_profit)
+                self.receive_crypto(user, position.symbol, to_return)
                 # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
-                Notification_manager().add_notification(user_id,
-                                                        f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"}'
-                                                        f'{abs(position.current_usd_profit)}$ of {position.symbol}',
-                                                        'warning')
+                if position.current_usd_profit > 0:
+                    # positive profit
+                    Notification_manager().add_notification(user_id,
+                                                            f'Position closed ! You won'
+                                                            f'{position.current_usd_profit}$ of {position.symbol}',
+                                                            'warning')
+                else:
+                    # negative profit
+                    Notification_manager().add_notification(user_id,
+                                                            f'Position closed ! You lost'
+                                                            f'{min(abs(position.current_usd_profit), position.usd_entry_price)}$ of {position.symbol}',
+                                                            'warning')
 
             db.session.commit()
 
@@ -803,3 +819,17 @@ class wallet_manager:
     def get_number_of_opened_positions(user_id):
         """ Get the number of opened positions of the user """
         return len(Position.query.filter_by(user_id=user_id, status='open').all())
+
+    @staticmethod
+    def get_number_of_opened_positions_per_symbol(user_id):
+        """
+        Get the number of opened positions per symbol of the user
+
+        :param user_id: the id of the user
+        :return: a json with the number of opened positions per symbol (symbol as key)
+        """
+        positions_json = {symbol:0 for symbol in top_cryptos_symbols}
+        positions = Position.query.filter_by(user_id=user_id, status='open').all()
+        for position in positions:
+            positions_json[position.symbol] += 1
+        return positions_json
