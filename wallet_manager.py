@@ -670,7 +670,7 @@ class wallet_manager:
                                 )
             # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
             Notification_manager().add_notification(position.user_id,
-                                                    f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"}'
+                                                    f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"} '
                                                     f'{abs(position.current_usd_profit)}$ of {position.symbol}',
                                                     'warning')
             db.session.commit()
@@ -803,13 +803,13 @@ class wallet_manager:
                 if position.current_usd_profit > 0:
                     # positive profit
                     Notification_manager().add_notification(user_id,
-                                                            f'Position closed ! You won'
+                                                            f'Position closed ! You won '
                                                             f'{position.current_usd_profit}$ of {position.symbol}',
                                                             'warning')
                 else:
                     # negative profit
                     Notification_manager().add_notification(user_id,
-                                                            f'Position closed ! You lost'
+                                                            f'Position closed ! You lost '
                                                             f'{min(abs(position.current_usd_profit), position.usd_entry_price)}$ of {position.symbol}',
                                                             'warning')
 
