@@ -529,7 +529,7 @@ class wallet_manager:
         # if not, return an error
         user_wallet = CryptoWallet.query.filter_by(user_id=user.id, symbol=symbol).first()
         if not user_wallet:
-            return {'error': 'You do not have this crypto'}
+            return {'message': 'You do not have this crypto', 'success': False}
         if user_wallet.quantity >= quantity:
             # use max to avoid negative quantity with approximations
             user_wallet.quantity = max(user_wallet.quantity - quantity, 0)
@@ -538,9 +538,9 @@ class wallet_manager:
             # Update wallet evolution
             self.update_crypto_wallet_evolution(user)
 
-            return {'success': 'Transaction successful'}
+            return {'message': 'Transaction successful', 'success': True}
         else:
-            return {'error': 'Not enough crypto in wallet'}
+            return {'message': 'Not enough crypto in wallet', 'success': False}
 
     def receive_crypto(self, user, symbol, quantity):
         """

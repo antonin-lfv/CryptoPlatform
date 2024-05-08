@@ -127,10 +127,10 @@
                                                 data-bs-toggle="modal" data-bs-target="#buy_server"
                                         ><i
                                                 class="fa fa-plus faa-horizontal animated"></i></span>&nbsp;&nbsp;<span
-                                                class="badge badge-lg badge-info" onclick="" href="#"
+                                                class="badge badge-lg badge-info" onclick="update_user_balance_display('{{ server_data.symbol }}')" href="#"
                                                 data-bs-toggle="modal" data-bs-target="#sell_server"
                                         ><i
-                                                class="fa fa-minus faa-horizontal animated"></i></span></h5>
+                                                class="fa fa-minus faa-horizontal animated" onclick="update_user_balance_display('{{ server_data.symbol }}')"></i></span></h5>
                                     </div>
                                     <div class="col-12 col-lg-6">
                                         <h5 class="p-15 mb-0"><strong>{{ server_data.symbol }}
@@ -234,7 +234,6 @@
                 $('#total_power').html(` ${(serverDetails.number_of_servers * serverDetails.power).toFixed(1)} ${serverDetails.symbol}/day <small class="fs-11 mb-0 text-uppercase"> ($${(
                     serverDetails.number_of_servers * serverDetails.power_USD).toFixed(1)})</small>`);
 
-
             },
             error: function (error) {
                 console.error('Error:', error);
@@ -264,6 +263,7 @@
                     if (success_call) {
                         loadUserMiningServerDetails('{{ server_data.id }}', '{{ current_user.id }}');
                         toggle_icon_notifications();
+                        update_user_balance_display('{{ server_data.symbol }}');
                         swal("Success", message_call, "success");
                     } else {
                         swal("Error", message_call, "error");
@@ -279,9 +279,13 @@
     // attach the function to the validate button
     $('#validate_buy_server').click(function () {
         manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_buy').val(), 'buy');
+        // update buy_crypto_amount
+        update_user_balance_display('{{ server_data.symbol }}');
     });
     $('#validate_sell_server').click(function () {
         manageServerModalValidation('{{ server_data.id }}', '{{ current_user.id }}', $('#range_int_selector_sell').val(), 'sell');
+        // update buy_crypto_amount
+        update_user_balance_display('{{ server_data.symbol }}');
     });
 
     $(document).ready(function () {
@@ -337,8 +341,6 @@ function update_amount_pay_modal() {
 
 // display the user balance
 update_user_balance_display('{{ server_data.symbol }}');
-
-
 
 </script>
 

@@ -287,8 +287,11 @@ class Mining_server_manager:
         # Test if the user has enough crypto to buy the server with the quantity he wants
         if user_wallet['tokens'] >= server_details.buy_amount * number_of_servers_to_buy:
             # If yes, update the user's wallet
-            wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
-                                             server_details.buy_amount * number_of_servers_to_buy)
+            response = wallet_manager().buy_with_crypto(user, server_details.symbol + '-USD',
+                                                        server_details.buy_amount * number_of_servers_to_buy)
+            if response['success'] is False:
+                return response
+
             # Create entry or update the user's server details, then add an invoice
             period = datetime.utcnow().strftime("%B %Y")
             issuer = user.username
@@ -331,6 +334,7 @@ class Mining_server_manager:
         """
         # Cast the number of servers to sell to int
         number_of_servers_to_sell = int(number_of_servers_to_sell)
+        number_of_servers_to_sell_copy = int(number_of_servers_to_sell)
         # Get the server details
         server_details = MiningServer.query.filter_by(id=server_id).first()
         # Get the user's server details (this is a list)
@@ -366,8 +370,9 @@ class Mining_server_manager:
                 index_to_delete += 1
 
             # Refund the user
-            wallet_manager().receive_crypto(User.query.filter_by(id=user_id).first(), server_details.symbol + '-USD',
-                                            server_details.buy_amount * number_of_servers_to_sell)
+            wallet_manager().receive_crypto(User.query.filter_by(id=user_id).first(),
+                                                       server_details.symbol + '-USD',
+                                                       server_details.buy_amount * number_of_servers_to_sell_copy)
 
             db.session.commit()
 

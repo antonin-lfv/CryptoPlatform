@@ -415,9 +415,6 @@ def buy_mining_server(server_id, user_id, number_of_servers_to_buy):
     Buy a mining server
     """
     response = Mining_server_manager().buy_server(server_id, user_id, number_of_servers_to_buy)
-    # Payment process for servers
-    mining_server_manager = Mining_server_manager()
-    mining_server_manager.check_for_server_payment(current_user.id)
     return jsonify(response)
 
 
