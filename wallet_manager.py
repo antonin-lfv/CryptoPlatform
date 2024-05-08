@@ -606,7 +606,7 @@ class wallet_manager:
         """
 
         # Test if the user has already 5 positions for the same symbol
-        positions = Position.query.filter_by(user_id=user_id, symbol=position_json['symbol']).all()
+        positions = Position.query.filter_by(user_id=user_id, symbol=position_json['symbol'], status='open').all()
         if len(positions) >= 5:
             return {'message': 'You can\'t have more than 5 positions for the same symbol', 'success': False}
         # Test if the user has already 1 position for the same symbol today (opened one)
@@ -664,14 +664,32 @@ class wallet_manager:
             position.status = 'closed'
             position.updated_at = datetime.utcnow()
             user = User.query.filter_by(id=user_id).first()
-            self.receive_crypto(user, position.symbol, self.crypto_manager.get_crypto_from_USD(position.symbol,
-                                                                                               position.usd_entry_price) *
-                                (position.current_pourcentage_profit + 100) / 100
-                                )
+            profit = self.crypto_manager.get_crypto_from_USD(position.symbol,position.usd_entry_price) * (position.current_pourcentage_profit + 100) / 100
+            stop_loss_value_usd = position.stop_loss_value if position.stop_loss_value else position.stop_loss_percentage * position.usd_entry_price / 100
+            take_profit_value_usd = position.take_profit_value if position.take_profit_value else position.take_profit_percentage * position.usd_entry_price / 100
+            stop_loss_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, stop_loss_value_usd)
+            take_profit_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, take_profit_value_usd)
+            print(f"profit : {profit}")
+            print(f"stop_loss_value_crypto : {stop_loss_value_crypto}, stop_loss_value_usd : {stop_loss_value_usd}")
+            print(f"take_profit_value_crypto : {take_profit_value_crypto}, take_profit_value_usd : {take_profit_value_usd}")
+            if profit < 0:
+                profit = max(profit, -stop_loss_value_crypto)
+                to_pay = position.price - profit
+            else:
+                profit = min(profit, take_profit_value_crypto)
+                to_pay = position.price + profit
+
+            profit = round(profit, 4)
+            position.current_usd_profit = round(self.crypto_manager.get_USD_from_crypto(position.symbol, profit), 2)
+            position.current_pourcentage_profit = round((position.current_usd_profit * 100 / position.price) + 1, 2)
+
+            print(f"profit after stop loss and take profit : {profit}")
+
+            self.receive_crypto(user, position.symbol, to_pay)
             # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
             Notification_manager().add_notification(position.user_id,
-                                                    f'Position closed ! You {"won" if position.current_usd_profit > 0 else "lost"} '
-                                                    f'{abs(position.current_usd_profit)}$ of {position.symbol}',
+                                                    f'Position closed ! You {"won" if profit > 0 else "lost"} '
+                                                    f'{abs(profit)} {position.symbol.split("-")[0]}',
                                                     'warning')
             db.session.commit()
             return {'message': 'Position closed', 'success': True}
@@ -795,23 +813,36 @@ class wallet_manager:
 
             if position.status == 'closed':
                 # Envoyer les tokens à l'utilisateur uniquement si la position est fermée
-                to_return = max(0, self.crypto_manager.get_crypto_from_USD(position.symbol, position.usd_entry_price) *
-                                (position.current_pourcentage_profit + 100) / 100)
-                user = User.query.filter_by(id=user_id).first()
-                self.receive_crypto(user, position.symbol, to_return)
-                # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
-                if position.current_usd_profit > 0:
-                    # positive profit
-                    Notification_manager().add_notification(user_id,
-                                                            f'Position closed ! You won '
-                                                            f'{position.current_usd_profit}$ of {position.symbol}',
-                                                            'warning')
+                profit = self.crypto_manager.get_crypto_from_USD(position.symbol, position.usd_entry_price) * (position.current_pourcentage_profit + 100) / 100
+                stop_loss_value_usd = position.stop_loss_value if position.stop_loss_value else position.stop_loss_percentage * position.usd_entry_price / 100
+                take_profit_value_usd = position.take_profit_value if position.take_profit_value else position.take_profit_percentage * position.usd_entry_price / 100
+                stop_loss_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, stop_loss_value_usd)
+                take_profit_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol,
+                                                                                   take_profit_value_usd)
+                print(f"profit : {profit}")
+                print(f"stop_loss_value_crypto : {stop_loss_value_crypto}, stop_loss_value_usd : {stop_loss_value_usd}")
+                print(f"take_profit_value_crypto : {take_profit_value_crypto}, take_profit_value_usd : {take_profit_value_usd}")
+
+                if profit < 0:
+                    profit = max(profit, -stop_loss_value_crypto)
+                    to_pay = position.price - profit
                 else:
-                    # negative profit
-                    Notification_manager().add_notification(user_id,
-                                                            f'Position closed ! You lost '
-                                                            f'{min(abs(position.current_usd_profit), position.usd_entry_price)}$ of {position.symbol}',
-                                                            'warning')
+                    profit = min(profit, take_profit_value_crypto)
+                    to_pay = position.price + profit
+
+                profit = round(profit, 4)
+                position.current_usd_profit = round(self.crypto_manager.get_USD_from_crypto(position.symbol, profit), 2)
+                position.current_pourcentage_profit = round((position.current_usd_profit * 100 / position.price) + 1, 2)
+
+                print(f"profit after stop loss and take profit : {profit}")
+
+                user = User.query.filter_by(id=user_id).first()
+                self.receive_crypto(user, position.symbol, to_pay)
+                # Send a notification to the user with the amount of the tokens credited
+                Notification_manager().add_notification(user_id,
+                                                        f'Position closed ! You {"won" if profit > 0 else "lost"} '
+                                                        f'{abs(profit)} {position.symbol.split("-")[0]}',
+                                                        'warning')
 
             db.session.commit()
 
