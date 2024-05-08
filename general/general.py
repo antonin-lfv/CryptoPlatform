@@ -245,7 +245,7 @@ def public_profile(user_id):
     user_profile = User.query.filter_by(id=user_id).first()
     current_user_obj = User.query.filter_by(id=current_user.id).first()
     # Get the id of the nft set as profile picture
-    nft_img_path = current_user.profile_img_path
+    nft_img_path = user_profile.profile_img_path
     # Get the id of the NFT where image_path is the image path
     nft = NFT.query.filter_by(image_path=nft_img_path).first()
     if nft:
