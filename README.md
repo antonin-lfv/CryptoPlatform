@@ -20,7 +20,7 @@ progression in the quests.
 The platform offers users a virtual USD wallet, regularly updated with USD funds, allowing the purchase of Bitcoin (
 BTC). These BTC can then be converted into other cryptocurrencies, including a stablecoin, thus facilitating the
 management of the digital wallet. The platform offers various widgets to monitor the evolution of the wallet in real
-time. The price of cryptocurrencies is updated every 3 minutes via the Yahoo Finance API.
+time. The price of cryptocurrencies is updated every minute via the Yahoo Finance API.
 
 ![crypto-wallet](assets/images/ReadMe/wallet.png)
 

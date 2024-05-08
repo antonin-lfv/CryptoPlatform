@@ -7,7 +7,7 @@ Crypto Platforme est une plateforme qui simule un écosystème complet de crypto
 La plateforme offre aux utilisateurs un wallet USD virtuel, mis à jour régulièrement avec des fonds en USD, permettant
 l'achat de Bitcoin (BTC). Ces BTC peuvent ensuite être convertis en d'autres cryptomonnaies, y compris une stablecoin,
 facilitant ainsi la gestion du portefeuille numérique. La plateforme propose divers widgets pour surveiller
-l'évolution du wallet en temps réel. Le prix des cryptomonnaies est actualisé toutes les 3 minutes via l'API
+l'évolution du wallet en temps réel. Le prix des cryptomonnaies est actualisé toutes les minutes via l'API
 Yahoo Finance.
 
 # Trading (disponible)

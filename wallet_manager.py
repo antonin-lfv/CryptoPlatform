@@ -661,17 +661,29 @@ class wallet_manager:
             return {'message': 'You can\'t close this position', 'success': False}
 
         if position:
+            # Get the price of 1 token to avoid changing the price of the token during the transaction
+            one_token_usd = self.crypto_manager.get_USD_from_crypto(position.symbol, 1)
+
             position.status = 'closed'
             position.updated_at = datetime.utcnow()
             user = User.query.filter_by(id=user_id).first()
-            profit = self.crypto_manager.get_crypto_from_USD(position.symbol,position.usd_entry_price) * (position.current_pourcentage_profit + 100) / 100
+
+            # Create lambda functions to calculate price : usd to crypto and crypto to usd thanks to lambda functions
+            lambda_crypto_to_usd = lambda x: x * one_token_usd
+            lambda_usd_to_crypto = lambda x: x / one_token_usd
+
+            profit = lambda_usd_to_crypto(position.usd_entry_price) * position.current_pourcentage_profit / 100
             stop_loss_value_usd = position.stop_loss_value if position.stop_loss_value else position.stop_loss_percentage * position.usd_entry_price / 100
             take_profit_value_usd = position.take_profit_value if position.take_profit_value else position.take_profit_percentage * position.usd_entry_price / 100
-            stop_loss_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, stop_loss_value_usd)
-            take_profit_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, take_profit_value_usd)
+            stop_loss_value_crypto = lambda_usd_to_crypto(stop_loss_value_usd)
+            take_profit_value_crypto = lambda_usd_to_crypto(take_profit_value_usd)
+
             print(f"profit : {profit}")
-            print(f"stop_loss_value_crypto : {stop_loss_value_crypto}, stop_loss_value_usd : {stop_loss_value_usd}")
-            print(f"take_profit_value_crypto : {take_profit_value_crypto}, take_profit_value_usd : {take_profit_value_usd}")
+            print(f"stop_loss_value_usd : {stop_loss_value_usd}")
+            print(f"take_profit_value_usd : {take_profit_value_usd}")
+            print(f"stop_loss_value_crypto : {stop_loss_value_crypto}")
+            print(f"take_profit_value_crypto : {take_profit_value_crypto}")
+
             if profit < 0:
                 profit = max(profit, -stop_loss_value_crypto)
                 to_pay = position.price - profit
@@ -679,17 +691,22 @@ class wallet_manager:
                 profit = min(profit, take_profit_value_crypto)
                 to_pay = position.price + profit
 
-            profit = round(profit, 4)
-            position.current_usd_profit = round(self.crypto_manager.get_USD_from_crypto(position.symbol, profit), 2)
-            position.current_pourcentage_profit = round((position.current_usd_profit * 100 / position.price) + 1, 2)
+            print(f"profit : {profit}")
+            print(f"to_pay : {to_pay}")
 
-            print(f"profit after stop loss and take profit : {profit}")
+            position.current_usd_profit = round(lambda_crypto_to_usd(profit), 2)
+            position.current_pourcentage_profit = round(profit / lambda_usd_to_crypto(position.usd_entry_price) * 100, 2)
+
+            profit = round(profit, 4)
+
+            print(f"current_usd_profit : {position.current_usd_profit}")
+            print(f"current_pourcentage_profit : {position.current_pourcentage_profit}")
 
             self.receive_crypto(user, position.symbol, to_pay)
             # Envoyer une notification à l'utilisateur avec le montant des tokens crédités
             Notification_manager().add_notification(position.user_id,
-                                                    f'Position closed ! You {"won" if profit > 0 else "lost"} '
-                                                    f'{abs(profit)} {position.symbol.split("-")[0]}',
+                                                    f'Position closed ! You {"won" if profit >= 0 else "lost"} '
+                                                    f'{abs(profit)} {position.symbol.split("-")[0]} Date : {position.updated_at.strftime("%Y-%m-%d %H:%M:%S")} ',
                                                     'warning')
             db.session.commit()
             return {'message': 'Position closed', 'success': True}
@@ -819,10 +836,6 @@ class wallet_manager:
                 stop_loss_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol, stop_loss_value_usd)
                 take_profit_value_crypto = self.crypto_manager.get_crypto_from_USD(position.symbol,
                                                                                    take_profit_value_usd)
-                print(f"profit : {profit}")
-                print(f"stop_loss_value_crypto : {stop_loss_value_crypto}, stop_loss_value_usd : {stop_loss_value_usd}")
-                print(f"take_profit_value_crypto : {take_profit_value_crypto}, take_profit_value_usd : {take_profit_value_usd}")
-
                 if profit < 0:
                     profit = max(profit, -stop_loss_value_crypto)
                     to_pay = position.price - profit
@@ -830,18 +843,16 @@ class wallet_manager:
                     profit = min(profit, take_profit_value_crypto)
                     to_pay = position.price + profit
 
-                profit = round(profit, 4)
                 position.current_usd_profit = round(self.crypto_manager.get_USD_from_crypto(position.symbol, profit), 2)
-                position.current_pourcentage_profit = round((position.current_usd_profit * 100 / position.price) + 1, 2)
-
-                print(f"profit after stop loss and take profit : {profit}")
+                position.current_pourcentage_profit = round(profit / self.crypto_manager.get_crypto_from_USD(position.symbol, position.usd_entry_price) * 100, 2)
+                profit = round(profit, 4)
 
                 user = User.query.filter_by(id=user_id).first()
                 self.receive_crypto(user, position.symbol, to_pay)
                 # Send a notification to the user with the amount of the tokens credited
                 Notification_manager().add_notification(user_id,
-                                                        f'Position closed ! You {"won" if profit > 0 else "lost"} '
-                                                        f'{abs(profit)} {position.symbol.split("-")[0]}',
+                                                        f'Position closed ! You {"won" if profit >= 0 else "lost"} '
+                                                        f'{abs(profit)} {position.symbol.split("-")[0]}. Date : {position.updated_at.strftime("%Y-%m-%d %H:%M:%S")} ',
                                                         'warning')
 
             db.session.commit()

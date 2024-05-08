@@ -123,9 +123,7 @@ def create_app():
     def schedule_update():
         # Update crypto data
         manager = CryptoDataManager()
-        print(f"[INFO] Starting update at {datetime.utcnow()}")
         manager.update_crypto_data()
-        print(f"[INFO] Finished update at {datetime.utcnow()}")
         # Update NFT prices if needed
         nft_manager = NFT_manager()
         nft_manager.update_NFT_price()
