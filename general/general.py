@@ -8,7 +8,7 @@ from nft_manager import NFT_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
 from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from utils import NFTs_sold_steps, NFTs_bought_steps, NFTs_bid_steps, Servers_bought_steps, reward_factor
-from utils import get_current_quest_step
+from utils import get_current_quest_step, user_profile_default_image_path
 from models import MiningServer, User, CryptoWalletEvolution, UserQuestsStats, UserQuestRewards, NFT
 from mining_server_manager import Mining_server_manager
 from functools import lru_cache
@@ -323,7 +323,8 @@ def nft_details(nft_id):
     eth_amount['USD'] = round(eth_amount['USD'], 2)
 
     return render_template('general/nft_details.html',
-                           user=current_user, nft_data=nft_data, eth_amount=eth_amount)
+                           user=current_user, nft_data=nft_data, eth_amount=eth_amount,
+                           user_profile_default_image_path=user_profile_default_image_path)
 
 
 @BLP_general.route('/crypto_wallet', methods=['GET', 'POST'])

@@ -392,6 +392,7 @@ function accept_bid(bid_id) {
             get_bids({{ nft_data['id'] }});
             update_price();
             drawNFTHistoryChart({{ nft_data['id'] }});
+            reset_profile_picture();
             swal(response['status'], response['message'], response['status']);
         },
         error: function(response) {
@@ -499,6 +500,15 @@ function set_as_profile_picture(nft_id) {
             console.error('Error:', error);
         }
     });
+}
+
+
+function reset_profile_picture() {
+    // change the path of the profile picture to the default one (user_profile_default_image_path)
+    var baseUrl = "{{ url_for('static', filename='') }}"; // Récupère la base de l'URL des fichiers statiques
+    var defaultImagePath = baseUrl + "{{ user_profile_default_image_path }}";
+    $('#profile_picture_top_navbar').attr('src', defaultImagePath);
+
 }
 
 
