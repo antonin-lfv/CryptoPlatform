@@ -453,6 +453,10 @@ def player_quests():
     step_nft_bid_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'bids_made']
     step_servers_bought_recovered = [reward.step for reward in quest_rewards if reward.quest_type == 'servers_bought']
 
+    print(
+        f"step_nft_bought_recovered: {step_nft_bought_recovered}, step_nft_sold_recovered: {step_nft_sold_recovered}, "
+        f"step_nft_bid_recovered: {step_nft_bid_recovered}, step_servers_bought_recovered: {step_servers_bought_recovered}")
+
     return render_template('general/quests.html', user=current_user,
                            NFTs_bought_steps=NFTs_bought_steps, NFTs_sold_steps=NFTs_sold_steps,
                            NFTs_bid_steps=NFTs_bid_steps, Servers_bought_steps=Servers_bought_steps,
