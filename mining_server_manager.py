@@ -314,7 +314,7 @@ class Mining_server_manager:
             # Update user quests stats
             user_quest_stats = UserQuestsStats.query.filter_by(user_id=user_id).first()
             if user_quest_stats:
-                user_quest_stats.servers_bought += 1
+                user_quest_stats.servers_bought += number_of_servers_to_buy
             else:
                 # Create the user quest stats
                 user_quest_stats = UserQuestsStats(user_id=user_id, nfts_bought=0, nfts_sold=0, bids_made=0,

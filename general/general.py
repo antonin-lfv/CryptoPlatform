@@ -30,6 +30,18 @@ def user_updates():
     print("Deleting old notifications")
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
+    # Mettre à jour le nombre de serveurs achetés
+    users = User.query.all()
+    for user in users:
+        quests_stats = UserQuestsStats.query.filter_by(user_id=user.id).first()
+        # Get the number of servers bought
+        mining_server_manager = Mining_server_manager()
+        total_servers = mining_server_manager.get_total_servers(user.id)
+        if quests_stats is None:
+            pass
+        else:
+            quests_stats.servers_bought = total_servers
+        quests_stats.save()
 
 
 @BLP_general.before_request
