@@ -5,6 +5,7 @@ from wallet_manager import wallet_manager
 from notification_manager import Notification_manager
 from user_manager import UserManager
 from nft_manager import NFT_manager
+from quests_manager import Quests_manager
 from utils import top_cryptos_symbols, top_cryptos_names, NFT_collections, number_most_valuable_cryptos
 from utils import max_servers, symbol_to_name, steps, steps_bonus, get_bonus_from_BTC_wallet
 from utils import NFTs_sold_steps, NFTs_bought_steps, NFTs_bid_steps, Servers_bought_steps, reward_factor
@@ -30,18 +31,7 @@ def user_updates():
     print("Deleting old notifications")
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
-    # Mettre à jour le nombre de serveurs achetés
-    users = User.query.all()
-    for user in users:
-        quests_stats = UserQuestsStats.query.filter_by(user_id=user.id).first()
-        # Get the number of servers bought
-        mining_server_manager = Mining_server_manager()
-        total_servers = mining_server_manager.get_total_servers(user.id)
-        if quests_stats is None:
-            pass
-        else:
-            quests_stats.servers_bought = total_servers
-        quests_stats.save()
+    Quests_manager().refresh_quest_stats()
 
 
 @BLP_general.before_request
