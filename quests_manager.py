@@ -31,17 +31,3 @@ class Quests_manager:
 
         return {"status": "success", "message": f"User {user_id} has claimed "
                                                 f"the reward for quest {quest_type} step {step}"}
-
-    @staticmethod
-    def refresh_quest_stats():
-        # Mettre à jour le nombre de serveurs achetés
-        users = User.query.all()
-        for user in users:
-            quests_stats = UserQuestsStats.query.filter_by(user_id=user.id).first()
-            # Get the number of servers bought
-            mining_server_manager = Mining_server_manager()
-            total_servers = mining_server_manager.get_total_servers(user.id)
-            if quests_stats is None:
-                pass
-            else:
-                quests_stats.servers_bought = total_servers

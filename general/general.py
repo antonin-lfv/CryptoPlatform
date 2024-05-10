@@ -31,7 +31,6 @@ def user_updates():
     print("Deleting old notifications")
     notification_manager = Notification_manager()
     notification_manager.delete_old_notifications(current_user)
-    Quests_manager().refresh_quest_stats()
 
 
 @BLP_general.before_request
