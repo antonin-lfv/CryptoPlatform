@@ -374,6 +374,14 @@ class Mining_server_manager:
                                                        server_details.symbol + '-USD',
                                                        server_details.buy_amount * number_of_servers_to_sell_copy)
 
+            # Update user quests stats
+            user_quest_stats = UserQuestsStats.query.filter_by(user_id=user_id).first()
+            if user_quest_stats:
+                user_quest_stats.servers_bought -= number_of_servers_to_sell_copy
+            else:
+                # Normally, this case should not happen
+                pass
+
             db.session.commit()
 
             return {'success': True, 'message': 'Server sold successfully'}
