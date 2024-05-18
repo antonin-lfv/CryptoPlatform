@@ -150,18 +150,22 @@ def get_current_quest_step(nft_bougth, nft_sold, nft_bid, servers_bought):
         if nft_bougth < step:
             index_nft_bougth = i-1
             break
+        index_nft_bougth = i
     for i, step in enumerate(NFTs_sold_steps):
         if nft_sold < step:
             index_nft_sold = i-1
             break
+        index_nft_sold = i
     for i, step in enumerate(NFTs_bid_steps):
         if nft_bid < step:
             index_nft_bid = i-1
             break
+        index_nft_bid = i
     for i, step in enumerate(Servers_bought_steps):
         if servers_bought < step:
             index_servers_bought = i-1
             break
+        index_servers_bought = i
 
     if index_nft_bougth < 0:
         step_nft_bougth = -1
