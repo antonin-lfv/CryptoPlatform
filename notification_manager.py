@@ -1,24 +1,27 @@
 from datetime import datetime, timedelta
-from app import db
+from extensions import db
 from models import Notification, User
 
 
 class Notification_manager:
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
     @staticmethod
     def get_notifications(current_user):
         """
         Get all notifications of the user
         """
-        notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.date.desc()).all()
+        notifications = (
+            Notification.query.filter_by(user_id=current_user.id)
+            .order_by(Notification.date.desc())
+            .all()
+        )
         # Create a dict object for each notification to be able to use it in the template
         notifications = [
             {
-                'message': notification.message,
-                'icon': notification.icon,
-                'date': notification.date
+                "message": notification.message,
+                "icon": notification.icon,
+                "date": notification.date,
             }
             for notification in notifications
         ]
@@ -40,10 +43,7 @@ class Notification_manager:
             return
 
         new_notification = Notification(
-            user_id=user_id,
-            message=message,
-            icon=icon,
-            date=datetime.utcnow()
+            user_id=user_id, message=message, icon=icon, date=datetime.utcnow()
         )
         db.session.add(new_notification)
         db.session.commit()

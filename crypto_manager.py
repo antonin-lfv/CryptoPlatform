@@ -4,7 +4,10 @@ import yfinance as yf
 from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
 from models import CryptoPrice
-from app import db
+from extensions import db
+import pandas as pd
+
+yf.set_tz_cache_location("/tmp/py-yfinance-cache")
 
 
 class CryptoDataManager:
@@ -19,16 +22,24 @@ class CryptoDataManager:
 
         """
 
-        if os.getenv('MAINTENANCE_MODE') == 'True':
+        if os.getenv("MAINTENANCE_MODE") == "True":
             print("[INFO] You are in offline mode. No data will be updated.")
             return
         else:
             for symbol in self.top_cryptos:
-                latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
+                latest_data = (
+                    CryptoPrice.query.filter_by(symbol=symbol)
+                    .order_by(CryptoPrice.date.desc())
+                    .first()
+                )
 
                 try:
                     # Télécharge les données depuis Yahoo Finance
-                    start_date = (latest_data.date - timedelta(days=1)).isoformat() if latest_data else '2000-01-01'
+                    start_date = (
+                        (latest_data.date - timedelta(days=1)).isoformat()
+                        if latest_data
+                        else "2000-01-01"
+                    )
                     data = yf.download(symbol, start=start_date)
 
                     # Ajoute ou remplace les données dans la base de données
@@ -36,26 +47,38 @@ class CryptoDataManager:
                         index_date = index.date()
 
                         # Vérifie si la date existe déjà dans la base de données
-                        existing_data = CryptoPrice.query.filter_by(symbol=symbol, date=index_date).first()
+                        existing_data = CryptoPrice.query.filter_by(
+                            symbol=symbol, date=index_date
+                        ).first()
+
+                        # Extract price and volume values
+                        if isinstance(row["Close"], pd.Series):
+                            price = row["Close"][symbol]
+                            volume = row["Volume"][symbol]
+                        else:
+                            price = row["Close"]
+                            volume = row["Volume"]
 
                         if existing_data:
                             # Si la date existe déjà, on met à jour le prix et le volume
-                            existing_data.price = row['Close']
-                            existing_data.volume = row['Volume']
+                            existing_data.price = price
+                            existing_data.volume = volume
                         else:
                             # Sinon on ajoute une nouvelle entrée
                             new_data = CryptoPrice(
                                 symbol=symbol,
                                 date=index_date,
-                                price=row['Close'],
-                                volume=row['Volume']
+                                price=price,
+                                volume=volume,
                             )
                             db.session.add(new_data)
 
                         db.session.commit()
 
                 except KeyError as e:
-                    print(f"[ERROR] Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
+                    print(
+                        f"[ERROR] Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance."
+                    )
 
                 except Exception as e:
                     print(f"[ERROR] Une erreur inattendue est survenue: {e}.")
@@ -69,10 +92,7 @@ class CryptoDataManager:
             dict with keys date and price and list of floats as values
         """
         data = CryptoPrice.query.filter_by(symbol=symbol).all()
-        return {
-            'date': [d.date for d in data],
-            'price': [d.price for d in data]
-        }
+        return {"date": [d.date for d in data], "price": [d.price for d in data]}
 
     @staticmethod
     def get_price_for_last_week():
@@ -84,7 +104,12 @@ class CryptoDataManager:
         """
         res = {}
         for symbol in top_cryptos_symbols:
-            data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(8).all()
+            data = (
+                CryptoPrice.query.filter_by(symbol=symbol)
+                .order_by(CryptoPrice.id.desc())
+                .limit(8)
+                .all()
+            )
             res[symbol] = [d.price for d in data][::-1]
 
         return res
@@ -98,7 +123,7 @@ class CryptoDataManager:
         """
         data = self.get_specific_crypto_data(symbol)
         assert symbol in self.top_cryptos, f"Symbol {symbol} is not in top cryptos."
-        return data['price'][-1] * float(quantity)
+        return data["price"][-1] * float(quantity)
 
     def get_crypto_from_USD(self, symbol, USD):
         """
@@ -108,7 +133,7 @@ class CryptoDataManager:
             float
         """
         data = self.get_specific_crypto_data(symbol)
-        return float(USD) / data['price'][-1]
+        return float(USD) / data["price"][-1]
 
     def get_crypto_from_crypto(self, symbol_from, symbol_to, quantity):
         """
@@ -119,7 +144,7 @@ class CryptoDataManager:
         """
         data_from = self.get_specific_crypto_data(symbol_from)
         data_to = self.get_specific_crypto_data(symbol_to)
-        return float(quantity) * data_from['price'][-1] / data_to['price'][-1]
+        return float(quantity) * data_from["price"][-1] / data_to["price"][-1]
 
     def get_all_crypto_data(self):
         """
@@ -151,36 +176,54 @@ class CryptoDataManager:
         """
         market_data = {}
         for symbol, name in zip(self.top_cryptos, self.top_cryptos_names):
-            latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
+            latest_data = (
+                CryptoPrice.query.filter_by(symbol=symbol)
+                .order_by(CryptoPrice.date.desc())
+                .first()
+            )
             market_data[symbol] = {
-                'symbol': symbol.split('-')[0],
-                'API_symbol': symbol,
-                'name': name,
+                "symbol": symbol.split("-")[0],
+                "API_symbol": symbol,
+                "name": name,
                 # use coma to separate thousands, and round to 3 decimals
-                'price': '{:,}'.format(round(latest_data.price, 3)),
+                "price": "{:,}".format(round(latest_data.price, 3)),
                 # use coma to separate thousands
-                'volume': '{:,}'.format(round(latest_data.volume, 0)),
-                'change_24h': 0,
-                'change_7d': 0,
-                'change_30d': 0,
-                'chart_24d': ''
+                "volume": "{:,}".format(round(latest_data.volume, 0)),
+                "change_24h": 0,
+                "change_7d": 0,
+                "change_30d": 0,
+                "chart_24d": "",
             }
             # Get change % (24h)
-            market_data[symbol]['change_24h'] = self.get_crypto_change(symbol, 1)
+            market_data[symbol]["change_24h"] = self.get_crypto_change(symbol, 1)
             # Get change % (7d)
-            market_data[symbol]['change_7d'] = self.get_crypto_change(symbol, 7)
+            market_data[symbol]["change_7d"] = self.get_crypto_change(symbol, 7)
             # Get change % (30d)
-            market_data[symbol]['change_30d'] = self.get_crypto_change(symbol, 30)
+            market_data[symbol]["change_30d"] = self.get_crypto_change(symbol, 30)
             # Get chart data (24d) in list of floats
-            latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
-            data = list(CryptoPrice.query.filter_by(symbol=symbol).filter(
-                CryptoPrice.date >= latest_data.date - timedelta(days=30)).all())
-            market_data[symbol]['chart_30d'] = ','.join([str(round(d.price, 2)) for d in data])
+            latest_data = (
+                CryptoPrice.query.filter_by(symbol=symbol)
+                .order_by(CryptoPrice.date.desc())
+                .first()
+            )
+            data = list(
+                CryptoPrice.query.filter_by(symbol=symbol)
+                .filter(CryptoPrice.date >= latest_data.date - timedelta(days=30))
+                .all()
+            )
+            market_data[symbol]["chart_30d"] = ",".join(
+                [str(round(d.price, 2)) for d in data]
+            )
 
         # Order by price
-        market_data = {k: v for k, v in sorted(market_data.items(),
-                                               key=lambda item: float(item[1]['price'].replace(',', '')),
-                                               reverse=True)}
+        market_data = {
+            k: v
+            for k, v in sorted(
+                market_data.items(),
+                key=lambda item: float(item[1]["price"].replace(",", "")),
+                reverse=True,
+            )
+        }
 
         return market_data
 
@@ -192,7 +235,12 @@ class CryptoDataManager:
         Return:
             float
         """
-        last_days = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.id.desc()).limit(days+1).all()
+        last_days = (
+            CryptoPrice.query.filter_by(symbol=symbol)
+            .order_by(CryptoPrice.id.desc())
+            .limit(days + 1)
+            .all()
+        )
         # pourcentage change from last_days[-1].date to last_days[0].date
         coeff = last_days[0].price / last_days[-1].price
         pourcentage_change = (coeff - 1) * 100

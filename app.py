@@ -2,24 +2,26 @@ import json
 import os
 import random
 import time
-from datetime import datetime
 
 from flask import Flask, render_template
-from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 
+from extensions import (
+    db,
+    login_manager,
+)  # Importer db et login_manager depuis extensions
+
 from configuration.config import Config as app_config
 from utils import NFT_collections, core_url_NFT, collection_to_min_max_price
-
-db = SQLAlchemy()
 
 
 def create_app():
     # ===== Flask app
-    app = Flask(__name__, template_folder='templates', static_folder='assets')
+    app = Flask(__name__, template_folder="templates", static_folder="assets")
     app.config.from_object(app_config)
+    db.init_app(app)
     # Initialisation de l'APScheduler
     scheduler = APScheduler()
     scheduler.init_app(app)
@@ -28,17 +30,15 @@ def create_app():
     from auth.auth import BLP_auth
     from general.general import BLP_general
     from API.api import BLP_api
+
     app.register_blueprint(BLP_auth)
     app.register_blueprint(BLP_general)
     app.register_blueprint(BLP_api)
 
     # ===== Login manager
-    login_manager = LoginManager()
-    login_manager.login_view = 'BLP_auth.login'
     login_manager.init_app(app)
 
     with app.app_context():
-        db.init_app(app)
         if not os.path.exists("instance/db.sqlite"):
             # ===== init SQLAlchemy
             db.create_all()
@@ -54,22 +54,36 @@ def create_app():
             # add the collection name
             # add the image path
             from models import NFT, NFTPriceOwnerHistory
+
             print("[INFO] Adding NFTs to the database")
 
             for collection in NFT_collections:
-                collection_path = core_url_NFT + collection.lower() + '/'
+                collection_path = core_url_NFT + collection.lower() + "/"
                 # Add as many NFTs as there is in the folder with the same name and _index (starting at 1)
                 # get the number of file in collection_path (just img files that end with .png or .jpg)
-                files_ = os.listdir('assets' + collection_path)
-                nb_files = len([f for f in files_ if f.endswith('.png') or f.endswith('.jpg')])
+                files_ = os.listdir("assets" + collection_path)
+                nb_files = len(
+                    [f for f in files_ if f.endswith(".png") or f.endswith(".jpg")]
+                )
 
                 for i in range(1, nb_files + 1):
                     # Init the NFT
                     name = f"{collection} #{i}"
                     path = f"{collection_path}{collection.lower()}_{i}.png"
-                    price = round(random.uniform(collection_to_min_max_price[collection][0],
-                                                 collection_to_min_max_price[collection][1]), 3)
-                    nft = NFT(name=name, collection=collection, image_path=path, price=price, owner_id=None)
+                    price = round(
+                        random.uniform(
+                            collection_to_min_max_price[collection][0],
+                            collection_to_min_max_price[collection][1],
+                        ),
+                        3,
+                    )
+                    nft = NFT(
+                        name=name,
+                        collection=collection,
+                        image_path=path,
+                        price=price,
+                        owner_id=None,
+                    )
                     db.session.add(nft)
                     db.session.flush()
 
@@ -78,24 +92,25 @@ def create_app():
             # ===== Init Mining server
             from models import MiningServer
 
-            path_to_mining_server_config = 'configuration/mining_servers.json'
+            path_to_mining_server_config = "configuration/mining_servers.json"
             # Iterate over all the json in the document, and add the mining server to the database
             with open(path_to_mining_server_config) as json_file:
                 data = json.load(json_file)
                 for mining_server in data:
                     mining_server = MiningServer(
-                        name=mining_server['Name'],
-                        symbol=mining_server['Symbol'],
-                        buy_amount=mining_server['BuyAmount'],
-                        power=mining_server['Power'],
-                        logo_path=mining_server['Logo'],
-                        category=mining_server['Category']
+                        name=mining_server["Name"],
+                        symbol=mining_server["Symbol"],
+                        buy_amount=mining_server["BuyAmount"],
+                        power=mining_server["Power"],
+                        logo_path=mining_server["Logo"],
+                        category=mining_server["Category"],
                     )
                     db.session.add(mining_server)
                 db.session.commit()
 
             # ===== Init the first user (admin)
             from init_fonctions import init_admin
+
             init_admin()
 
     from models import User
@@ -108,11 +123,11 @@ def create_app():
     # ===== error page
     @app.errorhandler(404)
     def forbidden(error):
-        return render_template('errors/error_404.html')
+        return render_template("errors/error_404.html")
 
     @app.errorhandler(500)
     def forbidden(error):
-        return render_template('errors/error_500.html')
+        return render_template("errors/error_500.html")
 
     # ===== Scheduler
     from crypto_manager import CryptoDataManager
@@ -158,20 +173,35 @@ def create_app():
         with app.app_context():
             server_payment_process()
 
-    frequency_crypto_update = os.getenv('FREQUENCY_UPDATE_CRYPTO_MINUTES')
+    frequency_crypto_update = os.getenv("FREQUENCY_UPDATE_CRYPTO_MINUTES")
 
     # Add the task to the scheduler based on the DEBUG_MODE environment variable
-    if os.getenv('DEBUG_MODE') == 'True':
+    if os.getenv("DEBUG_MODE") == "True":
         print("Debug mode is on, updating every hour")
-        scheduler.add_job(func=cron_debug_crypto_update, trigger='cron',
-                          hour='*', id='debug_crypto_update')
+        scheduler.add_job(
+            func=cron_debug_crypto_update,
+            trigger="cron",
+            hour="*",
+            id="debug_crypto_update",
+        )
     else:
-        print(f"Regular mode, updating every {frequency_crypto_update} minutes and payment process at 1 AM")
+        print(
+            f"Regular mode, updating every {frequency_crypto_update} minutes and payment process at 1 AM"
+        )
 
-        scheduler.add_job(func=cron_crypto_update, trigger='cron',
-                          minute=f'*/{frequency_crypto_update}', id='crypto_update')
-        scheduler.add_job(func=cron_server_payment, trigger='cron',
-                          hour='1', minute='0', id='server_payment')
+        scheduler.add_job(
+            func=cron_crypto_update,
+            trigger="cron",
+            minute=f"*/{frequency_crypto_update}",
+            id="crypto_update",
+        )
+        scheduler.add_job(
+            func=cron_server_payment,
+            trigger="cron",
+            hour="1",
+            minute="0",
+            id="server_payment",
+        )
 
     # Check if scheduler is not already running before starting
     if not scheduler.running:
@@ -183,3 +213,8 @@ def create_app():
 app = create_app()
 
 migrate = Migrate(app, db)
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host="0.0.0.0", port=8000)
