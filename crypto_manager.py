@@ -5,6 +5,7 @@ from utils import top_cryptos_symbols, top_cryptos_names
 from configuration.config import Config
 from models import CryptoPrice
 from app import db
+import pandas as pd
 
 
 class CryptoDataManager:
@@ -29,26 +30,38 @@ class CryptoDataManager:
                 try:
                     # Télécharge les données depuis Yahoo Finance
                     start_date = (latest_data.date - timedelta(days=1)).isoformat() if latest_data else '2000-01-01'
-                    data = yf.download(symbol, start=start_date)
+                    data = yf.download(symbol, start=start_date, auto_adjust=True)
 
                     # Ajoute ou remplace les données dans la base de données
                     for index, row in data.iterrows():
                         index_date = index.date()
+                        
+                        close_val = row["Close"]
+                        volume_val = row["Volume"]
+
+                        # Gère le cas où close_val / volume_val sont des Series à 1 élément
+                        if isinstance(close_val, pd.Series):
+                            close_val = close_val.iloc[0]
+                        if isinstance(volume_val, pd.Series):
+                            volume_val = volume_val.iloc[0]
+                        
+                        price = float(close_val)
+                        volume = float(volume_val)
 
                         # Vérifie si la date existe déjà dans la base de données
                         existing_data = CryptoPrice.query.filter_by(symbol=symbol, date=index_date).first()
 
                         if existing_data:
                             # Si la date existe déjà, on met à jour le prix et le volume
-                            existing_data.price = row['Close']
-                            existing_data.volume = row['Volume']
+                            existing_data.price = price
+                            existing_data.volume = volume
                         else:
                             # Sinon on ajoute une nouvelle entrée
                             new_data = CryptoPrice(
                                 symbol=symbol,
                                 date=index_date,
-                                price=row['Close'],
-                                volume=row['Volume']
+                                price=price,
+                                volume=volume
                             )
                             db.session.add(new_data)
 

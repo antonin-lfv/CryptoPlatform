@@ -1,0 +1,25 @@
+[project]
+name = "cryptoplatform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13.9"
+dependencies = [
+    "alembic>=1.17.2",
+    "flask>=3.1.2",
+    "flask-apscheduler>=1.13.1",
+    "flask-login>=0.6.3",
+    "flask-migrate>=4.1.0",
+    "flask-nav>=0.6",
+    "flask-sqlalchemy>=3.1.1",
+    "gunicorn>=23.0.0",
+    "jsons>=1.6.3",
+    "numpy>=2.3.5",
+    "pip>=25.3",
+    "plotly>=6.5.0",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "sqlalchemy>=2.0.44",
+    "werkzeug>=3.1.4",
+    "yfinance>=0.2.66",
+]
