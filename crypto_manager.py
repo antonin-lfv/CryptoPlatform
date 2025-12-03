@@ -22,42 +22,36 @@ class CryptoDataManager:
 
         """
 
-        if os.getenv("MAINTENANCE_MODE") == "True":
+        if os.getenv('MAINTENANCE_MODE') == 'True':
             print("[INFO] You are in offline mode. No data will be updated.")
             return
         else:
             for symbol in self.top_cryptos:
-                latest_data = (
-                    CryptoPrice.query.filter_by(symbol=symbol)
-                    .order_by(CryptoPrice.date.desc())
-                    .first()
-                )
+                latest_data = CryptoPrice.query.filter_by(symbol=symbol).order_by(CryptoPrice.date.desc()).first()
 
                 try:
                     # Télécharge les données depuis Yahoo Finance
-                    start_date = (
-                        (latest_data.date - timedelta(days=1)).isoformat()
-                        if latest_data
-                        else "2000-01-01"
-                    )
-                    data = yf.download(symbol, start=start_date)
+                    start_date = (latest_data.date - timedelta(days=1)).isoformat() if latest_data else '2000-01-01'
+                    data = yf.download(symbol, start=start_date, auto_adjust=True)
 
                     # Ajoute ou remplace les données dans la base de données
                     for index, row in data.iterrows():
                         index_date = index.date()
+                        
+                        close_val = row["Close"]
+                        volume_val = row["Volume"]
+
+                        # Gère le cas où close_val / volume_val sont des Series à 1 élément
+                        if isinstance(close_val, pd.Series):
+                            close_val = close_val.iloc[0]
+                        if isinstance(volume_val, pd.Series):
+                            volume_val = volume_val.iloc[0]
+                        
+                        price = float(close_val)
+                        volume = float(volume_val)
 
                         # Vérifie si la date existe déjà dans la base de données
-                        existing_data = CryptoPrice.query.filter_by(
-                            symbol=symbol, date=index_date
-                        ).first()
-
-                        # Extract price and volume values
-                        if isinstance(row["Close"], pd.Series):
-                            price = row["Close"][symbol]
-                            volume = row["Volume"][symbol]
-                        else:
-                            price = row["Close"]
-                            volume = row["Volume"]
+                        existing_data = CryptoPrice.query.filter_by(symbol=symbol, date=index_date).first()
 
                         if existing_data:
                             # Si la date existe déjà, on met à jour le prix et le volume
@@ -69,16 +63,14 @@ class CryptoDataManager:
                                 symbol=symbol,
                                 date=index_date,
                                 price=price,
-                                volume=volume,
+                                volume=volume
                             )
                             db.session.add(new_data)
 
                         db.session.commit()
 
                 except KeyError as e:
-                    print(
-                        f"[ERROR] Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance."
-                    )
+                    print(f"[ERROR] Erreur lors de la mise à jour des données pour {symbol}: {e}. Tentative de relance.")
 
                 except Exception as e:
                     print(f"[ERROR] Une erreur inattendue est survenue: {e}.")
