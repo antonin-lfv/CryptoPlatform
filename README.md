@@ -1,6 +1,4 @@
 <h1 align="center">
-  <img src="https://media.licdn.com/dms/image/C4E12AQGo1frCtMyg8Q/article-cover_image-shrink_720_1280/0/1581443087388?e=1720656000&v=beta&t=p2ouPNHVQlXNOH9wrXJAElgz5rPZbruBms9pL0dXajI" width="260">
-<br>
 </br>
   CryptoPlatform
 </h1>
